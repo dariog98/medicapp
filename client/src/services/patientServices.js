@@ -83,6 +83,19 @@ const getAllPatientFiles = async({ idPatient, search, page, order }) => {
     return await response.json()
 }
 
+const getAllPatientTreatments = async({ idPatient, search, page, order }) => {
+    const params = new URLSearchParams({
+        search: search ?? '',
+        page: page ?? 1,
+        order: JSON.stringify(order ?? []),
+    })
+
+    const url = `${RouteAPI.Patients}/${idPatient}/treatments?${params.toString()}`
+    const request = newRequest({ url, userToken: true })
+    const response = await fetch(request)
+    return await response.json()
+}
+
 const patientServices = {
     getAllPatients,
     getPatient,
@@ -92,6 +105,7 @@ const patientServices = {
     getAllPatientNotes,
     getAllPatientFiles,
     getAllPatientPhotos,
+    getAllPatientTreatments
 }
 
 export default patientServices

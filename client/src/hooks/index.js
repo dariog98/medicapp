@@ -1,5 +1,6 @@
 export { default as useLocalStorage } from './useLocalStorage'
 export { default as useLogin } from './useLogin'
+export { default as useModal } from './useModal'
 export { default as usePatient } from './usePatient'
 export { default as usePatients } from './usePatients'
 export { default as usePatientFiles } from './usePatientFiles'

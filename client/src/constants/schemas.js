@@ -19,7 +19,12 @@ const schemaPatient = yup.object({
     address: yup.string().nullable().notRequired(),
 })
 
+const schemaNotes = yup.object({
+    content: yup.string().required(language.messages.FieldRequired)
+})
+
 export {
     schemaLogin,
-    schemaPatient
+    schemaPatient,
+    schemaNotes
 }

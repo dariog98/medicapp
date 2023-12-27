@@ -52,14 +52,14 @@ const PatientModal = ({ showModal, modalMode, form, handleClose }) => {
 
                 <div className='d-flex justify-content-end gap-2'>
                     <Button
-                        className='btn-outline-success'
+                        className='btn-success'
                         text={language.buttons.Save}
                         icon={faCheck}
                         handleOnClick={form.handleSubmit}
                     />
 
                     <Button
-                        className='btn-outline-danger'
+                        className='btn-danger'
                         text={language.buttons.Cancel}
                         icon={faX}
                         handleOnClick={handleClose}

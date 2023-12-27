@@ -1,5 +1,5 @@
 import useFetch from './useFetch'
-import patientServices from '../services/patientSevices'
+import patientServices from '../services/patientServices'
 
 const usePatient = ({ idPatient } = {}) => {
     const getPatient = async () => {

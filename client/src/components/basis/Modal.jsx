@@ -1,10 +1,10 @@
 import { faX } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Button from './Button'
+import { createPortal } from 'react-dom'
 
 const Modal= ({ title, children, show, handleClose, contentStyle, modalSize }) => {
     if (show) {
-        return (
+        return createPortal(
             <>
                 <div className='fade modal-backdrop show'/>
 
@@ -32,7 +32,7 @@ const Modal= ({ title, children, show, handleClose, contentStyle, modalSize }) =
                     </div>
                 </div>
             </>
-        )
+        , document.getElementById('modal'))
     }
 }
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ORDER } from '../constants/order'
 import useFetch from './useFetch'
-import patientServices from '../services/patientSevices'
+import patientServices from '../services/patientServices'
 
 const usePatientFiles = ({ idPatient } = {}) => {
     const [search, setSearch] = useState('')

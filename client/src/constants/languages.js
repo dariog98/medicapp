@@ -16,7 +16,7 @@ const LANGUAGES = {
         Profile: 'Perfil',
         buttons: {
             Add: 'Añadir',
-            SeeOnAgenda: 'Ver en la agenda',
+            SeeOnAgenda: 'Ver en agenda',
             LogOut: 'Cerrar Sesión',
             Save: 'Guardar',
             Confirm: 'Confirmar',
@@ -72,7 +72,7 @@ const LANGUAGES = {
         Profile: 'Profile',
         buttons: {
             Add: 'Add',
-            SeeOnAgenda: 'See on the agenda',
+            SeeOnAgenda: 'See on agenda',
             LogOut: 'Logout',
             Save: 'Save',
             Confirm: 'Confirm',

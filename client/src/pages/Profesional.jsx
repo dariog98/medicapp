@@ -11,8 +11,6 @@ const Profesional = () => {
     const { id: idProfesional } = useParams()
     const { isLoading, data } = useProfesional({ idProfesional })
 
-    console.log({ idProfesional })
-
     return (
         <div className='w-100 my-4'>
             <div className='container'>

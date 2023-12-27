@@ -17,7 +17,7 @@ const getAllProfesionals = async (request, response) => {
 
 const getProfesional = async (request, response) => {
     const { id } = request.params
-    const profesional = await User.findByPk(id)
+    const profesional = await User.findByPk(id, { include: ['role', 'charge'] })
 
     if (!profesional) throw new ClientError('Profesional not found', 404)
 

@@ -36,11 +36,8 @@ const TurnItem = ({ data }) => {
                 <h5>{`${data.profesional.surnames} ${data.profesional.names}`}</h5>
                 <div>{`${data.patient.surnames} ${data.patient.names}`}</div>
                 <div className='d-flex gap-2 align-items-end'>
-                {
-                    data.treatment &&
-                    <div>{data.treatment.description}</div>
-                }
-                    <small><i>{data.description}</i></small>
+                {data.treatment && <div>{data.treatment.description}</div>}
+                <small><i>{data.description}</i></small>
                 </div>
             </div>
             <div className='d-flex p-2 align-items-end'>
@@ -48,7 +45,8 @@ const TurnItem = ({ data }) => {
                     <Button
                         className='btn-outline-system'
                         icon={faCalendarDays}
-                        text={language.buttons.SeeOnAgenda}
+                        title={language.buttons.SeeOnAgenda}
+                        style={{ width: '2.5rem', height: '2.5rem' }}
                         handleOnClick={handleGoToSchedule}
                     />
                 </div>
