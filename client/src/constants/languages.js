@@ -1,0 +1,98 @@
+const LANGUAGES = {
+    ES: {
+        Home: 'Inicio',
+        Patient: 'Paciente',
+        Patients: 'Pacientes',
+        Profesional: 'Profesional',
+        Profesionals: 'Profesionales',
+        Configuration: 'Configuración',
+        Search: 'Buscar',
+        Notes: 'Notas',
+        Photos: 'Fotografías',
+        Files: 'Archivos',
+        Turns: 'Turnos',
+        Treatments: 'Tratamientos',
+        Main: 'Principal',
+        Profile: 'Perfil',
+        buttons: {
+            Add: 'Añadir',
+            SeeOnAgenda: 'Ver en la agenda',
+            LogOut: 'Cerrar Sesión',
+        },
+        rows: {
+            Surnames: 'Apellidos',
+            Names: 'Nombres',
+            Birthdate: 'Fecha de Nacimiento',
+            Phone: 'Teléfono',
+            Username: 'Usuario',
+            Mail: 'Correo',
+            Address: 'Dirección',
+            Role: 'Rol',
+            Charge: 'Cargo',
+            Filename: 'Nombre',
+            Description: 'Descripción',
+            UpdatedAt: 'Última modificación',
+            Password: 'Contraseña',
+        },
+        configuration: {
+            Language: 'Idioma',
+            DarkMode: 'Modo oscuro'
+        },
+        messages: {
+            NoResults: 'No se han encontrado resultados',
+            Loading: 'Cargando',
+            LogIn: 'Iniciar Sesión',
+            YearsOld: 'Años',
+        },
+        string: 'es-ES',
+    },
+    EN: {
+        Home: 'Home',
+        Patient: 'Patient',
+        Patients: 'Patients',
+        Profesional: 'Profesional',
+        Profesionals: 'Profesionals',
+        Configuration: 'Configuration',
+        Search: 'Search',
+        Notes: 'Notes',
+        Photos: 'Photos',
+        Files: 'Files',
+        Turns: 'Turns',
+        Treatments: 'Treatments',
+        Main: 'Main',
+        Profile: 'Profile',
+        buttons: {
+            Add: 'Add',
+            SeeOnAgenda: 'See on the agenda',
+            LogOut: 'Logout',
+        },
+        rows: {
+            Surnames: 'Surnames',
+            Names: 'Names',
+            Birthdate: 'Birthdate',
+            Phone: 'Phone',
+            Username: 'Username',        
+            Mail: 'Mail',
+            Address: 'Address',
+            Role: 'Role',
+            Charge: 'Charge',
+            Filename: 'Filename',
+            Description: 'Description',
+            UpdatedAt: 'Updated at',
+            Password: 'Password',
+        },
+        configuration: {
+            Language: 'Language',
+            DarkMode: 'Dark mode'
+        },
+        messages: {
+            NoResults: 'No results found',
+            Loading: 'Loading',
+            LogIn: 'Login',
+            YearsOld: 'Years old'
+        },
+        string: 'en-EN',
+    }
+}
+
+export { LANGUAGES }

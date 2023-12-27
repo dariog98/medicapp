@@ -1,0 +1,7 @@
+export { default as Configuration } from './Configuration'
+export { default as Home } from './Home'
+export { default as Login } from './Login'
+export { default as Patient } from './Patient'
+export { default as Patients } from './Patients'
+export { default as Profesional } from './Profesional'
+export { default as Profesionals } from './Profesionals'

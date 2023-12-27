@@ -1,0 +1,174 @@
+import { ValidationErrorItem } from 'sequelize'
+import { ClientError, ServerError } from '../constants/errors.js'
+import { catchedAsync } from '../helpers/catchedAsync.js'
+import { getTokenFromRequest, tokenSign } from '../helpers/generateToken.js'
+import { encrypt, compare } from '../helpers/handleBcrypt.js'
+import { httpError } from '../helpers/handleErrors.js'
+import { handleResponse, handleResponseCustomStatus } from '../helpers/handleResponse.js'
+import { sendMail } from '../helpers/sendMail.js'
+import { User } from '../models/index.js'
+
+const tokenSecretKey = process.env.JWT_SECRET
+const refreshTokenSecretKey = process.env.JWT_RT_SECRET
+
+const login = async (request, response) => {
+    const { user: usernameOrMail, password } = request.body
+    
+    const user = await User.getByUsernameOrMail(usernameOrMail)
+    
+    if (!user) throw new ClientError('User not found', 404)
+
+    const { id: idUser, username, names, surnames, mail, phone, charge, role } = user
+
+    const userResume = { idUser, username, charge, role }
+
+    const checkPassword = await compare(password, user.password)
+    
+    if (!checkPassword) throw new ClientError('Invalid password', 409)
+    
+    const accessToken = await tokenSign(userResume, tokenSecretKey, '24h')
+    const refreshToken = await tokenSign(userResume, refreshTokenSecretKey, '30d')
+
+    const data = {
+        idUser,
+        surnames,
+        names,
+        username,
+        mail,
+        phone,
+        charge,
+        role,
+        accessToken,
+        refreshToken
+    }
+
+    handleResponse({ response, statusCode: 200, message: 'Login user sucessfully', data })
+}
+
+const update = async (request, response) => {
+    try {
+        const accessToken = await getTokenFromRequest(request)
+        const idUser = accessToken.idUser
+        const { username, names, surnames, mail, phone, idCharge } = request.body
+
+        let user = await User.getByID(idUser)
+
+        if (!user) {
+            const status = 404
+            const message = 'User is not found or does not exist'
+            handleResponse(response, status, message)
+            return
+        }
+
+        // Update user
+        await user.update({ username, names, surnames, mail, phone, idCharge })
+
+        // Generate token
+        user = await User.getByID(idUser)
+
+        const userResume = { 
+            id: user.id,
+            username: user.username,
+            charge: user.charge,
+            role: user.role
+        }
+
+        const newAccessToken = await tokenSign(userResume, tokenSecretKey, '24h')
+        const newRefreshToken = await tokenSign(userResume, refreshTokenSecretKey, '30d')
+
+        const data = {
+            id: user.id,
+            names: user.names,
+            surnames: user.surnames,
+            username: user.username,
+            charge: user.charge,
+            role: user.role,
+            mail: user.mail,
+            phone: user.phone,
+            token: newAccessToken,
+            refreshToken: newRefreshToken
+        }
+
+        const status = 200
+        const message = 'User updated successfully'
+        handleResponse(response, status, message, data)
+    } catch (error) {
+        const errorNumber = Number(error?.original?.errno)
+        const fields = error?.fields
+        if (errorNumber === 1062) {
+            const httpStatus = 409
+            if (fields?.username) {
+                const status = 10062
+                const message = 'Username duplicate'
+                handleResponseCustomStatus(response, httpStatus, status, message)
+                return
+            }
+            if (fields?.mail) {
+                const status = 10063
+                const message = 'Mail duplicate'
+                handleResponseCustomStatus(response, httpStatus, status, message)
+                return
+            }
+        }
+        httpError(response, error)
+    }
+}
+
+const register = async (request, response) => {
+    const { names, surnames, username, password, mail, idCharge, idRole } = request.body
+    const passwordHash = await encrypt(password)
+
+    try {
+        await User.create({
+            names: names,
+            surnames: surnames,
+            username: username, 
+            password: passwordHash,
+            mail: mail,
+            idCharge: idCharge,
+            idRole: idRole
+        })
+        handleResponse({ response, statusCode: 201, message: 'User create successfully' })
+    } catch(error) {
+        const err = error.errors.pop()
+        const errorList = {
+            'username': new ClientError('Validation error: Username is already in use', 409),
+            'mail': new ClientError('Validation error: Mail is already in use', 409)
+        }
+        if (err instanceof ValidationErrorItem) {
+            throw errorList[err.path]
+        }
+        throw new ServerError('Server error')
+    }
+}
+
+const resetPassword = async(request, response) => {
+    const { mail } = request.body
+    const user = await User.getByMail(mail)
+
+    if (!user || user.isDeleted) throw new ClientError('User not found', 404)
+
+    // Update password
+    const password = (Date.now()).toString(32)
+    const passwordHash = await encrypt(password)
+
+    console.log({
+        password, passwordHash,
+    })
+
+    await user.update({ password: passwordHash })
+    
+    // Send mail
+    await sendMail(user.mail, password)
+
+    handleResponse({response, statusCode: 200, message: 'User password reset. The user will receive their new password by email' })
+}
+
+const authenticationController = {
+    login: catchedAsync(login),
+    register: catchedAsync(register),
+    update: catchedAsync(update),
+    resetPassword: catchedAsync(resetPassword)
+}
+
+export default authenticationController 
