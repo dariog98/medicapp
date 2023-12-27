@@ -74,7 +74,7 @@ const PatientData = ({ data }) => {
                         label={language.rows.Address}
                         name='address'
                         type='text'
-                        value={data.address}
+                        value={data.address ?? ''}
                         isDisabled={true}
                     />
                 </div>

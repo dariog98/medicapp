@@ -1,22 +1,9 @@
 import useFetch from './useFetch'
-import { useUserContext } from '../components/providers/UserProvider'
-import { RouteAPI } from '../constants/routesAPI'
+import patientServices from '../services/patientSevices'
 
 const usePatient = ({ idPatient } = {}) => {
-    const { userToken } = useUserContext()
-
     const getPatient = async () => {
-        const config = {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${userToken}`,
-                'Content-Type': 'application/json'
-            }
-        }
-
-        const URL = `${RouteAPI.Patients}/${idPatient}`
-        const response = await fetch(URL, config)
-        return await response.json()
+        return await patientServices.getPatient({ idPatient })
     }
 
     const { isLoading, data } = useFetch(getPatient, [idPatient])

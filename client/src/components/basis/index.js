@@ -1,6 +1,7 @@
 export { default as Button } from './Button'
 export { default as ImagesViewer } from './ImagesViewer'
 export { default as Input } from './Input'
+export { default as Modal } from './Modal'
 export { default as Pagination } from './Pagination'
 export { default as Password } from './Password'
 export { default as Title } from './Title'

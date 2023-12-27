@@ -1,11 +1,9 @@
-import useFetch from './useFetch'
-import { useUserContext } from '../components/providers/UserProvider'
-import { RouteAPI } from '../constants/routesAPI'
 import { useState } from 'react'
 import { ORDER } from '../constants/order'
+import useFetch from './useFetch'
+import patientServices from '../services/patientSevices'
 
 const usePatientNotes = ({ idPatient } = {}) => {
-    const { userToken } = useUserContext()
     const [search, setSearch] = useState('')
     const [page, setPage] = useState(1)
     const [order, setOrder] = useState({ id: ORDER.Descending })
@@ -18,24 +16,7 @@ const usePatientNotes = ({ idPatient } = {}) => {
 
     const getPatientNotes = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-
-        const config = {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${userToken}`,
-                'Content-Type': 'application/json'
-            }
-        }
-
-        const params = new URLSearchParams({
-            search: search ?? '',
-            page: page ?? 1,
-            order: JSON.stringify(tableOrder ?? []),
-        })
-
-        const URL = `${RouteAPI.Patients}/${idPatient}/notes?${params.toString()}`
-        const response = await fetch(URL, config)
-        return await response.json()
+        return await patientServices.getAllPatientNotes({ idPatient, search, page, order: tableOrder })
     }
 
     const { isLoading, data } = useFetch(getPatientNotes, [idPatient, search, page, order])
@@ -46,7 +27,8 @@ const usePatientNotes = ({ idPatient } = {}) => {
         order,
         handleOrder,
         page,
-        handlePage: setPage
+        handlePage: setPage,
+        handleSearch: setSearch,
     }
 }
 

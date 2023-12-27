@@ -7,7 +7,6 @@ const useFetch = (fetchFunction, triggers = []) => {
     const action = async () => {
         try {
             const response = await fetchFunction()
-            console.log({response})
             setData(response)
         } catch (error) {
             console.log(error)

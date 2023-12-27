@@ -1,11 +1,12 @@
 import { faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { SearchBar, Title, Button, Table, Pagination } from '../components/basis'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
-import { usePatients } from '../hooks'
+import { usePatientModal, usePatients } from '../hooks'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ROUTES } from '../constants/routes'
 import { getStringDateInLanguageTimeZone } from '../constants/dateToString'
 import { UTC } from '../constants/time'
+import { PatientModal } from '../components/patient'
 
 const Patients = () => {
     const { language } = useSettingsContext()
@@ -13,6 +14,7 @@ const Patients = () => {
     const search = searchParams.get('search')
     const { isLoading, data, order, handleOrder, page, handlePage } = usePatients({})
     const navigate = useNavigate()
+    const { showModal, form, handleOpen, handleClose } = usePatientModal()
 
     const handleSearch = (value) => {
         setSearchParams(params => {
@@ -36,6 +38,7 @@ const Patients = () => {
                                     className='btn-primary'
                                     icon={faUserPlus}
                                     text={language.buttons.Add}
+                                    handleOnClick={() => handleOpen()}
                                 />
                             </div>
                         </div>
@@ -64,6 +67,8 @@ const Patients = () => {
                             />
                             
                             <Pagination page={page} totalPages={data?.totalPages} handlePage={handlePage}/>
+
+                            <PatientModal form={form} showModal={showModal} handleClose={handleClose}/>
                         </div>
 
                     </div>

@@ -34,10 +34,10 @@ const getPatient = async (request, response) => {
 const createPatient = async(request, response) => {
     const { names, surnames, dni, birthdate, phone, address } = request.body
     
-    const patients = await Patient.getByDNI(dni)
+    const patients = await Patient.findOne({ where: { dni } })
     if (patients) throw new ClientError('DNI is already in use', 409)
     
-    const patient = await Patient.create({ names, surnames, dni, birthdate, phone, address })
+    await Patient.create({ names, surnames, dni, birthdate, phone, address })
     
     handleResponse({ response, statusCode: 201, message: 'Patient create successfully' })
 }
