@@ -1,13 +1,10 @@
 import { useState } from 'react'
-import useFetch from './useFetch'
 import { ORDER } from '../constants/order'
-import { useUserContext } from '../components/providers/UserProvider'
-import { RouteAPI } from '../constants/routesAPI'
+import useFetch from './useFetch'
+import profesionalServices from '../services/profesionalServices'
 
 const useProfesionals = ({ search } = {}) => {
-    const { userToken } = useUserContext()
     const [page, setPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
     const [order, setOrder] = useState({ id: ORDER.Descending })
 
     const handleOrder = (row, value) => {
@@ -18,24 +15,7 @@ const useProfesionals = ({ search } = {}) => {
 
     const getProfesionals = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-
-        const config = {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${userToken}`,
-                'Content-Type': 'application/json'
-            }
-        }
-    
-        const params = new URLSearchParams({
-            search: search ?? '',
-            page: page ?? 1,
-            order: JSON.stringify(tableOrder ?? []),
-        })
-    
-        const URL = `${RouteAPI.Profesionals}?${params.toString()}`
-        const response = await fetch(URL, config)
-        return await response.json()
+        return await profesionalServices.getAllProfesionals({ search, page, order: tableOrder })
     }
 
     const { isLoading, data } = useFetch(getProfesionals, [search, page, order])
@@ -43,7 +23,6 @@ const useProfesionals = ({ search } = {}) => {
     return {
         isLoading,
         data, 
-        totalPages,
         page,
         order,
         handlePage: setPage,

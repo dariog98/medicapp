@@ -1,7 +1,7 @@
 const ROUTES = {
     Home: '/',
     Patients: '/patients',
-    Profesionals: '/profesional',
+    Profesionals: '/profesionals',
     Configuration: '/configuration',
     Login: '/login',
     Root: '/'

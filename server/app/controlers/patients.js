@@ -5,20 +5,33 @@ import { getTokenFromRequest } from '../helpers/generateToken.js'
 import { handleResponse } from '../helpers/handleResponse.js'
 import { File, Note, Patient, Treatment, Turn } from '../models/index.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'
+import { sequelize } from '../config/mysql.js'
 
 const getAllPatients = async (request, response) => {
     const { search, idProfesional, idTreatment, page, order: stringOrder } = request.query
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
     
-    const { totalPages, data, total } = await paginatedQuery(Patient, 100, page, order, {
-        dni: { [Op.like]: `%${search ?? ''}%` }
-        /*
-        $or: [
-            { dni: { $like: `%${search ?? ''}%` } },
-            Sequelize.where(Sequelize.fn('concat', Sequelize.col('surnames'), ' ', Sequelize.col('names')), { [Op.like]: `%${search ?? ''}%` })
-        ]*/
-    })
+    const params = {}
 
+    if (idProfesional) {
+        const query = `
+            select distinct idPatient
+            from turns
+            where turns.idProfesional = ${Number(idProfesional)}
+            ${idTreatment ? `and turns.idTreatment = ${Number(idTreatment)}`  : ''}
+        `
+        const [results] = await sequelize.query(query)
+        const patients = results.map(row => row.idPatient)
+        params.id = patients
+    }
+
+    const { totalPages, data, total } = await paginatedQuery(Patient, 100, page, order, params, [],
+    {
+        [Op.or]: [
+            Sequelize.where(Sequelize.fn('concat', Sequelize.col('surnames'), ' ', Sequelize.col('names')), { [Op.like]: `%${search ?? ''}%` }),
+            { dni: { [Op.like]: `%${search ?? ''}%` } }
+        ]
+    })
     handleResponse({ response, statusCode: 200, data, total, totalPages})
 }
 
@@ -69,7 +82,9 @@ const getPatientFiles = async (request, response) => {
     const { id: idPatient } = request.params
     const { search, page, order: stringOrder } = request.query
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
-    const { totalPages, data, total } = await paginatedQuery(File, 100, page, order, { idPatient, type: 'other' })
+    const { totalPages, data, total } = await paginatedQuery(File, 100, page, order, { idPatient, type: 'other' }, [], {
+        name: { [Op.like]: `%${search ?? ''}%`}
+    })
 
     handleResponse({ response, statusCode: 200, data, total, totalPages })
 }
@@ -78,8 +93,10 @@ const getPatientPhotos = async (request, response) => {
     const { id: idPatient } = request.params
     const { search, page, order: stringOrder } = request.query
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
-    const { totalPages, data, total } = await paginatedQuery(File, 100, page, order, { idPatient, type: 'image' })
-
+    const { totalPages, data, total } = await paginatedQuery(File, 100, page, order, { idPatient, type: 'image' }, [], {
+        name: { [Op.like]: `%${search ?? ''}%`}
+    })
+    
     handleResponse({ response, statusCode: 200, data, total, totalPages })
 }
 
@@ -130,24 +147,23 @@ const createPatientNote = async (request, response) => {
     const { id: idPatient } = request.params
     const { content } = request.body
     const accessToken = await getTokenFromRequest(request)
-    const createdBy = accessToken.id
+    const createdBy = accessToken.idUser
     
-    const note = Note.create({ idPatient, content, createdBy })
-    handleResponse(response, 201, 'Note create successfully', note)
+    await Note.create({ idPatient, content, createdBy })
+    handleResponse({ response, statusCode: 201, message: 'Note create successfully' })
 }
 
 const updatePatientNote = async (request, response) => {
     const { id: idPatient, note: idNote } = request.params
     const { content } = request.body
     const accessToken = await getTokenFromRequest(request)
-    const modifiedBy = accessToken.id
+    const modifiedBy = accessToken.idUser
     
     const note = await Note.findOne({ where: { idPatient, id: idNote } })
     if (!note) throw new ClientError('Note is not found or does not exist', 404)
 
     await note.update({ content, modifiedBy })
-
-    handleResponse(response, 200, 'Note updated successfully', note)
+    handleResponse({ response, statusCode: 200, message: 'Note updated successfully' })
 }
 
 const deletePatientNote = async (request, response) => {
@@ -157,7 +173,7 @@ const deletePatientNote = async (request, response) => {
     if (!note) throw new ClientError('Note is not found or does not exist', 404)
 
     await note.destroy()
-    handleResponse(response, 200, 'Note deleted successfully')
+    handleResponse({ response, statusCode: 200, message: 'Note deleted successfully' })
 }
 
 const patientController = {

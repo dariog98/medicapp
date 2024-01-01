@@ -1,33 +1,41 @@
-import { faUserDoctor } from '@fortawesome/free-solid-svg-icons'
-import { Title } from '../components/basis'
-import ProfesionalData from '../components/profesional/ProfesionalData'
+import { faCalendarDays, faUserDoctor } from '@fortawesome/free-solid-svg-icons'
+import { Button, Container, NotFound, Title } from '../components/basis'
 import { useProfesional } from '../hooks'
-import { useParams } from 'react-router-dom'
-import ProfesionalPatients from '../components/profesional/ProfesionalPatients'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
+import { ProfesionalData, ProfesionalPatients } from '../components/profesional'
+import { ROUTES } from '../constants/routes'
 
 const Profesional = () => {
     const { language } = useSettingsContext()
     const { id: idProfesional } = useParams()
     const { isLoading, data } = useProfesional({ idProfesional })
+    const navigate = useNavigate()
 
     return (
-        <div className='w-100 my-4'>
-            <div className='container'>
-                {
-                    data &&
-                    <div className='d-grid gap-3' style={{ gridTemplateColumns: '2fr 1fr' }} >
-                        <div className='d-flex flex-column gap-3'>
-                            <Title icon={faUserDoctor} text={language.Profesional}/>
-                            <ProfesionalData profesional={data.data}/>
-                        </div>
-                        <div>
-                            <ProfesionalPatients idProfesional={idProfesional}/>
-                        </div>
+        data?.data ?
+        <Container>
+            <div className='d-grid gap-3' style={{ gridTemplateColumns: '2fr 1fr' }} >
+                <div className='d-flex flex-column gap-3'>
+                    <Title icon={faUserDoctor} text={language.Profesional}/>
+                    <ProfesionalData profesional={data.data}/>
+
+                    <div>
+                        <Button
+                            className='btn-outline-system'
+                            icon={faCalendarDays}
+                            text='See agenda'
+                            handleOnClick={() => navigate(`${ROUTES.Profesionals}/${idProfesional}/schedule`)}
+                        />
                     </div>
-                }
+                </div>
+                <div>
+                    <ProfesionalPatients idProfesional={idProfesional}/>
+                </div>
             </div>
-        </div>
+        </Container>
+        :
+        <NotFound/>
     )
 }
 

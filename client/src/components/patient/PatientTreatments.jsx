@@ -1,8 +1,7 @@
 import { faStethoscope } from '@fortawesome/free-solid-svg-icons'
-import { Title } from '../basis'
+import { Loading, Title } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import { usePatientTreatments } from '../../hooks'
-import Loading from '../basis/Loading'
 
 const PatientTreatments = ({ idPatient }) => {
     const { language } = useSettingsContext()

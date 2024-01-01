@@ -1,17 +1,24 @@
+import { Op, Sequelize } from 'sequelize'
 import { sequelize } from '../config/mysql.js'
 import { TURN_STATUS } from '../constants/turnstatus.js'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { httpError } from '../helpers/handleErrors.js'
-import { handleResponse, handleResponseCustomStatus } from '../helpers/handleResponse.js'
+import { handleResponse } from '../helpers/handleResponse.js'
 import { Exception, Reminder, Treatment, Turn, User } from '../models/index.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'
+import { ClientError, ServerError } from '../constants/errors.js'
 
 const getAllProfesionals = async (request, response) => {
     const { search, page, order: stringOrder } = request.query
 
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
-    const { totalPages, data, total } = await paginatedQuery(User, 100, page, order, { idRole: 1 })
-
+    const { totalPages, data, total } = await paginatedQuery(User, 100, page, order, { idRole: 1 }, [],
+    {
+        [Op.or]: [
+            Sequelize.where(Sequelize.fn('concat', Sequelize.col('surnames'), ' ', Sequelize.col('names')), { [Op.like]: `%${search ?? ''}%` }),
+            { username: { [Op.like]: `%${search ?? ''}%` } }
+        ]
+    })
     handleResponse({ response, statusCode: 200, data, total, totalPages})
 }
 
@@ -25,86 +32,60 @@ const getProfesional = async (request, response) => {
 }
 
 const getProfesionalEvents = async (request, response) => {
-    try {
-        const id = request.params.id
-        const startTime = new Date(request.query.startTime)
-        const endTime = request.query.endTime ? new Date(request.query.endTime) : new Date(
-            Date.UTC(
+    const { id: idProfesional } = request.params
+    const startTime = request.query.startTime ? new Date(request.query.startTime) : new Date()
+    const endTime = request.query.endTime ? new Date(request.query.endTime) : new Date(
+        Date.UTC(
+            startTime.getUTCFullYear(),
+            startTime.getUTCMonth(),
+            startTime.getUTCDate(),
+            startTime.getUTCHours() + 23,
+            startTime.getUTCMinutes() + 59,
+        )
+    )
+
+    const turns = await Turn.findAll({
+        where: { idProfesional, dateTime: { [Op.between]: [startTime, endTime] } },
+        include: ['createdByUser', 'modifiedByUser', 'profesional', 'patient', 'treatment'],
+    })
+
+    const exceptions = await Exception.findAll({
+        where: { idProfesional, startDateTime: { [Op.lte]: endTime }, endDateTime: { [Op.gte]: startTime } },
+        include: ['createdByUser', 'modifiedByUser', 'profesional'],
+    })
+
+    const reminders = await Reminder.findAll({
+        where: { idProfesional, dateTime: { [Op.between]: [startTime, endTime] } },
+        include: ['createdByUser', 'modifiedByUser', 'profesional', 'patient'],
+    })
+
+    const data = [
+        ...turns.map(t => {
+            const turn = t.get()
+
+            const startTime = new Date(turn.dateTime)
+            const [hours, minutes] = turn.duration.split(':')
+            const endTime = new Date(Date.UTC(
                 startTime.getUTCFullYear(),
                 startTime.getUTCMonth(),
                 startTime.getUTCDate(),
-                startTime.getUTCHours() + 23,
-                startTime.getUTCMinutes() + 59,
-            )
-        )
-        const turns = await Turn.getByProfesionalID(id, startTime, endTime)
-        const exceptions = await Exception.getByProfesionalID(id, startTime, endTime)
-        const reminders = await Reminder.getByProfesionalID(id, startTime, endTime)
-        const result = [
-            ...turns.map(turn => {
-                const data = JSON.parse(JSON.stringify(turn))
-                const startTime = new Date(data.dateTime)
-                const [hours, minutes] = data.duration.split(':')
-                const endTime = new Date(Date.UTC(
-                    startTime.getUTCFullYear(),
-                    startTime.getUTCMonth(),
-                    startTime.getUTCDate(),
-                    startTime.getUTCHours() + parseInt(hours),
-                    startTime.getUTCMinutes() + parseInt(minutes)
-                ))
-                const duration = data.duration.slice(0, 5)
+                startTime.getUTCHours() + parseInt(hours),
+                startTime.getUTCMinutes() + parseInt(minutes)
+            ))
 
-                const type = 'turn'
-                return {
-                    ...data,
-                    duration,
-                    startTime,
-                    endTime,
-                    type
-                }
-            }),
-            ...exceptions.map(exception => {
-                const data = JSON.parse(JSON.stringify(exception))
-                const type = 'exception'
-                return {
-                    ...data,
-                    startTime: data.startDateTime,
-                    endTime: data.endDateTime,
-                    type
-                }
-            }),
-            ...reminders.map(exception => {
-                const data = JSON.parse(JSON.stringify(exception))
-                const type = 'reminder'
-                return {
-                    ...data,
-                    startTime: data.dateTime,
-                    type
-                }
-            })
-        ]
+            return { type: 'turn', startTime, endTime, ...turn }
+        }),
+        ...exceptions.map(ex => {
+            const exception = ex.get()
+            return { type: 'expception', startTime: exception.startDateTime, endTime: exception.endDateTime, ...exception }
+        }),
+        ...reminders.map(r => {
+            const reminder = r.get()
+            return { type: 'reminder', startTime: reminder.dateTime, ...reminder }
+        })
+    ]
 
-        const status = 200
-        const message = ''
-        handleResponse(response, status, message, result)
-    } catch (error) {
-        console.log(error)
-        httpError(response, error)
-    }
-}
-
-const deleteAllProfesionalsEvents = async (request, response) => {
-    try {
-        await Turn.destroy({ where: {}, truncate: true })
-        await Exception.destroy({ where: {}, truncate: true })
-        await Reminder.destroy({ where: {}, truncate: true })
-
-        const status = 200
-        const message = 'All events deleted successfully'
-        handleResponse(response, status, message)
-    } catch (error) {
-        httpError(response, error)
-    }
+    handleResponse({ response, statusCode: 200, data })
 }
 
 const getSecondsOfTime = (time) => {
@@ -190,228 +171,86 @@ const saveProfesionalScheduleConfig = async (request, response) => {
 }
 
 const getProfesionalTreatments = async (request, response) => {
-    try {
-        const { id: idProfesional } = request.params
-        const { order: stringOrder, search, page } = request.query
-        const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
+    const { id: idProfesional } = request.params
+    const { order: stringOrder, search, page } = request.query
+    const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
 
-        const {total_pages, results: data } = await Treatment.getPage({ idProfesional, search: search ? search : '', order,  page: page ? page - 1 : 0 })
+    const { totalPages, data, total } = await paginatedQuery(User, 100, page, order, { idProfesional }, [], {
+        description: { [Op.like]: `%${search ?? ''}%` }
+    })
 
-        const status = 200
-        const message = ''
-        response.send({ status, message, data, total_pages })
-    } catch (error) {
-        httpError(response, error)
-    }
+    handleResponse({ response, statusCode: 200, data, total, totalPages })
 }
 
 const getProfesionalTreatment = async (request, response) => {
-    try {
-        const { id: idProfesional, treatment: idTreatment } = request.params
-
-        const treatment = await Treatment.findOne({ where: { idProfesional, id: idTreatment }})
-
-        if (!treatment) {
-            const status = 404
-            const message = 'Treatment is not found or does not exist'
-            handleResponse(response, status, message)
-            return
-        }
-
-        const status = 200
-        const message = ''
-        handleResponse(response, status, message, treatment)
-    } catch (error) {
-        httpError(response, error)
-    }
-}
-
-const getProfesionalTreatmentsResume = async (request, response) => {
-    try {
-        const { idProfesional } = request.query
-
-        const query = `
-            select year(addtime(turns.dateTime, '-03:00:00')) as year, month(addtime(turns.dateTime, '-03:00:00')) as month, count(idTreatment) as total
-            from turns
-            where turns.idProfesional = ${Number(idProfesional)} and turns.status = ${TURN_STATUS.Confirmed}
-            group by year(addtime(turns.dateTime, '-03:00:00')), month(addtime(turns.dateTime, '-03:00:00'))
-            order by year desc, month asc
-        `
-        const [results] = await sequelize.query(query)
-
-        const dataIndexed = results.reduce((accumulator, current) => {
-            if (!accumulator[current.year]) {
-                accumulator[current.year] = {}
-            }
-            accumulator[current.year][current.month] = current.total
-            return accumulator
-        }, {})
-        
-        const data = Object.keys(dataIndexed).map(year => {
-            let yearTotalTreatments = 0
-            const treatments =  Array.from({ length: 12 }, (_, i) => i + 1).map(month => {
-                const monthTotal = dataIndexed[year][month] ?? 0
-                yearTotalTreatments += monthTotal
-                return { month, total: monthTotal }
-            })
-            return { year: Number(year), treatments, total: yearTotalTreatments }
-        }).sort((a, b) => a.year < b.year ? 1 : -1)
-
-        const status = 200
-        const message = ''
-        handleResponse(response, status, message, data)
-    } catch (error) {
-        httpError(response, error)
-    }
+    const { id: idProfesional, treatment: idTreatment } = request.params
+    const treatment = await Treatment.findOne({ where: { idProfesional, id: idTreatment }})
+    if (!treatment) throw new ClientError('Treatment is not found or does not exist', 404)
+    handleResponse({response, statusCode: 200, data: treatment})
 }
 
 const createProfesionalTreatment = async (request, response) => {
-    try {
-        const { id: idProfesional } = request.params
-        const { description, price } = request.body
+    const { id: idProfesional } = request.params
+    const { description } = request.body
 
-        Treatment.create({ idProfesional, description })
-        .then(result => {
-            const status = 201
-            const message = 'Treatment create successfully'
-            handleResponse(response, status, message, result)
-        })
-        .catch(error => {
-            console.log(error)
-            const errorNumber = Number(error?.original?.errno)
-            if (errorNumber === 1062) {
-                const httpStatus = 409
-                const status = 1062
-                const message = 'Description duplicate'
-                handleResponseCustomStatus(response, httpStatus, status, message)
-                return
-            }
-            const status = 500
-            const message = `An error occurred while trying to create the treatment: ${error.errors}`
-            handleResponse(response, status, message)
-        })
-    } catch (error) {
-        httpError(response, error)
-    }
+    await Treatment.create({ idProfesional, description })
+    .then(() => {
+        handleResponse({ response, statusCode: 201, message: 'Treatment create successfully' })
+    })
+    .catch(error => {
+        const errorNumber = Number(error?.original?.errno)
+        if (errorNumber === 1062) throw new ClientError('Description duplicate', 409, 1062)
+        throw new ServerError('An error occurred while trying to create the treatment', 500)
+    })
 }
 
 const updateProfesionalTreatment = async (request, response) => {
-    try {
-        const { id: idProfesional, treatment: idTreatment } = request.params
-        const { description, price } = request.body
+    const { id: idProfesional, treatment: idTreatment } = request.params
+    const { description } = request.body
 
-        const treatment = await Treatment.findOne({ where: { id: idTreatment, idProfesional } })
+    const treatment = await Treatment.findOne({ where: { id: idTreatment, idProfesional } })
 
-        if (!treatment) {
-            const status = 404
-            const message = 'Treatment is not found or does not exist'
-            handleResponse(response, status, message)
-            return
-        }
+    if (!treatment) throw new ClientError('Treatment is not found or does not exist', 404)
 
-        await treatment.update({ description })
-
-        const status = 200
-        const message = 'Treatment updated successfully'
-        handleResponse(response, status, message, treatment)
-    } catch (error) {
+    treatment.update({ description })
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Treatment updated successfully' })
+    })
+    .catch(error => {
         const errorNumber = Number(error?.original?.errno)
-        if (errorNumber === 1062) {
-            const httpStatus = 409
-            const status = 1062
-            const message = 'Description duplicate'
-            handleResponseCustomStatus(response, httpStatus, status, message)
-            return
-        }
-        httpError(response, error)
-    }
+        if (errorNumber === 1062) throw new ClientError('Description duplicate', 409, 1062)
+        throw new ServerError('An error occurred while trying to update the treatment', 500)
+    })
 }
 
 const deleteProfesionalTreatment = async (request, response) => {
-    try {
-        const { id: idProfesional, treatment: idTreatment } = request.params
+    const { id: idProfesional, treatment: idTreatment } = request.params
 
-        const treatment = await Treatment.findOne({ where: { id: idTreatment, idProfesional } })
+    const treatment = await Treatment.findOne({ where: { id: idTreatment, idProfesional } })
 
-        if (!treatment) {
-            const status = 404
-            const message = 'Treatment is not found or does not exist'
-            handleResponse(response, status, message)
-            return
-        }
+    if (!treatment) throw new ClientError('Treatment is not found or does not exist', 404)
 
-        await treatment.destroy()
-
-        const status = 200
-        const message = 'Treatment deleted successfully'
-        handleResponse(response, status, message)
-    } catch (error) {
+    treatment.destroy()
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Treatment deleted successfully' })
+    })
+    .catch(error => {
         const errorNumber = Number(error?.original?.errno)
-        if (errorNumber === 1451) {
-            const httpStatus = 409
-            const status = 1451
-            const message = `Can't eliminate treatment`
-            handleResponseCustomStatus(response, httpStatus, status, message)
-            return
-        }
-        httpError(response, error)
-    }
-}
-
-const getProfesionalEarnings = async (request, response) => {
-    try {
-        const { idProfesional } = request.query
-
-        const query = `
-            select year(addtime(turns.dateTime, '-03:00:00')) as year, month(addtime(turns.dateTime, '-03:00:00')) as month, sum(treatments.price) as total
-            from turns
-            left join treatments on turns.idTreatment = treatments.id
-            where turns.idProfesional = ${Number(idProfesional)} and turns.status = ${TURN_STATUS.Confirmed}
-            group by year(addtime(turns.dateTime, '-03:00:00')), month(addtime(turns.dateTime, '-03:00:00'))
-            order by year desc, month asc
-        `
-        
-        const [results] = await sequelize.query(query)
-
-        const dataIndexed = results.reduce((accumulator, current) => {
-            if (!accumulator[current.year]) {
-                accumulator[current.year] = {}
-            }
-            accumulator[current.year][current.month] = current.total
-            return accumulator
-        }, {})
-
-        const data = Object.keys(dataIndexed).map(year => {
-            let yearTotalEarnings = 0
-            const earnings =  Array.from({ length: 12 }, (_, i) => i + 1).map(month => {
-                const monthTotal = dataIndexed[year][month] ?? 0
-                yearTotalEarnings += monthTotal
-                return { month, total: monthTotal }
-            })
-            return { year: Number(year), earnings, total: yearTotalEarnings }
-        }).sort((a, b) => a.year < b.year ? 1 : -1)
-
-        const status = 200
-        const message = ''
-        handleResponse(response, status, message, data)
-    } catch (error) {
-        httpError(response, error)
-    }
+        if (errorNumber === 1451) throw new ClientError("The treatment can't be deleted since it was assigned to a turn", 409, 1451)
+        throw new ServerError('An error occurred while trying to delete the treatment', 500)
+    })
 }
 
 const profesionalController = {
     getAllProfesionals: catchedAsync(getAllProfesionals),
     getProfesional: catchedAsync(getProfesional),
-    getProfesionalEvents,
-    deleteAllProfesionalsEvents,
-    saveProfesionalScheduleConfig,
-    getProfesionalTreatments,
-    getProfesionalTreatmentsResume,
-    getProfesionalTreatment,
-    createProfesionalTreatment,
-    updateProfesionalTreatment,
-    deleteProfesionalTreatment,
-    getProfesionalEarnings
+    getEvents: catchedAsync(getProfesionalEvents),
+    saveScheduleConfig: catchedAsync(saveProfesionalScheduleConfig),
+    getTreatments: catchedAsync(getProfesionalTreatments),
+    getTreatment: catchedAsync(getProfesionalTreatment),
+    createTreatment: catchedAsync(createProfesionalTreatment),
+    updateTreatment: catchedAsync(updateProfesionalTreatment),
+    deleteTreatment: catchedAsync(deleteProfesionalTreatment),
 }
 
 export default profesionalController

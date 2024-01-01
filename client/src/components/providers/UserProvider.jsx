@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { useLocalStorage } from '../../hooks'
+import { USER_ROLES } from '../../constants/roles'
 
 const userContext = createContext()
 
@@ -7,6 +8,7 @@ const UserProvider = ({ children }) => {
     const [user, setUser] = useState(undefined)
     const { setItem, getItem, removeItem } = useLocalStorage('USER')
     const userToken = user?.accessToken
+    const isAdmin = user?.role.id === USER_ROLES.Admin
 
     const handleLogIn = (user) => {
         setUser(user)
@@ -29,7 +31,7 @@ const UserProvider = ({ children }) => {
     }
 
     return (
-        <userContext.Provider value={{ user, handleLogIn, handleLogOut, userToken }}>
+        <userContext.Provider value={{ user, handleLogIn, handleLogOut, userToken, isAdmin }}>
             {children}
         </userContext.Provider>
     )

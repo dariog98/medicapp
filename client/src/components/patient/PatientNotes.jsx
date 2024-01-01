@@ -1,17 +1,16 @@
 import { faNotesMedical, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { getStringDateInLanguageTimeZone } from '../../constants/dateToString'
-import { Button, Pagination, SearchBar, Title } from '../basis'
+import { Button, Loading, Pagination, SearchBar, Title } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
-import { usePatientNotes } from '../../hooks'
-import Loading from '../basis/Loading'
-import NotePreview from './notes/NotePreview'
-import useNotesModal from './notes/useNoteModal'
+import { usePatientNotes, usePatientNoteModal } from '../../hooks'
+import NoteModal from './notes/NoteModal'
+import { MODALMODES } from '../../constants/modal'
 
 const Note = ({ data, handleOnClick }) => {
     const { language, timeZone } = useSettingsContext()
 
     return (
-        <div className='card cursor-pointer' onClick={handleOnClick}>
+        <div className='w-100 card cursor-pointer' onClick={handleOnClick}>
             <div className='card-header'>
                 {getStringDateInLanguageTimeZone(new Date(data.updatedAt), language.string, timeZone)}
             </div>
@@ -24,8 +23,8 @@ const Note = ({ data, handleOnClick }) => {
 
 const PatientNotes = ({ idPatient }) => {
     const { language } = useSettingsContext()
-    const { isLoading, data, order, handleOrder, page, handlePage, handleSearch } = usePatientNotes({ idPatient })
-    const { form, showModal, handleOpen, handleClose } = useNotesModal()
+    const { isLoading, data, page, handlePage, handleSearch, refreshNotes } = usePatientNotes({ idPatient })
+    const { form, showModal, modalMode, handleOpen, handleClose, handleDelete, handleEdit, isLoading: isLoadingModal } = usePatientNoteModal({ idPatient, refreshNotes })
 
     return (
         <div className='d-flex flex-column gap-3'>
@@ -39,6 +38,7 @@ const PatientNotes = ({ idPatient }) => {
                         className='btn-primary'
                         icon={faPlus}
                         text={language.buttons.Add}
+                        handleOnClick={() => handleOpen()}
                     />
                 </div>
             </div>
@@ -53,7 +53,7 @@ const PatientNotes = ({ idPatient }) => {
                     data && data.data.length
                     ? 
                     <>
-                        {data.data.map(note => <Note key={note.id} data={note} handleOnClick={() => handleOpen(note)}/>)}
+                        {data.data.map(note => <Note key={note.id} data={note} handleOnClick={() => handleOpen(note, MODALMODES.Preview)}/>)}
                         <Pagination page={page} handlePage={handlePage} totalPages={data?.totalPages}/>
                     </>
                     :
@@ -63,7 +63,15 @@ const PatientNotes = ({ idPatient }) => {
                 }
             </div>
 
-            <NotePreview form={form} showModal={showModal} handleClose={handleClose}/>
+            <NoteModal
+                form={form}
+                showModal={showModal}
+                modalMode={modalMode}
+                handleClose={handleClose}
+                handleDelete={handleDelete}
+                handleEdit={handleEdit}
+                isLoading={isLoadingModal}
+            />
         </div>
     )
 }

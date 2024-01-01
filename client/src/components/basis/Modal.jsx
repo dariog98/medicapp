@@ -1,6 +1,6 @@
+import { createPortal } from 'react-dom'
 import { faX } from '@fortawesome/free-solid-svg-icons'
 import Button from './Button'
-import { createPortal } from 'react-dom'
 
 const Modal= ({ title, children, show, handleClose, contentStyle, modalSize }) => {
     if (show) {

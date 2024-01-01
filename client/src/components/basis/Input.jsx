@@ -1,17 +1,18 @@
-const Input = ({ label, before, after, form, name, type, placeholder, isDisabled, isReadOnly, value }) => {
+const Input = ({ label, before, after, form, name, type, placeholder, isDisabled, isReadOnly, value, handleOnChange }) => {
     return (
         <div>
             {label && <label className='form-label'>{label}</label>}
             <div className='input-group'>
                 {before && <div className='input-group-text'>{before}</div>}
                 <input
-                    className='form-control'
+                    className={`form-control ${form?.formState.errors[name] ? 'is-invalid' : ''}`}
                     type={type}
                     placeholder={placeholder}
                     disabled={isDisabled}
                     readOnly={isReadOnly}
                     value={value}
                     { ...form?.register(name) }
+                    onChange={handleOnChange}
                 />
                 {after && <div className='input-group-text'>{after}</div>}
             </div>

@@ -15,7 +15,7 @@ const useTurns = ({ idPatient, idProfesional, idTreatment, status, startTime, en
 
     const getTurns = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-        return turnServices.getAllTurns({ idPatient, idProfesional, idTreatment, page, order: tableOrder })
+        return turnServices.getAllTurns({ idPatient, idProfesional, idTreatment, startTime, endTime, status, page, order: tableOrder })
     }
 
     const { isLoading, data } = useFetch(getTurns, [idPatient, idProfesional, status, startTime, endTime])

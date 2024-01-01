@@ -18,7 +18,7 @@ const usePatients = ({ idProfesional, idTreatment, search }) => {
         return await patientServices.getAllPatients({ idProfesional, idTreatment, search, page, order: tableOrder })
     }
 
-    const { isLoading, data } = useFetch(getPatients, [search, page, order, idProfesional, idTreatment])
+    const { isLoading, data, fechData: refreshData } = useFetch(getPatients, [search, page, order, idProfesional, idTreatment])
 
     return {
         isLoading,
@@ -27,6 +27,7 @@ const usePatients = ({ idProfesional, idTreatment, search }) => {
         order,
         handlePage: setPage,
         handleOrder,
+        refreshData
     }
 }
 

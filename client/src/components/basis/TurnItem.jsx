@@ -54,7 +54,7 @@ const TurnItem = ({ data }) => {
             {
                 data.status === 1 &&
                 <div className='d-flex justify-content-center align-items-center p-2 border-start'>
-                    <FontAwesomeIcon icon={faCircleCheck} size='x1'/>
+                    <FontAwesomeIcon icon={faCircleCheck}/>
                 </div>
             }
         </div>

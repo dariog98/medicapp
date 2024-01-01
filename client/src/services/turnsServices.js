@@ -1,12 +1,14 @@
 import { newRequest } from '../constants/request'
 import { RouteAPI } from '../constants/routesAPI'
 
-const getAllTurns = async ({ idPatient, idProfesional, idTreatment, page, order }) => {
+const getAllTurns = async ({ idPatient, idProfesional, idTreatment, startTime, endTime, page, order }) => {
     const params = new URLSearchParams({
         page: page ?? 1,
         idPatient: idPatient ?? '',
         idProfesional: idProfesional ?? '',
         idTreatment: idTreatment ?? '',
+        startTime: startTime ?? '',
+        endTime: endTime ?? '',
         order: JSON.stringify(order ?? []),
     })
 

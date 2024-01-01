@@ -1,12 +1,15 @@
 import { faBars, faImage, faTableCellsLarge, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Button, ImagesViewer, Pagination, SearchBar, Table, Title } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
-import { usePatientPhotos, useSwitch } from '../../hooks'
+import { usePatientFileModal, usePatientPhotos, useSwitch } from '../../hooks'
 import { getStringDateTimeInLanguageTimeZone } from '../../constants/dateToString'
+import FileModal from './FileModal'
+import { MODALMODES } from '../../constants/modal'
 
 const PatientPhotos = ({ idPatient }) => {
     const { language, timeZone } = useSettingsContext()
     const { isLoading, data, order, handleOrder, page, handlePage, handleSearch } = usePatientPhotos({ idPatient })
+    const { showModal, modalMode, form, handleOpen, handleClose } = usePatientFileModal()
     const { mode, onSwitch, offSwitch } = useSwitch()
 
     return (
@@ -38,6 +41,7 @@ const PatientPhotos = ({ idPatient }) => {
                             className='btn-primary'
                             icon={faPlus}
                             text={language.buttons.Add}
+                            handleOnClick={() => handleOpen()}
                         />
                     </div>
                 </div>
@@ -60,6 +64,8 @@ const PatientPhotos = ({ idPatient }) => {
                             order={order}
                             handleOrder={handleOrder}
                             caption={`Total: ${data?.total}`}
+                            isPressable={true}
+                            handleOnPress={(item) => handleOpen(item, MODALMODES.Preview)}
                         />
                         :
                         <ImagesViewer
@@ -80,6 +86,7 @@ const PatientPhotos = ({ idPatient }) => {
                     
                     <Pagination page={page} totalPages={data?.totalPages} handlePage={handlePage}/>
                 </div>
+                <FileModal form={form} showModal={showModal} modalMode={modalMode} handleClose={handleClose}/>
             </div>
         </div>
     )

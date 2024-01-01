@@ -1,4 +1,4 @@
-import { faUsers } from '@fortawesome/free-solid-svg-icons'
+import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { Pagination, Table, Title } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import { usePatients } from '../../hooks'
@@ -9,7 +9,7 @@ const ProfesionalPatients = ({ idProfesional }) => {
 
     return (
         <div>
-            <Title icon={faUsers} text={language.Patients}/>
+            <Title icon={faUserGroup} text={language.Patients}/>
 
             <div className='d-flex flex-column align-items-center gap-3'>
                 <Table

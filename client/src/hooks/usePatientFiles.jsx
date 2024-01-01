@@ -19,7 +19,7 @@ const usePatientFiles = ({ idPatient } = {}) => {
         return await patientServices.getAllPatientFiles({ idPatient, search, page, order: tableOrder })
     }
 
-    const { isLoading, data } = useFetch(getPatientFiles, [idPatient, search, page, order])
+    const { isLoading, data, fechData: refreshFiles } = useFetch(getPatientFiles, [idPatient, search, page, order])
 
     return {
         isLoading,
@@ -29,6 +29,7 @@ const usePatientFiles = ({ idPatient } = {}) => {
         page,
         handlePage: setPage,
         handleSearch: setSearch,
+        refreshFiles
     }
 }
 

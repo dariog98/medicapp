@@ -1,43 +1,77 @@
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Button, InputV2, ModalTemplate } from '../../basis'
+import { Button, Modal, Textarea } from '../../basis'
 import { MODALMODES } from '../../../constants/modal'
+import { faCheck, faPen, faTrashCan, faX } from '@fortawesome/free-solid-svg-icons'
+import { useSettingsContext } from '../../providers/SettingsProvider'
 
-const NoteModal = ({ showModal, modalMode, handleClose, formManager }) => {
+const NoteModal = ({ showModal, modalMode, handleClose, handleEdit, handleDelete, form, isLoading }) => {
+    const { language } = useSettingsContext()
+    const content = form.getValues('content')
+
+    if (modalMode === MODALMODES.Preview) {
+        return (
+            <Modal title={language.Notes} show={showModal} modalSize='modal-lg' handleClose={handleClose}>
+                <div className='d-flex flex-column gap-3'>
+
+                    <div className='card-body text-truncate' style={{ whiteSpace: 'pre-wrap' }}>
+                        {content}
+                    </div>
+
+                    <div className='d-flex justify-content-end gap-2'>
+                        <Button
+                            className='btn-success'
+                            icon={faPen}
+                            text={language.buttons.Edit}
+                            handleOnClick={handleEdit}
+                        />
+                        <Button
+                            className='btn-danger'
+                            icon={faTrashCan}
+                            text={language.buttons.Delete}
+                            handleOnClick={handleDelete}
+                        />
+                    </div>
+                    
+                </div>
+            </Modal>
+        )
+    }
+
     return (
-        <ModalTemplate show={showModal} modalSize='modal-lg' handleClose={handleClose} title='Nota'>
+        <Modal  title={language.Notes} show={showModal} modalSize='modal-lg' handleClose={handleClose}>
             <div className='d-flex flex-column gap-3'>
                 {
                     modalMode === MODALMODES.Delete &&
-                    <div>¿Seguro que desea eliminar la siguiente nota?</div>
+                    <div>{language.messages.ConfirmDelete}</div>
                 }
-                <InputV2
-                    formManager={{ ...formManager, errors: formManager?.formState.errors }}
+
+                <Textarea
+                    form={form}
                     name='content'
-                    type='textarea'
-                    placeholder='Escriba aquí....'
+                    placeholder={language.messages.WriteHere}
                     height='300px'
                     disabled={modalMode === MODALMODES.Delete}
                 />
 
                 <div className='d-flex justify-content-end gap-2'>
                     <Button
-                        className='btn-outline-success'
-                        Icon={CheckIcon}
-                        text={modalMode === MODALMODES.Delete ? 'Confirmar' : 'Guardar'}
-                        handleOnClick={formManager.handleSubmit}
-                        isLoading={formManager.isLoading}
-                        isDisabled={formManager.isLoading}
+                        className='btn-success'
+                        icon={faCheck}
+                        text={modalMode === MODALMODES.Delete ? language.buttons.Confirm : language.buttons.Save}
+                        handleOnClick={form.handleSubmit}
+                        isLoading={isLoading}
+                        isDisabled={isLoading}
                     />
+
                     <Button
-                        className='btn-outline-danger'
-                        Icon={XMarkIcon}
-                        text='Cancelar'
+                        className='btn-danger'
+                        icon={faX}
+                        text={language.buttons.Cancel}
                         handleOnClick={handleClose}
                     />
                 </div>
                 
             </div>
-        </ModalTemplate>
+        </Modal>
     )
 }
 

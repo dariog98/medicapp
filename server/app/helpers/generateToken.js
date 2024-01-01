@@ -12,10 +12,10 @@ const tokenSign = async (user, secretKey, expirationTime) => {
 
 const verifyToken = async (token, secretKey) => {
     try {
-        //return jwt.verify(token, process.env.JWT_SECRET)
         return jwt.verify(token, secretKey)
     } catch(error) {
-        return null
+        console.log(error)
+        return undefined
     }
 }
 

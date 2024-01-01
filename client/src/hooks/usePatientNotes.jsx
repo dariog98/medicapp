@@ -16,10 +16,10 @@ const usePatientNotes = ({ idPatient } = {}) => {
 
     const getPatientNotes = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-        return await patientServices.getAllPatientNotes({ idPatient, search, page, order: tableOrder })
+        return await patientServices.getAllNotes({ idPatient, search, page, order: tableOrder })
     }
 
-    const { isLoading, data } = useFetch(getPatientNotes, [idPatient, search, page, order])
+    const { isLoading, data, fechData: refreshNotes } = useFetch(getPatientNotes, [idPatient, search, page, order])
 
     return {
         isLoading,
@@ -29,6 +29,7 @@ const usePatientNotes = ({ idPatient } = {}) => {
         page,
         handlePage: setPage,
         handleSearch: setSearch,
+        refreshNotes
     }
 }
 

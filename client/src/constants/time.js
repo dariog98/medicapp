@@ -6,4 +6,8 @@ const TIMEZONES = [
 const Buenos_Aires = TIMEZONES[0]
 const UTC = TIMEZONES[1]
 
-export { TIMEZONES, Buenos_Aires, UTC }
+const TOAST_TIME = {
+    Short: 3000
+}
+
+export { TIMEZONES, Buenos_Aires, UTC, TOAST_TIME }

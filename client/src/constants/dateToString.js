@@ -39,10 +39,22 @@ const getStringMonthInLanguageTimeZone = (date, language, timeZone) => {
     return date.toLocaleString(language, { month: 'long', timeZone: timeZone.string })
 }
 
+const newDateInTimeZone = (timeZone, year = 2000, month = 1, date = 1, hours = 0, minutes = 0, seconds = 0) => {
+    const YYYY = Number(year).toString().padStart(4, 0)
+    const MM = Number(month).toString().padStart(2, 0)
+    const DD = Number(date).toString().padStart(2, 0)
+    const hh = Number(hours).toString().padStart(2, 0)
+    const mm = Number(minutes).toString().padStart(2, 0)
+    const ss = Number(seconds).toString().padStart(2, 0)
+
+    return new Date(`${YYYY}-${MM}-${DD}T${hh}:${mm}:${ss}${timeZone.numeric}`)
+}
+
 export {
     getStringDateInTimeZone,
     getStringTimeInTimeZone,
     getStringMonthInLanguageTimeZone,
     getStringDateInLanguageTimeZone,
-    getStringDateTimeInLanguageTimeZone
+    getStringDateTimeInLanguageTimeZone,
+    newDateInTimeZone
 }

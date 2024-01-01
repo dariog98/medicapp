@@ -6,11 +6,12 @@ const usePatient = ({ idPatient } = {}) => {
         return await patientServices.getPatient({ idPatient })
     }
 
-    const { isLoading, data } = useFetch(getPatient, [idPatient])
+    const { isLoading, data, fechData: refreshData } = useFetch(getPatient, [idPatient])
 
     return {
         isLoading,
         data,
+        refreshData
     }
 }
 

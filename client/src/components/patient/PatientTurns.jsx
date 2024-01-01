@@ -1,8 +1,7 @@
 import { faCalendarWeek } from '@fortawesome/free-solid-svg-icons'
-import { Title, TurnList } from '../basis'
+import { Loading, Title, TurnList } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import { useTurns } from '../../hooks'
-import Loading from '../basis/Loading'
 
 const PatientTurns = ({ idPatient }) => {
     const { language } = useSettingsContext()

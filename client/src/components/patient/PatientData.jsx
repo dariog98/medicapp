@@ -3,6 +3,7 @@ import { Button, Input } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import PatientModal from './PatientModal'
 import { usePatientModal } from '../../hooks'
+import { MODALMODES } from '../../constants/modal'
 
 const getYearsOlds = (birthdate) => {
     const ageDifferent = Date.now() - new Date(birthdate).getTime()
@@ -10,9 +11,9 @@ const getYearsOlds = (birthdate) => {
     return Math.abs(ageDate.getUTCFullYear() - 1970)
 }
 
-const PatientData = ({ data }) => {
+const PatientData = ({ data, refreshData }) => {
     const { language } = useSettingsContext()
-    const { showModal, handleOpen, handleClose, form } = usePatientModal()
+    const { showModal, handleOpen, handleClose, form } = usePatientModal({ refreshData })
 
     return (
         <div className='d-flex flex-column gap-3'>
@@ -88,7 +89,7 @@ const PatientData = ({ data }) => {
                     className='btn-success'
                     icon={faPen}
                     text={language.buttons.Edit}
-                    handleOnClick={() => handleOpen(data)}
+                    handleOnClick={() => handleOpen(data, MODALMODES.Edit)}
                 />
             </div>
 

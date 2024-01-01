@@ -23,8 +23,35 @@ const schemaNotes = yup.object({
     content: yup.string().required(language.messages.FieldRequired)
 })
 
+
+const schemaTurns = yup.object({
+    patient: yup.object().shape({ id: yup.string().required("El paciente ingresado no es válido") }),
+    date: yup.string().required(language.messages.FieldRequired),
+    time: yup.string().required(language.messages.FieldRequired),
+    duration: yup.string().required(language.messages.FieldRequired),
+    description: yup.string().nullable().notRequired(),
+})
+
+const schemaReminders = yup.object({
+    patient: yup.object({ id: yup.string() }).notRequired(),
+    date: yup.string().required(language.messages.FieldRequired),
+    time: yup.string().required(language.messages.FieldRequired),
+    description: yup.string().nullable().notRequired(),
+})
+
+const schemaExceptions = yup.object({
+    startDate: yup.string().required(language.messages.FieldRequired),
+    startTime: yup.string().required(language.messages.FieldRequired),
+    endDate: yup.string().required(language.messages.FieldRequired),
+    endTime: yup.string().required(language.messages.FieldRequired),
+    description: yup.string().nullable().notRequired(),
+})
+
 export {
     schemaLogin,
     schemaPatient,
-    schemaNotes
+    schemaNotes,
+    schemaExceptions,
+    schemaReminders,
+    schemaTurns,
 }

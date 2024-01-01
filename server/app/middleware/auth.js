@@ -9,13 +9,16 @@ const refreshTokenSecretKey = process.env.JWT_RT_SECRET
 
 const checkAuth = async (request, response, next) => {
     const func = async () => {
+        console.log({ auth: request.headers.authorization })
         if(!request.headers.authorization) throw new ClientError("The token is invalid or doesn't exist", 401)
 
         const token = request.headers.authorization.split(' ').pop()
         const tokenData = await verifyToken(token, tokenSecretKey)
 
+        if(!tokenData) throw new ClientError("The sended token is invalid", 401)
+
         // Check is a valid token
-        if(!tokenData.username) throw new ClientError("The token is invalid or doesn't exist", 401)
+        if(!tokenData.username) throw new ClientError("The token is invalid", 401)
 
         // Check is not a deleted accound
         const user = await User.findOne({ where: { id : tokenData.idUser }, raw: true })

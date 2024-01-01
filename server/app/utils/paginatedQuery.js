@@ -1,11 +1,16 @@
-const paginatedQuery = async (model, rows = 100, page = 1, order = ['id', 'ASC'], params = {}, include) => {
+const cleanObject = (obj) => {
+    return Object.keys(obj).reduce((accumulator, current) => {
+        console.log({ accumulator, current, value: obj[current] })
+        if (obj[current] !== undefined && obj[current] !== '') accumulator[current] = obj[current]
+        return accumulator
+    }, {})
+}
+
+const paginatedQuery = async (model, rows = 100, page = 1, order = ['id', 'ASC'], params = {}, include, literalParams) => {
     const limit = rows
     const offset = limit * (page - 1)
 
-    const where = Object.keys(params).reduce((accumulator, current) => {
-        if (params[current] !== undefined && params[current] !== '') accumulator[current] = params[current]
-        return accumulator
-    }, {})
+    const where = { ...cleanObject(params), ...literalParams }
 
     const { count: total, rows: data } = await model.findAndCountAll({ offset, limit, order: [ order ], where, include })
     return {

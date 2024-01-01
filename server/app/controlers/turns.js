@@ -6,6 +6,7 @@ import { handleResponse, handleResponseCustomStatus } from '../helpers/handleRes
 import { paginatedQuery } from '../utils/paginatedQuery.js'
 import { Turn } from '../models/index.js'
 import { catchedAsync } from '../helpers/catchedAsync.js'
+import { Op } from 'sequelize'
 
 const getAllTurns = async (request, response) => {
     const {
@@ -22,14 +23,22 @@ const getAllTurns = async (request, response) => {
 
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
 
+    const literal = {}
+
+    if (startTime) {
+        literal.dateTime = { [Op.gte]: startTime }
+    }
+
+    if (endTime) {
+        literal.dateTime = { ...literal['dateTime'], [Op.lte]: endTime }
+    }
+
     const { totalPages, data, total } = await paginatedQuery(Turn, rows, page, order, {
         idPatient,
         idProfesional,
         idTreatment,
-        startTime,
-        endTime,
         status
-    }, [ 'treatment', 'profesional', 'patient' ])
+    }, [ 'treatment', 'profesional', 'patient' ], literal)
 
     handleResponse({ response, statusCode: 200, data, total, totalPages })
 }
@@ -242,62 +251,6 @@ const confirmTurn = async (request, response) => {
             handleResponse(response, status, message)
         }
         //httpError(response, error)
-    }
-}
-
-const getReports = async (request, response) => {
-    try {
-        const {
-            searchDate,
-            searchProfesional,
-            page,
-            order: stringOrder,
-        } = request.query
-        console.log({ searchDate, searchProfesional, page, order: stringOrder })
-        const order = stringOrder
-            ? JSON.parse(stringOrder)
-            : ['dateTime', 'ASC']
-        const turns = await Turn.getPageHome(
-            searchDate
-                ? searchDate
-                : new Date().toLocaleDateString('en-CA', {
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                  }),
-            searchProfesional,
-            page ? Number(page) - 1 : 0,
-            order
-        )
-        // const { date, profesionalId } = request.params
-        // const turns = await Turn.findAll({
-        //   where: {
-        //     [Op.and]: [
-        //       sequelize.where(
-        //         sequelize.fn("date", sequelize.col("dateTime")),
-        //         "=",
-        //         date
-        //       ),
-        //       profesionalId && profesionalId > 0 && { idProfesional: profesionalId }
-        //     ].filter(Boolean), // Filtrar elementos falsy para excluir condiciones undefined o null
-        //   },
-        //   include: ["profesional", "patient", "treatment"],
-        // })
-        if (turns) {
-            const status = 200
-            const message = ''
-            const data = turns
-            handleResponse(response, status, message, data)
-            return
-        } else {
-            const status = 404
-            const message = 'Not found turns'
-            const data = turns
-            handleResponse(response, status, message, data)
-            return
-        }
-    } catch (error) {
-        httpError(response, error)
     }
 }
 

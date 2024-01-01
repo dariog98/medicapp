@@ -13,7 +13,7 @@ const Login = () => {
             <div className='d-flex'>
                 <div className='bg-dark mx-5'>
                     <div className='d-flex justify-content-center align-items-center vh-100' style={{ width: '360px' }}>
-                        <div className='d-flex flex-column gap-3'>
+                        <form className='d-flex flex-column gap-3' onSubmit={form.handleSubmit}>
                             <h2>{language.messages.LogIn}</h2>
                             <Input form={form} label={language.rows.Username} name='user' type='text'/>
                             <Password
@@ -26,11 +26,10 @@ const Login = () => {
                             <Button
                                 className='btn-primary'
                                 text={language.messages.LogIn}
-                                handleOnClick={form.handleSubmit}
                                 isLoading={isLoading}
                                 isDisabled={isLoading}
                             />
-                        </div>
+                        </form>
                     </div>
                 </div>
 

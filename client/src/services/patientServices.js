@@ -44,7 +44,7 @@ const deletePatient = async ({ idPatient }) => {
     return await response.json()
 }
 
-const getAllPatientNotes = async({ idPatient, search, page, order }) => {
+const getAllNotes = async({ idPatient, search, page, order }) => {
     const params = new URLSearchParams({
         search: search ?? '',
         page: page ?? 1,
@@ -53,6 +53,28 @@ const getAllPatientNotes = async({ idPatient, search, page, order }) => {
 
     const url = `${RouteAPI.Patients}/${idPatient}/notes?${params.toString()}`
     const request = newRequest({ url, userToken: true })
+    const response = await fetch(request)
+    return await response.json()
+}
+
+const createNote = async ({ idPatient, data }) => {
+    const url = `${RouteAPI.Patients}/${idPatient}/notes`
+    const request = newRequest({ url, method: METHODS.Post, contentType: CONTENT_TYPES.JSON, body: data, userToken: true })
+    console.log({request})
+    const response = await fetch(request)
+    return await response.json()
+}
+
+const updateNote = async ({ idPatient, idNote, data }) => {
+    const url = `${RouteAPI.Patients}/${idPatient}/notes/${idNote}}`
+    const request = newRequest({ url, method: METHODS.Patch, contentType: CONTENT_TYPES.JSON, body: data, userToken: true })
+    const response = await fetch(request)
+    return await response.json()
+}
+
+const deleteNote = async ({ idPatient, idNote }) => {
+    const url = `${RouteAPI.Patients}/${idPatient}/notes/${idNote}}`
+    const request = newRequest({ url, method: METHODS.Delete, userToken: true })
     const response = await fetch(request)
     return await response.json()
 }
@@ -102,7 +124,10 @@ const patientServices = {
     createPatient,
     updatePatient,
     deletePatient,
-    getAllPatientNotes,
+    getAllNotes,
+    createNote,
+    updateNote,
+    deleteNote,
     getAllPatientFiles,
     getAllPatientPhotos,
     getAllPatientTreatments

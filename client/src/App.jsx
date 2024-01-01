@@ -1,7 +1,7 @@
 import { Sidebar } from './components/basis';
 import ProtectedUserRoute from './components/protect/ProtectedUserRoute';
 import { ROUTES } from './constants/routes';
-import { Configuration, Home, Login, Patient, Patients, Profesional, Profesionals } from './pages'
+import { Configuration, Home, Login, Patient, Patients, Profesional, Profesionals, Schedule } from './pages'
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
   
@@ -24,9 +24,7 @@ const router = createBrowserRouter([
                 element: (
                     <div className='d-flex'>
                         <Sidebar/>
-                        <div className='flex-grow-1'>
-                            <Patients/>
-                        </div>
+                        <Patients/>
                     </div>
                 ),
             },
@@ -35,9 +33,7 @@ const router = createBrowserRouter([
                 element: (
                     <div className='d-flex'>
                         <Sidebar/>
-                        <div className='flex-grow-1'>
-                            <Patient/>
-                        </div>
+                        <Patient/>
                     </div>
                 ),
             },
@@ -55,9 +51,16 @@ const router = createBrowserRouter([
                 element: (
                     <div className='d-flex'>
                         <Sidebar/>
-                        <div className='flex-grow-1 bg-body-tertiary'>
-                            <Profesional/>
-                        </div>
+                        <Profesional/>
+                    </div>
+                ),
+            },
+            {
+                path: `${ROUTES.Profesionals}/:id/schedule`,
+                element: (
+                    <div className='d-flex'>
+                        <Sidebar/>
+                        <Schedule/>
                     </div>
                 ),
             },
@@ -66,9 +69,7 @@ const router = createBrowserRouter([
                 element: (
                     <div className='d-flex'>
                         <Sidebar/>
-                        <div className='flex-grow-1'>
-                            <Configuration/>
-                        </div>
+                        <Configuration/>
                     </div>
                 ),
             },

@@ -4,7 +4,7 @@ const useFetch = (fetchFunction, triggers = []) => {
     const [isLoading, setIsLoading] = useState(false)
     const [data, setData] = useState(undefined)
 
-    const action = async () => {
+    const fechData = async () => {
         try {
             const response = await fetchFunction()
             setData(response)
@@ -16,12 +16,13 @@ const useFetch = (fetchFunction, triggers = []) => {
     }
 
     useEffect(() => {
-        action()
+        fechData()
     }, triggers)
 
     return {
         isLoading,
-        data
+        data,
+        fechData
     }
 }
 
