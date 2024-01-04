@@ -7,8 +7,11 @@ import { MODALMODES, MODALTABS } from '../constants/modal'
 import { schemaExceptions, schemaReminders, schemaTurns } from '../constants/schemas'
 import useModal from './useModal'
 import { getStringDateInTimeZone, getStringTimeInTimeZone } from '../constants/dateToString'
+import profesionalServices from '../services/profesionalServices'
+import { faPen, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { TOAST_TIME } from '../constants/time'
 
-const useScheduleEventModal = ({ idProfesional } = {}) => {
+const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const [isLoading, setIsLoading] = useState()
     const [modalTab, setModalTab] = useState(MODALTABS.Turns)
     const [modalMode, setModalMode] = useState(MODALMODES.Add)
@@ -17,19 +20,13 @@ const useScheduleEventModal = ({ idProfesional } = {}) => {
     const turnForm = useForm({ resolver: yupResolver(schemaTurns) })
     const exceptionForm = useForm({ resolver: yupResolver(schemaExceptions) })
     const reminderForm = useForm({ resolver: yupResolver(schemaReminders) })
-    const [patient, setPatient] = useState()
-    const [treatment, setTreatment] = useState()
 
-    const { timeZone } = useSettingsContext()
+    const { language, timeZone } = useSettingsContext()
     const { addNotification } = useNotificationsContext()
-
-    console.log('rendering...')
 
     const OPEN_ACTIONS = {
         [MODALMODES.Add]: (data = {}) => {
             const { date, time } = data
-            setPatient(undefined)
-            setTreatment(undefined)
             turnForm.reset({ date, time })
             exceptionForm.reset({ startDate: date, startTime: time, endDate: date })
             reminderForm.reset({ date, time })
@@ -66,6 +63,8 @@ const useScheduleEventModal = ({ idProfesional } = {}) => {
     }
 
     const handleOpen = (data, tab = MODALTABS.Turns, mode = MODALMODES.Add) => {
+        setModalTab(tab)
+        setModalMode(mode)
         if (mode === MODALMODES.Add) {
             OPEN_ACTIONS[MODALMODES.Add](data)
         } else {
@@ -74,16 +73,157 @@ const useScheduleEventModal = ({ idProfesional } = {}) => {
         open()
     }
 
-    const handleConfirmTurn = async (data) => {
+    const TURN_ACTIONS = {
+        [MODALMODES.Add]: async (data) => {
+            const { patient: { id: idPatient }, duration, description } = data
+            const dateTime = `${data.date}T${data.time}:00${timeZone.numeric}`
+            const idTreatment = data?.treatment?.id
+            const turn = { idPatient, dateTime, duration, idTreatment, description }
+            const response = await profesionalServices.createTurn({ idProfesional, data: turn })
 
+            if (response.status === 201) {
+                addNotification({ id: Date.now(), icon: faPlus, message: language.messages.TurnCreated, type: 'primary', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        },
+        [MODALMODES.Edit]: async (data) => {
+            const { id: idTurn, duration, description } = data
+            const dateTime = `${data.date}T${data.time}:00${timeZone.numeric}`
+            const idTreatment = data?.treatment?.id
+            const turn = { dateTime, duration, idTreatment, description }
+            
+            const response = await profesionalServices.updateTurn({ idProfesional, idTurn, data: turn })
+
+            if (response.status === 200) {
+                addNotification({ id: Date.now(), icon: faPen, message: language.messages.TurnUpdated, type: 'success', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        },
+        [MODALMODES.Delete]: async (data) => {
+            const { id: idTurn } = data
+            const response = await profesionalServices.deleteTurn({ idProfesional, idTurn })
+
+            if (response.status === 200) {
+                addNotification({ id: Date.now(), icon: faPen, message: language.messages.TurnDeleted, type: 'danger', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        }
+    }
+
+    const handleConfirmTurn = async (data) => {
+        try {
+            setIsLoading(true)
+            TURN_ACTIONS[modalMode](data)
+        } catch (error) {
+            //console.log(error)
+            addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.AnErrorOcurred, type: 'warning', time: TOAST_TIME.Short })
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const EXCEPTION_ACTIONS = {
+        [MODALMODES.Add]: async (data) => {
+            const { description } = data
+            const startDateTime = `${data.startDate}T${data.startTime}:00${timeZone.numeric}`
+            const endDateTime = `${data.endDate}T${data.endTime}:00${timeZone.numeric}`
+            const exception = { startDateTime, endDateTime, description }
+            const response = await profesionalServices.createException({ idProfesional, data: exception })
+
+            if (response.status === 201) {
+                addNotification({ id: Date.now(), icon: faPlus, message: language.messages.ExceptionCreated, type: 'primary', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        },
+        [MODALMODES.Edit]: async (data) => {
+            const { id: idException, description } = data
+            const startDateTime = `${data.startDate}T${data.startTime}:00${timeZone.numeric}`
+            const endDateTime = `${data.endDate}T${data.endTime}:00${timeZone.numeric}`
+            const exception = { startDateTime, endDateTime, description }
+            const response = await profesionalServices.updateException({ idProfesional, idException, data: exception })
+
+            if (response.status === 200) {
+                addNotification({ id: Date.now(), icon: faPen, message: language.messages.ExceptionUpdated, type: 'success', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        },
+        [MODALMODES.Delete]: async (data) => {
+            const { id: idException } = data
+            const response = await profesionalServices.deleteException({ idProfesional, idException })
+
+            if (response.status === 200) {
+                addNotification({ id: Date.now(), icon: faPen, message: language.messages.ExceptionDeleted, type: 'danger', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        }
     }
 
     const handleConfirmException = async (data) => {
+        try {
+            setIsLoading(true)
+            EXCEPTION_ACTIONS[modalMode](data)
+        } catch (error) {
+            //console.log(error)
+            addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.AnErrorOcurred, type: 'warning', time: TOAST_TIME.Short })
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
+    const REMINDER_ACTIONS = {
+        [MODALMODES.Add]: async (data) => {
+            const { patient: { id: idPatient }, description } = data
+            const dateTime = `${data.date}T${data.time}:00${timeZone.numeric}`
+            const reminder = { idPatient, dateTime, description }
+            const response = await profesionalServices.createReminder({ idProfesional, data: reminder })
+
+            if (response.status === 201) {
+                addNotification({ id: Date.now(), icon: faPlus, message: language.messages.ReminderCreated, type: 'primary', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        },
+        [MODALMODES.Edit]: async (data) => {
+            const { id: idReminder, description } = data
+            const dateTime = `${data.date}T${data.time}:00${timeZone.numeric}`
+            const reminder = { dateTime, description }
+            
+            const response = await profesionalServices.updateReminder({ idProfesional, idReminder, data: reminder })
+
+            if (response.status === 200) {
+                addNotification({ id: Date.now(), icon: faPen, message: language.messages.ReminderUpdated, type: 'success', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        },
+        [MODALMODES.Delete]: async (data) => {
+            const { id: idReminder } = data
+            const response = await profesionalServices.deleteReminder({ idProfesional, idReminder })
+
+            if (response.status === 200) {
+                addNotification({ id: Date.now(), icon: faPen, message: language.messages.ReminderDeleted, type: 'danger', time: TOAST_TIME.Short })
+                refreshEvents()
+                handleClose()
+            }
+        }
     }
 
     const handleConfirmReminder = async (data) => {
-
+        try {
+            setIsLoading(true)
+            REMINDER_ACTIONS[modalMode](data)
+        } catch (error) {
+            //console.log(error)
+            addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.AnErrorOcurred, type: 'warning', time: TOAST_TIME.Short })
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return {
@@ -94,9 +234,9 @@ const useScheduleEventModal = ({ idProfesional } = {}) => {
         modalMode,
         modalTab,
         handleModalTab: setModalTab,
-        turnForm: {...turnForm, patient, setPatient, treatment, setTreatment, handleSubmit: turnForm.handleSubmit(handleConfirmTurn) },
+        turnForm: {...turnForm, handleSubmit: turnForm.handleSubmit(handleConfirmTurn) },
         exceptionForm: { ...exceptionForm, handleSubmit: exceptionForm.handleSubmit(handleConfirmException)},
-        reminderForm: { ...reminderForm, patient, setPatient, handleSubmit: reminderForm.handleSubmit(handleConfirmReminder)},
+        reminderForm: { ...reminderForm, handleSubmit: reminderForm.handleSubmit(handleConfirmReminder)},
     }
 }
 

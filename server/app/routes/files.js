@@ -1,7 +1,7 @@
-import { Router } from 'express';
-import { createFile, deleteAllFiles, deleteFile, getFile, getThumbnail, updateFile } from '../controlers/files.js';
-import { checkAuth } from '../middleware/auth.js';
-import { upload, uploadMiddleware } from '../middleware/storage.js';
+import { Router } from 'express'
+import { createFile, deleteAllFiles, deleteFile, getFile, getThumbnail, updateFile } from '../controlers/files.js'
+import { checkAuth } from '../middleware/auth.js'
+import { uploadMiddleware } from '../middleware/storage.js'
 
 const router = Router()
 

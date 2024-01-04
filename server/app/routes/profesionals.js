@@ -1,7 +1,7 @@
-import { Router } from 'express';
-import profesionalController from '../controlers/profesionals.js';
-import { checkAuth, checkUser } from '../middleware/auth.js';
-import { validateCreateTreatment, validateUpdateTreatment } from '../validators/treatment.js';
+import { Router } from 'express'
+import { checkAuth, checkUser } from '../middleware/auth.js'
+import { validateCreateTreatment, validateUpdateTreatment } from '../validators/treatment.js'
+import profesionalController from '../controlers/profesionals.js'
 
 const router = Router()
 
@@ -18,10 +18,19 @@ router.delete('/:id/treatments/:treatment', checkUser, profesionalController.del
 // Events
 router.get('/:id/events', checkAuth, profesionalController.getEvents)
 
-// Configuration
-router.post('/:id/config', checkUser, profesionalController.saveScheduleConfig)
+// Turns
+router.post('/:id/turns', checkAuth, profesionalController.createTurn)
+router.patch('/:id/turns/:turn', checkAuth, profesionalController.updateTurn)
+router.delete('/:id/turns/:turn', checkAuth, profesionalController.deleteTurn)
 
-/*
+// Exceptions
+router.post('/:id/exceptions', checkAuth, profesionalController.createException)
+router.patch('/:id/exceptions/:exception', checkAuth, profesionalController.updateException)
+router.delete('/:id/exceptions/:exception', checkAuth, profesionalController.deleteException)
 
-*/
-export { router };
+// Reminders
+router.post('/:id/reminders', checkAuth, profesionalController.createReminder)
+router.patch('/:id/reminders/:reminder', checkAuth, profesionalController.updateReminder)
+router.delete('/:id/reminders/:reminder', checkAuth, profesionalController.deleteReminder)
+
+export { router }

@@ -2,7 +2,7 @@ const baseAPI = 'http://localhost:3001'
 
 const RouteAPI = {
     Login: `${baseAPI}/auth/login`,
-    Register: `${baseAPI}/register`,
+    Password: `${baseAPI}/auth/password`,
     Profesionals: `${baseAPI}/profesionals`,
     Patients: `${baseAPI}/patients`,
     Files: `${baseAPI}/files`,

@@ -1,24 +1,24 @@
 import { Button, Input, Modal, Textarea } from '../basis'
 import { MODALMODES } from '../../constants/modal'
-import { faCheck, faPen, faTrashCan, faX } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faDownload, faPen, faTrashCan, faX } from '@fortawesome/free-solid-svg-icons'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import { useEffect, useState } from 'react'
 import { usePhoto } from '../../hooks'
 
 const Image = ({ photo }) => {
-    const { isLoading, data } = usePhoto(photo)
+    const { isLoading, data } = usePhoto({ photo })
 
     return (
-        <div className='card'>
+        <div className='card overflow-hidden'>
             {
                 data &&
-                <img src={data} alt={photo.name}/>
+                <img className='w-100' src={data} alt={photo.name}/>
             }
         </div>
     )
 }
 
-const FileModal = ({ showModal, modalMode, handleClose, handleEdit, handleDelete, form, isLoading }) => {
+const FileModal = ({ showModal, modalMode, handleClose, handleDownload, handleEdit, handleDelete, form, isLoading }) => {
     const { language } = useSettingsContext()
     const [image, setImage] = useState()
     const { name, filename, description } = form.getValues()
@@ -43,7 +43,7 @@ const FileModal = ({ showModal, modalMode, handleClose, handleEdit, handleDelete
 
     if (modalMode === MODALMODES.Preview) {
         return (
-            <Modal title={language.Files} show={showModal} handleClose={handleClose}>
+            <Modal title={language.Files} show={showModal} handleClose={handleClose} modalSize='modal-lg'>
                 <div className='d-flex gap-3'>
 
                     <div className='flex-grow-1 d-flex flex-column gap-3'>
@@ -59,6 +59,13 @@ const FileModal = ({ showModal, modalMode, handleClose, handleEdit, handleDelete
                         </div>
 
                         <div className='d-flex justify-content-end gap-2'>
+                            <Button
+                                className='btn-primary'
+                                icon={faDownload}
+                                text={language.buttons.Download}
+                                handleOnClick={handleDownload}
+                            />
+
                             <Button
                                 className='btn-success'
                                 icon={faPen}

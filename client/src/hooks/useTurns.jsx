@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ORDER } from '../constants/order'
 import useFetch from './useFetch'
-import turnServices from '../services/turnsServices'
+import turnServices from '../services/turnServices'
 
 const useTurns = ({ idPatient, idProfesional, idTreatment, status, startTime, endTime } = {}) => {
     const [page, setPage] = useState(1)

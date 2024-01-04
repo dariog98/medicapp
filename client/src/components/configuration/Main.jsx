@@ -1,6 +1,6 @@
 import { faCog } from '@fortawesome/free-solid-svg-icons'
 import { LANGUAGES } from '../../constants/languages'
-import { Title } from '../basis'
+import { Select, Title } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 
 const Main = () => {
@@ -10,16 +10,12 @@ const Main = () => {
         <div className='d-flex flex-column gap-3'>
             <Title icon={faCog} text={language.Main}/>
 
-            <div>
-                <label className='form-label'>{language.configuration.Language}</label>
-                <select className='form-select' defaultValue={currentLanguage} onChange={({ target }) => handleLanguage(target.value)}>
-                    {
-                        Object.keys(LANGUAGES).map(key =>
-                            <option key={key} value={key}>{key}</option>
-                        )
-                    }
-                </select>
-            </div>
+            <Select
+                label={language.configuration.Language}
+                options={Object.keys(LANGUAGES).map(key => ({value: key, label: key}))}
+                defaultValue={currentLanguage}
+                handleOnChange={({ target }) => handleLanguage(target.value)}
+            />
 
             <div className='form-check form-switch'>
                 <label className='form-check-label'>{language.configuration.DarkMode}</label>

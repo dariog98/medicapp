@@ -1,5 +1,5 @@
-import { faCalendarDays, faPlus } from '@fortawesome/free-solid-svg-icons'
-import { Button, Container, Title } from '../components/basis'
+import { faCalendarDays } from '@fortawesome/free-solid-svg-icons'
+import { Container, Title } from '../components/basis'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { useDate, useProfesionalEvents } from '../hooks'
@@ -21,7 +21,7 @@ const Schedule = () => {
     }
 
     return (
-        <ScheduleProvider idProfesional={idProfesional}>
+        <ScheduleProvider idProfesional={idProfesional} refreshEvents={refreshEvents}>
             <Container>
                 <div className='d-flex flex-column gap-3'>
                     <Title icon={faCalendarDays} text='Agenda'/>

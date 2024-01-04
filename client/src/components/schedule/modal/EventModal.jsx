@@ -1,10 +1,10 @@
 import { Button, Modal } from '../../basis'
 import { useScheduleContext } from '../../providers/ScheduleProvider'
 import { MODALMODES, MODALTABS } from '../../../constants/modal'
+import { useSettingsContext } from '../../providers/SettingsProvider'
 import Turn from './Turn'
 import Exception from './Exception'
 import Reminder from './Reminder'
-import { useSettingsContext } from '../../providers/SettingsProvider'
 
 const EventModal = () => {
     const {
@@ -18,12 +18,12 @@ const EventModal = () => {
         exceptionForm,
         reminderForm
     } = useScheduleContext()
-    const { language } = useSettingsContext()
 
+    const { language } = useSettingsContext()
     const isButtonsDisabled = modalMode !== MODALMODES.Add
 
     return (
-        <Modal show={showModal} title='Eventos' handleClose={handleClose}>
+        <Modal show={showModal} title={language.Events} handleClose={handleClose}>
 
             <div className='d-flex flex-column gap-4'>
                 <div className='d-flex gap-2'>

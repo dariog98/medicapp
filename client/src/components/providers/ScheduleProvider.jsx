@@ -3,11 +3,11 @@ import { useScheduleEventModal } from '../../hooks'
 
 const scheduleContext = createContext()
 
-const ScheduleProvider = ({ idProfesional, children }) => {
-    const modal = useScheduleEventModal({ idProfesional })
+const ScheduleProvider = ({ idProfesional, refreshEvents, children }) => {
+    const modal = useScheduleEventModal({ idProfesional, refreshEvents })
 
     return (
-        <scheduleContext.Provider value={modal}>
+        <scheduleContext.Provider value={{ ...modal, idProfesional }}>
             {children}
         </scheduleContext.Provider>
     )

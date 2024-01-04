@@ -47,6 +47,12 @@ const schemaExceptions = yup.object({
     description: yup.string().nullable().notRequired(),
 })
 
+const schemaUserPassword = yup.object({
+    currentPassword: yup.string().min(8, language.messages.PasswordMin).required(language.messages.FieldRequired),
+    password: yup.string().min(8, language.messages.PasswordMin).required(language.messages.FieldRequired),
+    confirmPassword: yup.string().oneOf([yup.ref('password'), null], language.messages.FieldsDoNotMatch).required(language.messages.FieldRequired),
+})
+
 export {
     schemaLogin,
     schemaPatient,
@@ -54,4 +60,5 @@ export {
     schemaExceptions,
     schemaReminders,
     schemaTurns,
+    schemaUserPassword
 }

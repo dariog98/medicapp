@@ -12,7 +12,9 @@ const Patients = () => {
     const { language } = useSettingsContext()
     const [searchParams, setSearchParams] = useSearchParams()
     const search = searchParams.get('search')
-    const { isLoading, data, order, handleOrder, page, handlePage, refreshData } = usePatients({ search })
+    const idProfesional = searchParams.get('idProfesional')
+    const idTreatment = searchParams.get('idTreatment')
+    const { isLoading, data, order, handleOrder, page, handlePage, refreshData } = usePatients({ idProfesional, idTreatment, search })
     const { showModal, form, handleOpen, handleClose } = usePatientModal({ refreshData })
     const navigate = useNavigate()
 

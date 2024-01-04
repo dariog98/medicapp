@@ -8,7 +8,7 @@ const Password = ({ label, before, form, name, see, handleSee, isDisabled, isRea
             <div className='input-group'>
                 {before && <div className='input-group-text'>{before}</div>}
                 <input
-                    className='form-control'
+                    className={`form-control ${form?.formState.errors[name] ? 'is-invalid' : ''}`}
                     type={see ? 'text' : 'password'}
                     disabled={isDisabled}
                     readOnly={isReadOnly}
@@ -19,6 +19,7 @@ const Password = ({ label, before, form, name, see, handleSee, isDisabled, isRea
                     style={{ width: '3rem' }}
                     icon={see ? faEyeSlash : faEye}
                     handleOnClick={handleSee}
+                    tabIndex='-1'
                 />
             </div>
             <div>

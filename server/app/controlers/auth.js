@@ -164,10 +164,27 @@ const resetPassword = async(request, response) => {
     handleResponse({response, statusCode: 200, message: 'User password reset. The user will receive their new password by email' })
 }
 
+const updatePassword = async (request, response) => {
+    const { currentPassword, password } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const { idUser } = accessToken
+    
+    const user = await User.scope('withPassword').findOne({ where: { id: idUser } })
+    if (!user) throw new ClientError('User not found', 404)
+
+    const checkPassword = await compare(currentPassword, user.password)
+    if (!checkPassword) throw new ClientError('The password is incorrect', 401)
+
+    const passwordHash = await encrypt(password)
+    await user.update({ password: passwordHash })
+    handleResponse({ response, statusCode: 200, message: 'Password updated successfully' })
+}
+
 const authenticationController = {
     login: catchedAsync(login),
     register: catchedAsync(register),
     update: catchedAsync(update),
+    updatePassword: catchedAsync(updatePassword),
     resetPassword: catchedAsync(resetPassword)
 }
 

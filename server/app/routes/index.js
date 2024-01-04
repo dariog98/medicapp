@@ -4,7 +4,6 @@ import { router as fileRouter } from './files.js'
 import { router as authRouter } from './auth.js'
 import { router as turnRouter } from './turns.js'
 import { router as reminderRouter } from './reminders.js'
-import { router as exceptionRouter } from './exceptions.js'
 import { router as chargeRouter } from './charges.js'
 import { router as profesionalRouter } from './profesionals.js'
 import { router as userRouter } from './users.js'
@@ -20,7 +19,6 @@ router.use('/charges', chargeRouter)
 router.use('/profesionals', profesionalRouter)
 router.use('/turns', turnRouter)
 router.use('/reminders', reminderRouter)
-router.use('/exceptions', exceptionRouter)
 router.use('/users', userRouter)
 router.use('/roles', rolesRouter)
 router.use('/stats', statRouter)

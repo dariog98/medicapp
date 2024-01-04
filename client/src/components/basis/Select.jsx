@@ -12,7 +12,7 @@ const Select = ({ label, before, after, form, name, options, isDisabled, isReadO
                     defaultValue={defaultValue}
                     onChange={handleOnChange}
                 >
-                    {options.map((option, index) => <option key={index} value={option.value}>{option.description}</option>)}
+                    {options.map((option, index) => <option key={index} value={option.value}>{option.label}</option>)}
                 </select>
                 {after && <div className='input-group-text'>{after}</div>}
             </div>

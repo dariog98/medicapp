@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { ORDER } from '../constants/order'
 import useFetch from './useFetch'
-import patientServices from '../services/patientServices'
+import profesionalServices from '../services/profesionalServices'
 
-const usePatients = ({ idProfesional, idTreatment, search } = {}) => {
+const useProfesionalTreatments = ({ search, idProfesional } = {}) => {
     const [page, setPage] = useState(1)
     const [order, setOrder] = useState({ id: ORDER.Descending })
 
@@ -13,12 +13,12 @@ const usePatients = ({ idProfesional, idTreatment, search } = {}) => {
         setOrder(newOrder)
     }
 
-    const getPatients = async () => {
+    const getProfesionals = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-        return await patientServices.getAllPatients({ idProfesional, idTreatment, search, page, order: tableOrder })
+        return await profesionalServices.getTreatments({ idProfesional, search, page, order: tableOrder })
     }
 
-    const { isLoading, data, fechData: refreshData } = useFetch(getPatients, [search, page, order, idProfesional, idTreatment])
+    const { isLoading, data } = useFetch(getProfesionals, [search, page, order])
 
     return {
         isLoading,
@@ -27,8 +27,7 @@ const usePatients = ({ idProfesional, idTreatment, search } = {}) => {
         order,
         handlePage: setPage,
         handleOrder,
-        refreshData
     }
 }
 
-export default usePatients
+export default useProfesionalTreatments

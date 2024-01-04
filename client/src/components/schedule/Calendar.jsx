@@ -35,7 +35,7 @@ const Calendar = ({ currentDate, handleDate }) => {
                 </div>
             </div>
 
-            <div className='card p-2' style={{ height: '346px' }}> 
+            <div className='card p-2' style={{ height: '346px' }}>
                 <div className='d-flex flex-column gap-2'>
                 <div className='d-flex gap-2'>
                     {language.days.map((day, index)=> <div key={index} className='d-flex justify-content-center align-items-center' style={buttonStyle}>{day.charAt(0)}</div>)}

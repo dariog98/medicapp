@@ -1,11 +1,16 @@
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { COLORS } from '../../../constants/eventColors'
 import { MODALMODES } from '../../../constants/modal'
-import { Button, Input, Textarea } from '../../basis'
+import { AutoComplete, Button, Input, Textarea } from '../../basis'
 import { useSettingsContext } from '../../providers/SettingsProvider'
+import { useState } from 'react'
+import { usePatients } from '../../../hooks'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const Reminder = ({ isLoading, modalMode, form }) => {
     const { language } = useSettingsContext()
+    const [search, setSearch] = useState('')
+    const { isLoading: isLoadingPatients, data } = usePatients({ search })
 
     if (modalMode === MODALMODES.Delete) {
         const patient = form.patient
@@ -44,6 +49,19 @@ const Reminder = ({ isLoading, modalMode, form }) => {
 
     return (
         <form className='d-flex flex-column gap-3' onSubmit={form.handleSubmit}>
+            <div>
+                <div className='flex-grow-1'>
+                    <AutoComplete
+                        form={form}
+                        label={language.Patient}
+                        before={<FontAwesomeIcon icon={faMagnifyingGlass} size='1x'/>}
+                        name='patient'
+                        handleSearch={setSearch}
+                        items={data?.data || []}
+                        value={(item) => `${item.surnames} ${item.names}`}
+                    />
+                </div>
+            </div>
 
             <div className='d-flex flex-wrap gap-3'>
                 <div className='flex-grow-1'>

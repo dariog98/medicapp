@@ -1,12 +1,12 @@
 import { Op, Sequelize } from 'sequelize'
 import { sequelize } from '../config/mysql.js'
-import { TURN_STATUS } from '../constants/turnstatus.js'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { httpError } from '../helpers/handleErrors.js'
 import { handleResponse } from '../helpers/handleResponse.js'
 import { Exception, Reminder, Treatment, Turn, User } from '../models/index.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'
 import { ClientError, ServerError } from '../constants/errors.js'
+import { getTokenFromRequest } from '../helpers/generateToken.js'
 
 const getAllProfesionals = async (request, response) => {
     const { search, page, order: stringOrder } = request.query
@@ -77,7 +77,7 @@ const getProfesionalEvents = async (request, response) => {
         }),
         ...exceptions.map(ex => {
             const exception = ex.get()
-            return { type: 'expception', startTime: exception.startDateTime, endTime: exception.endDateTime, ...exception }
+            return { type: 'exception', startTime: exception.startDateTime, endTime: exception.endDateTime, ...exception }
         }),
         ...reminders.map(r => {
             const reminder = r.get()
@@ -88,94 +88,12 @@ const getProfesionalEvents = async (request, response) => {
     handleResponse({ response, statusCode: 200, data })
 }
 
-const getSecondsOfTime = (time) => {
-    const [hours, minutes] = time.split(':')
-    return (Number(hours) * 60 + Number(minutes)) * 60
-}
-
-const checkCollapse = (worktimes, newWorktime) => {
-    for (let index = 0; index < worktimes.length; index++) {
-        const w = worktimes[index]
-        const worktimeStartTime = getSecondsOfTime('24:00') * w.idDay + getSecondsOfTime(w.startTime)
-        const worktimeEndTime   = getSecondsOfTime('24:00') * w.idDay + getSecondsOfTime(w.endTime)
-        const newWorktimeStartTime = getSecondsOfTime('24:00') * newWorktime.idDay + getSecondsOfTime(newWorktime.startTime)
-        const newWorktimeEndTime   = getSecondsOfTime('24:00') * newWorktime.idDay + getSecondsOfTime(newWorktime.endTime)
-
-        const isCollapse = (
-            (newWorktimeStartTime < worktimeStartTime && newWorktimeEndTime > worktimeStartTime) ||
-            (newWorktimeEndTime >= worktimeEndTime && newWorktimeStartTime < worktimeEndTime) ||
-            (newWorktimeStartTime >= worktimeStartTime && newWorktimeEndTime <= worktimeEndTime)
-        )
-
-        if (isCollapse) {
-            return true
-        }
-    }
-
-    return false
-}
-
-const saveProfesionalScheduleConfig = async (request, response) => {
-    const transaction = await sequelize.transaction()
-
-    try {
-        const id = request.params.id
-        const { worktimes } = request.body
-
-        if (worktimes.length === 0) {
-            const status = 401
-            const message = 'Worktimes list is empty'
-            handleResponse(response, status, message)
-            return
-        }
-
-        for (let index = 0; index < worktimes.length; index++) {
-            const worktime = worktimes[index]
-
-            if (getSecondsOfTime(worktime.startTime) >= getSecondsOfTime(worktime.endTime)) {
-                console.log(worktime)
-                const status = 401
-                const message = "startTime can'be greater than or equal to endTime"
-                handleResponse(response, status, message)
-                return
-            }
-
-            const filterList = worktimes.filter((_, i) => i !== index)
-
-            if (checkCollapse(filterList, worktime)) {
-                const status = 401
-                const message = 'Worktimes collapse'
-                handleResponse(response, status, message)
-                return
-            }
-        }
-
-        await NewWorktime.destroy({ where: { idProfesional: id }, transaction })
-
-        const rows = worktimes.map(worktime => ({ idProfesional: id, idDay: worktime.idDay, startTime: worktime.startTime, endTime: worktime.endTime }))
-
-        const config = await NewWorktime.bulkCreate(
-            rows,
-            { transaction }
-        )
-
-        await transaction.commit()
-        const status = 200
-        const data = { worktimes: config }
-        const message = 'Profesional schedule configuration saved succesfully'
-        handleResponse(response, status, message, data)
-    } catch (error) {
-        await transaction.rollback()
-        httpError(response, error)
-    }
-}
-
 const getProfesionalTreatments = async (request, response) => {
     const { id: idProfesional } = request.params
     const { order: stringOrder, search, page } = request.query
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
 
-    const { totalPages, data, total } = await paginatedQuery(User, 100, page, order, { idProfesional }, [], {
+    const { totalPages, data, total } = await paginatedQuery(Treatment, 100, page, order, { idProfesional }, [], {
         description: { [Op.like]: `%${search ?? ''}%` }
     })
 
@@ -241,16 +159,171 @@ const deleteProfesionalTreatment = async (request, response) => {
     })
 }
 
+const createTurn = async (request, response) => {
+    const { id: idProfesional } = request.params
+    const { idPatient, dateTime, duration, idTreatment, description } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const createdBy = accessToken.idUser
+
+    await Turn.create({ idProfesional, idPatient, dateTime, duration, idTreatment, description, createdBy })
+    .then(() => {
+        handleResponse({ response, statusCode: 201, message: 'Turn create successfully' })
+    })
+    .catch(error => {
+        console.log(error)
+        throw new ServerError('An error occurred while trying to create the turn', 500)
+    })
+}
+
+const updateTurn = async (request, response) => {
+    const { id: idProfesional, turn: idTurn } = request.params
+    const { dateTime, duration, idTreatment, description } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const modifiedBy = accessToken.idUser
+
+    const turn = await Turn.findOne({ where: { idProfesional, id: idTurn } })
+    if (!turn) throw new ClientError('Turn was not found or does not exist', 404)
+
+    turn.update({ dateTime, duration, idTreatment: idTreatment ?? null, description, modifiedBy })
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Turn updated successfully' })
+    })
+    .catch(error => {
+        throw new ServerError('An error occurred while trying to update the turn', 500)
+    })
+}
+
+const deleteTurn = async (request, response) => {
+    const { id: idProfesional, turn: idTurn } = request.params
+
+    const turn = await Turn.findOne({ where: { idProfesional, id: idTurn } })
+    if (!turn) throw new ClientError('Turn was not found or does not exist', 404)
+
+    turn.destroy()
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Turn deleted successfully' })
+    })
+    .catch(error => {
+        throw new ServerError('An error occurred while trying to delete the turn', 500)
+    })
+}
+
+const createException = async (request, response) => {
+    const { id: idProfesional } = request.params
+    const { startDateTime, endDateTime, description } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const createdBy = accessToken.idUser
+
+    await Exception.create({ idProfesional, startDateTime, endDateTime, description, createdBy })
+    .then(() => {
+        handleResponse({ response, statusCode: 201, message: 'Exception create successfully' })
+    })
+    .catch(error => {
+        console.log(error)
+        throw new ServerError('An error occurred while trying to create the excepion', 500)
+    })
+}
+
+const updateException = async (request, response) => {
+    const { id: idProfesional, exception: idException } = request.params
+    const { startDateTime, endDateTime, description } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const modifiedBy = accessToken.idUser
+
+    const exception = await Exception.findOne({ where: { idProfesional, id: idException } })
+    if (!exception) throw new ClientError('Exception was not found or does not exist', 404)
+
+    exception.update({ startDateTime, endDateTime, description, modifiedBy })
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Exception updated successfully' })
+    })
+    .catch(error => {
+        throw new ServerError('An error occurred while trying to update the exception', 500)
+    })
+}
+
+const deleteException = async (request, response) => {
+    const { id: idProfesional, exception: idException } = request.params
+
+    const exception = await Exception.findOne({ where: { idProfesional, id: idException } })
+    if (!exception) throw new ClientError('Exception was not found or does not exist', 404)
+
+    exception.destroy()
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Exception deleted successfully' })
+    })
+    .catch(error => {
+        throw new ServerError('An error occurred while trying to delete the exception', 500)
+    })
+}
+
+const createReminder = async (request, response) => {
+    const { id: idProfesional } = request.params
+    const { idPatient, dateTime, description } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const createdBy = accessToken.idUser
+
+    await Reminder.create({ idProfesional, idPatient, dateTime, description, createdBy })
+    .then(() => {
+        handleResponse({ response, statusCode: 201, message: 'Reminder create successfully' })
+    })
+    .catch(error => {
+        console.log(error)
+        throw new ServerError('An error occurred while trying to create the reminder', 500)
+    })
+}
+
+const updateReminder = async (request, response) => {
+    const { id: idProfesional, reminder: idReminder } = request.params
+    const { dateTime, description } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const modifiedBy = accessToken.idUser
+
+    const reminder = await Reminder.findOne({ where: { idProfesional, id: idReminder } })
+    if (!reminder) throw new ClientError('Reminder was not found or does not exist', 404)
+
+    reminder.update({ dateTime, description, modifiedBy })
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Reminder updated successfully' })
+    })
+    .catch(error => {
+        throw new ServerError('An error occurred while trying to update the reminder', 500)
+    })
+}
+
+const deleteReminder = async (request, response) => {
+    const { id: idProfesional, reminder: idReminder } = request.params
+
+    const reminder = await Reminder.findOne({ where: { idProfesional, id: idReminder } })
+    if (!reminder) throw new ClientError('Reminder was not found or does not exist', 404)
+
+    reminder.destroy()
+    .then(() => {
+        handleResponse({ response, statusCode: 200, message: 'Reminder deleted successfully' })
+    })
+    .catch(error => {
+        throw new ServerError('An error occurred while trying to delete the reminder', 500)
+    })
+}
+
 const profesionalController = {
     getAllProfesionals: catchedAsync(getAllProfesionals),
     getProfesional: catchedAsync(getProfesional),
     getEvents: catchedAsync(getProfesionalEvents),
-    saveScheduleConfig: catchedAsync(saveProfesionalScheduleConfig),
     getTreatments: catchedAsync(getProfesionalTreatments),
     getTreatment: catchedAsync(getProfesionalTreatment),
     createTreatment: catchedAsync(createProfesionalTreatment),
     updateTreatment: catchedAsync(updateProfesionalTreatment),
     deleteTreatment: catchedAsync(deleteProfesionalTreatment),
+    createTurn: catchedAsync(createTurn),
+    updateTurn: catchedAsync(updateTurn),
+    deleteTurn: catchedAsync(deleteTurn),
+    createException: catchedAsync(createException),
+    updateException: catchedAsync(updateException),
+    deleteException: catchedAsync(deleteException),
+    createReminder: catchedAsync(createReminder),
+    updateReminder: catchedAsync(updateReminder),
+    deleteReminder: catchedAsync(deleteReminder),
 }
 
 export default profesionalController

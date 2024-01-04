@@ -30,8 +30,10 @@ const UserProvider = ({ children }) => {
         }
     }
 
+    const userController = { user, handleLogIn, handleLogOut, userToken, isAdmin }
+    
     return (
-        <userContext.Provider value={{ user, handleLogIn, handleLogOut, userToken, isAdmin }}>
+        <userContext.Provider value={userController}>
             {children}
         </userContext.Provider>
     )

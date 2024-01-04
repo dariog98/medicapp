@@ -1,8 +1,6 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const iconStyle = { width: '1.25rem', height: '1.25rem' }
-
-const Button = ({ handleOnClick, isDisabled, icon, text, title, className, style, isActived, isLoading }) => {
+const Button = ({ handleOnClick, isDisabled, icon, text, title, className, style, isActived, isLoading, tabIndex }) => {
     return (
         <button
             className={`btn d-flex justify-content-center align-items-center gap-1 text-truncate ${className} ${isActived ? 'active' : ''}`}
@@ -10,8 +8,9 @@ const Button = ({ handleOnClick, isDisabled, icon, text, title, className, style
             title={title}
             disabled={isDisabled}
             style={style}
+            tabIndex={tabIndex}
         >
-            {icon && <FontAwesomeIcon icon={icon} size='1x'/>}
+            {icon && <FontAwesomeIcon icon={icon}/>}
             {isLoading && <div className='spinner-border' style={{ width: '1.25rem', height: '1.25rem', borderWidth: '2px' }}/>}
             {text}
         </button> 

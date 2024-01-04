@@ -8,6 +8,7 @@ const router = Router()
 router.post('/login', authenticationController.login)
 router.post('/register', validateCreate, authenticationController.register)
 router.patch('/update', checkAuth, authenticationController.update)
-router.post('/resetpassword', authenticationController.resetPassword)
+router.patch('/password', checkAuth, authenticationController.updatePassword)
+//router.post('/resetpassword', authenticationController.resetPassword)
 
 export { router }

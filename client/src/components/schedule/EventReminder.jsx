@@ -1,9 +1,10 @@
-import { CalendarDaysIcon } from '@heroicons/react/24/solid'
 import { COLORS } from '../../constants/eventColors'
 import { useSettingsContext } from '../providers/SettingsProvider'
-import { getStringTimeInTimeZone } from '../../constants/constants'
+import { getStringTimeInTimeZone } from '../../constants/dateToString'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faClock } from '@fortawesome/free-solid-svg-icons'
 
-function EventReminder({ data, handleModal }) {
+function EventReminder({ data, handleOnClick }) {
     const { timeZone } = useSettingsContext()
     const time = getStringTimeInTimeZone(new Date(data.dateTime), timeZone)
 
@@ -12,11 +13,11 @@ function EventReminder({ data, handleModal }) {
             <button
                 className='border-0 p-0 rounded-2 text-white'
                 style={{ backgroundColor: COLORS[data.id % COLORS.length], minHeight: '16px', textAlign: 'inherit' }}
-                onClick={() => handleModal(data)}
+                onClick={handleOnClick}
             >
                 <div className='d-flex'>
                     <div className='d-flex justify-content-center align-items-center p-2 border-end border-light'>
-                        <CalendarDaysIcon style={{ width: '1.5rem', height: '1.5rem' }}/>
+                        <FontAwesomeIcon icon={faClock}/>
                     </div>
                     
                     <div className='d-flex flex-grow-1 justify-content-between p-2'>

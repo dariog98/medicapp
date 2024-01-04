@@ -1,11 +1,20 @@
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { COLORS } from '../../../constants/eventColors'
 import { MODALMODES } from '../../../constants/modal'
-import { Button, Input, Select, Textarea } from '../../basis'
+import { AutoComplete, Button, Input, Select, Textarea } from '../../basis'
 import { useSettingsContext } from '../../providers/SettingsProvider'
+import { usePatients, useProfesionalTreatments } from '../../../hooks'
+import { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useScheduleContext } from '../../providers/ScheduleProvider'
 
 const Turn = ({ isLoading, modalMode, form }) => {
     const { language } = useSettingsContext()
+    const { idProfesional } = useScheduleContext()
+    const [searchPatient, setSearchPatient] = useState('')
+    const [searchTreatment, setSearchTreatment] = useState('')
+    const { isLoading: isLoadingPatients, data: dataPatients } = usePatients({ search: searchPatient })
+    const { isLoading: isLoadingTreatments, data: dataTreatments} = useProfesionalTreatments({ idProfesional, search: searchTreatment })
 
     if (modalMode === MODALMODES.Delete) {
         const { id: idTurn, time, description } = form.getValues()
@@ -39,6 +48,24 @@ const Turn = ({ isLoading, modalMode, form }) => {
 
     return (
         <form className='d-flex flex-column gap-3' onSubmit={form.handleSubmit}>
+
+            <div>
+                <div className='flex-grow-1'>
+                    <AutoComplete
+                        form={form}
+                        label={language.rows.Patient}
+                        before={<FontAwesomeIcon icon={faMagnifyingGlass}/>}
+                        name='patient'
+                        handleSearch={setSearchPatient}
+                        isLoading={isLoadingPatients}
+                        items={dataPatients?.data || []}
+                        value={(item) => `${item.surnames} ${item.names}`}
+                        isRequired={true}
+                        isDisabled={modalMode !== MODALMODES.Add}
+                        defaultValue={form.getValues('patient')}
+                    />
+                </div>
+            </div>
             
             <div className='d-flex flex-wrap gap-3'>
                 <div className='flex-grow-1'>
@@ -67,12 +94,28 @@ const Turn = ({ isLoading, modalMode, form }) => {
                     name='duration'
                     type='select'
                     options={[
-                        { value: '00:30:00', description: '30 minutos' },
-                        { value: '01:00:00', description: '1 hora' },
-                        { value: '01:30:00', description: '1 hora y 30 minutos' },
-                        { value: '02:00:00', description: '2 horas' },
+                        { value: '00:30:00', label: language.durations.ThirtyMinutes },
+                        { value: '01:00:00', label: language.durations.OneHour },
+                        { value: '01:30:00', label: language.durations.OneHourThirtyMinutes },
+                        { value: '02:00:00', label: language.durations.TwoHours },
                     ]}
                 />
+            </div>
+
+            <div>
+                <div className='flex-grow-1'>
+                    <AutoComplete
+                        form={form}
+                        label={language.rows.Treatment}
+                        before={<FontAwesomeIcon icon={faMagnifyingGlass}/>}
+                        name='treatment'
+                        handleSearch={setSearchTreatment}
+                        isLoading={isLoadingTreatments}
+                        items={dataTreatments?.data || []}
+                        value={(item) => item.description}
+                        defaultValue={form.getValues('treatment')}
+                    />
+                </div>
             </div>
 
             <div>

@@ -1,16 +1,14 @@
-import { httpError } from '../helpers/handleErrors.js'
+import { catchedAsync } from '../helpers/catchedAsync.js'
 import { handleResponse } from '../helpers/handleResponse.js'
-import Roles from '../models/role.js'
+import { Role } from '../models/index.js'
 
-const getRoles = async (request, response) => {
-    try {
-        const results = await Roles.findAll()
-        const status = 200
-        const message = ''
-        handleResponse(response, status, message, results)
-    } catch (error) {
-        httpError(response, error)
-    }
+const getAllRoles = async (request, response) => {
+    const results = await Role.findAll()
+    handleResponse({ response, statusCode: 200, data: results })
 }
 
-export { getRoles }
+const rolesController = {
+    getAllRoles: catchedAsync(getAllRoles)
+}
+
+export default rolesController

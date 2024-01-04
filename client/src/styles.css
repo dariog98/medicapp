@@ -1,11 +1,11 @@
 * {
     font-family: "Ubuntu";
 }
-/*
-body {
-    background-color: #f6f6f6;
+
+.pattern {
+    background-size: 16px 16px !important;
+    background-image: repeating-linear-gradient(45deg, transparent 0, #ffffff60 1px, transparent 0, transparent 50%);
 }
-*/
 
 .btn-simple {
     --bs-btn-color: var(--bs-body-color);
@@ -22,6 +22,12 @@ body {
     --bs-btn-disabled-color: var(--bs-body-color);
     --bs-btn-disabled-bg: var(--bs-tertiary-bg);
     --bs-btn-disabled-border-color: var(--bs-border-color);
+}
+
+.btn-simple.active {
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #0a58ca;
+    --bs-btn-disabled-border-color: #0a53be;
 }
 
 .btn-outline-system {
@@ -51,6 +57,42 @@ body {
     --bs-btn-active-color: #000;
     --bs-btn-active-bg: #f8f9fa;
     --bs-btn-active-border-color: #f8f9fa;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #f8f9fa;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #f8f9fa;
+    --bs-gradient: none;
+}
+
+.btn-outline-tertiary {
+    --bs-btn-color: #212529;
+    --bs-btn-border-color: #dee2e6;
+
+    --bs-btn-hover-color: #212529;
+    --bs-btn-hover-bg: #f8f9fa;
+    --bs-btn-hover-border-color: #0000002d;
+
+    --bs-btn-focus-shadow-rgb: 33, 37, 41;
+    --bs-btn-active-color: #212529;
+    --bs-btn-active-bg: #f8f9fa;
+    --bs-btn-active-border-color: #0000002d;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #dee2e6;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #dee2e6;
+    --bs-gradient: none;
+}
+
+[data-bs-theme=dark] .btn-outline-tertiary {
+    --bs-btn-color: #adb5bd;
+    --bs-btn-border-color: #495057;
+    --bs-btn-hover-color: #adb5bd;
+    --bs-btn-hover-bg:  #2b3035;
+    --bs-btn-hover-border-color: #ffffff26;
+    --bs-btn-focus-shadow-rgb: 248, 249, 250;
+    --bs-btn-active-color: #adb5bd;
+    --bs-btn-active-bg:  #2b3035;
+    --bs-btn-active-border-color: #ffffff26;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #f8f9fa;
     --bs-btn-disabled-bg: transparent;
@@ -112,3 +154,40 @@ body {
 input[type=number] {
     appearance: textfield;
 }
+
+.list {
+    display: none;
+}
+
+.list-item:hover {
+    color: #fff !important;
+    background: #0b5ed7 !important
+}
+
+.autocomplete:focus .list {
+    display: block;
+}
+
+.autocomplete-input:focus ~ .list {
+    display: block;
+}
+
+.add-turn {
+    flex-grow: 0;
+    opacity: 0;
+    transition: opacity 0.5s, width 0.5s, height 0.5s, flex-grow 0.5s;
+    user-select: none;
+}
+
+.add-turn-container:hover .add-turn {
+    flex-grow: 1;
+    opacity: 0.75;
+}
+
+.border-solid { border-style: solid !important; }
+.border-dashed { border-style: dashed !important; }
+.border-dotted { border-style: dotted !important; }
+
+.border-bottom-solid { border-bottom-style: solid !important; }
+.border-bottom-dashed { border-bottom-style: dashed !important; }
+.border-bottom-dotted { border-bottom-style: dotted !important; }
