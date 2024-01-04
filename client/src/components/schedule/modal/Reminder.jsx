@@ -57,8 +57,10 @@ const Reminder = ({ isLoading, modalMode, form }) => {
                         before={<FontAwesomeIcon icon={faMagnifyingGlass} size='1x'/>}
                         name='patient'
                         handleSearch={setSearch}
+                        isLoading={isLoadingPatients}
                         items={data?.data || []}
                         value={(item) => `${item.surnames} ${item.names}`}
+                        defaultValue={form.getValues('patient')}
                     />
                 </div>
             </div>

@@ -96,13 +96,25 @@ const FileModal = ({ showModal, modalMode, handleClose, handleDownload, handleEd
                     </div>
                 }
 
-                <Input
-                    form={form}
-                    type='file'
-                    name='file'
-                    handleOnChange={handleOnFileChange}
-                />
+                {
+                    modalMode === MODALMODES.Add &&
+                    <Input
+                        form={form}
+                        type='file'
+                        name='file'
+                        handleOnChange={handleOnFileChange}
+                    />
+                }
 
+                {
+                    modalMode === MODALMODES.Edit &&
+                    <Input
+                        form={form}
+                        type='text'
+                        name='name'
+                    />
+                }
+                
                 <Textarea
                     form={form}
                     name='description'

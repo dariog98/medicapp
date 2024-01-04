@@ -9,7 +9,7 @@ import { MODALMODES } from '../../constants/modal'
 const PatientPhotos = ({ idPatient }) => {
     const { language, timeZone } = useSettingsContext()
     const { isLoading, data, order, handleOrder, page, handlePage, handleSearch, refreshPhotos } = usePatientPhotos({ idPatient })
-    const { showModal, modalMode, form, handleOpen, handleClose } = usePatientFileModal({ idPatient, refreshPhotos })
+    const { showModal, modalMode, form, handleOpen, handleClose, handleEdit } = usePatientFileModal({ idPatient, refreshPhotos })
     const { mode, onSwitch, offSwitch } = useSwitch()
 
     return (
@@ -87,7 +87,13 @@ const PatientPhotos = ({ idPatient }) => {
                     
                     <Pagination page={page} totalPages={data?.totalPages} handlePage={handlePage}/>
                 </div>
-                <FileModal form={form} showModal={showModal} modalMode={modalMode} handleClose={handleClose}/>
+                <FileModal
+                    form={form}
+                    showModal={showModal}
+                    modalMode={modalMode}
+                    handleClose={handleClose}
+                    handleEdit={handleEdit}
+                />
             </div>
         </div>
     )

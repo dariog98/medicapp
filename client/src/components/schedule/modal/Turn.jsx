@@ -1,4 +1,4 @@
-import { faCheck, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faMagnifyingGlass, faX } from '@fortawesome/free-solid-svg-icons'
 import { COLORS } from '../../../constants/eventColors'
 import { MODALMODES } from '../../../constants/modal'
 import { AutoComplete, Button, Input, Select, Textarea } from '../../basis'
@@ -17,7 +17,8 @@ const Turn = ({ isLoading, modalMode, form }) => {
     const { isLoading: isLoadingTreatments, data: dataTreatments} = useProfesionalTreatments({ idProfesional, search: searchTreatment })
 
     if (modalMode === MODALMODES.Delete) {
-        const { id: idTurn, time, description } = form.getValues()
+        const { id: idTurn, time, description, patient } = form.getValues()
+
         return (
             <div>
                 <div>{language.messages.ConfirmDelete}</div>
@@ -28,19 +29,20 @@ const Turn = ({ isLoading, modalMode, form }) => {
                 >
                     {`${time} hs`}
                     <div className='fw-bold' style={{ fontSize: '1.25rem' }}>
-                        <div>{`${form.patient.surnames} ${form.patient.names}`}</div>
+                        <div>{`${patient.surnames} ${patient.names}`}</div>
                     </div>
                     <div>{description}</div>
                 </div>
 
                 <div className='d-flex justify-content-end'>
-                    <button className='btn btn-danger d-flex gap-2 align-items-center' onClick={form.handleSubmit} disabled={loading}>
-                        Confirmar
-                        <div
-                            className='spinner-border'
-                            style={{width: '1rem', height: '1rem', borderWidth: '2px', display: loading ? 'inherit' : 'none'}}
-                        />
-                    </button>
+                    <Button
+                        className='btn-success'
+                        icon={faCheck}
+                        text={language.buttons.Confirm}
+                        handleOnClick={form.handleSubmit}
+                        isLoading={isLoading}
+                        isDisabled={isLoading}
+                    />
                 </div>
             </div>
         )

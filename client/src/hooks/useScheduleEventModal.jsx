@@ -33,8 +33,6 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
         },
         [MODALTABS.Turns]: (data = {}) => {
             const { id, patient, startTime, duration, treatment, description } = data
-            setPatient(patient)
-            setTreatment(treatment)
             turnForm.reset({
                 id, patient, duration, treatment, description, 
                 date: getStringDateInTimeZone(new Date(startTime), timeZone),
@@ -43,7 +41,6 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
         },
         [MODALTABS.Reminders]: (data = {}) => {
             const { id, patient, startTime, description } = data
-            setPatient(patient)
             reminderForm.reset({
                 id, patient, description,
                 date: getStringDateInTimeZone(new Date(startTime), timeZone),

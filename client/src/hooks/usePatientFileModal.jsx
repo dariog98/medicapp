@@ -26,7 +26,6 @@ const usePatientFileModal = ({ idPatient, refreshPhotos } = {}) => {
 
     const ACTIONS = {
         [MODALMODES.Add]: async (data) => {
-            console.log(data)
             const file = new FormData()
             file.set('file', data.file[0])
             file.set('name', data.file[0].name)

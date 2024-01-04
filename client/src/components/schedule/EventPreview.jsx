@@ -3,6 +3,14 @@ import { COLORS } from '../../constants/eventColors'
 import { Button, Modal } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import { getStringDateTimeInLanguageTimeZone, getStringTimeInTimeZone } from '../../constants/dateToString'
+import { MODALMODES, MODALTABS } from '../../constants/modal'
+import { useScheduleContext } from '../providers/ScheduleProvider'
+
+const TYPES = {
+    'exception': MODALTABS.Exceptions,
+    'reminder': MODALTABS.Reminders,
+    'turn': MODALTABS.Turns
+}
 
 const EventPreview = ({ data, showModal, handleClose }) => {
     const { language, timeZone } = useSettingsContext()
@@ -11,6 +19,18 @@ const EventPreview = ({ data, showModal, handleClose }) => {
     const isException = type === 'exception'
     const startDateTime = getStringDateTimeInLanguageTimeZone(new Date(startTime), language.string, timeZone)
     const endDateTime = isException ? getStringDateTimeInLanguageTimeZone(new Date(endTime), language.string, timeZone) : getStringTimeInTimeZone(new Date(endTime), timeZone)
+
+    const { handleOpen } = useScheduleContext()
+
+    const handleEdit = () => {
+        handleOpen(data, TYPES[type], MODALMODES.Edit)
+        handleClose()
+    }
+
+    const handleDelete = () => {
+        handleOpen(data, TYPES[type], MODALMODES.Delete)
+        handleClose()
+    }
 
     return (
         <Modal
@@ -39,12 +59,14 @@ const EventPreview = ({ data, showModal, handleClose }) => {
                         className='btn-outline-light'
                         icon={faPen}
                         text={language.buttons.Edit}
+                        handleOnClick={handleEdit}
                     />
                     
                     <Button
                         className='btn-outline-light'
                         icon={faTrashCan}
                         text={language.buttons.Delete}
+                        handleOnClick={handleDelete}
                     />
                 </div>
 
