@@ -16,7 +16,7 @@ const usePatientPhotos = ({ idPatient } = {}) => {
 
     const getPatientPhotos = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-        return await patientServices.getAllPatientPhotos({ idPatient, search, page, order: tableOrder })
+        return await patientServices.getAllPhotos({ idPatient, search, page, order: tableOrder })
     }
 
     const { isLoading, data, fechData: refreshPhotos } = useFetch(getPatientPhotos, [idPatient, search, page, order])

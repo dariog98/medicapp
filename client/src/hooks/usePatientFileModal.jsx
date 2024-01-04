@@ -10,7 +10,7 @@ import { TOAST_TIME } from '../constants/time'
 import patientServices from '../services/patientServices'
 import useModal from './useModal'
 
-const usePatientFileModal = ({ idPatient, refreshNotes } = {}) => {
+const usePatientFileModal = ({ idPatient, refreshPhotos } = {}) => {
     const { language } = useSettingsContext()
     const { addNotification } = useNotificationsContext()
     const form = useForm()
@@ -26,7 +26,19 @@ const usePatientFileModal = ({ idPatient, refreshNotes } = {}) => {
 
     const ACTIONS = {
         [MODALMODES.Add]: async (data) => {
-            console.log({ data })
+            console.log(data)
+            const file = new FormData()
+            file.set('file', data.file[0])
+            file.set('name', data.file[0].name)
+            file.set('description', data.description)
+
+            const response = await patientServices.createPhoto({ idPatient, data: file })
+
+            if (response.status === 201) {
+                addNotification({ id: Date.now(), icon: faPlus, message: language.messages.NoteUpdated, type: 'primary', time: TOAST_TIME.Short })
+                refreshPhotos()
+                handleClose()
+            }
         },
         [MODALMODES.Edit]: async (data) => {
             const { id: idNote, content } = data
@@ -53,7 +65,7 @@ const usePatientFileModal = ({ idPatient, refreshNotes } = {}) => {
     const handleConfirm = async (data) => {
         try {
             setIsLoading(true)
-            ACTIONS[modalMode](data)
+            await ACTIONS[modalMode](data)
         } catch (error) {
             //console.log(error)
             addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.NoteDeleted, type: 'warning', time: TOAST_TIME.Short })

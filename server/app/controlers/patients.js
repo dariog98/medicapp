@@ -6,6 +6,7 @@ import { handleResponse } from '../helpers/handleResponse.js'
 import { File, Note, Patient, Treatment, Turn } from '../models/index.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'
 import { sequelize } from '../config/mysql.js'
+import { helperImage } from '../helpers/helperImage.js'
 
 const getAllPatients = async (request, response) => {
     const { search, idProfesional, idTreatment, page, order: stringOrder } = request.query
@@ -100,6 +101,34 @@ const getPatientPhotos = async (request, response) => {
     handleResponse({ response, statusCode: 200, data, total, totalPages })
 }
 
+const createPatientPhoto = async (request, response) => {
+    const accessToken = await getTokenFromRequest(request)
+    const { idUser: createdBy } = accessToken
+
+    const { id: idPatient } = request.params
+    const { name, description } = request.body
+    const { file } = request
+
+    const type = 'image'
+
+    console.log(request.body)
+
+    await helperImage(file.path, file.filename)
+
+    const existingFile = await File.findOne({ where: { name, idPatient } })
+
+    if (existingFile) throw new ClientError('File already exists', 409)
+
+    File.create({ name, filename: file.filename, description, type, idPatient, createdBy })
+    .then(() => {
+        handleResponse({response, statusCode: 201, message: 'File create successfully' })
+    })
+    .catch(error => {
+        console.log(error)
+        handleResponse({ response, statusCode: 500, message: 'An error occurred while trying to create the file' })
+    })
+}
+
 const getPatientTurns = async (request, response) => {
     const { id: idPatient } = request.params
     const { idProfesional, idTreatment, status, rows, page, startTime, endTime, order: stringOrder } = request.query
@@ -183,7 +212,8 @@ const patientController = {
     updatePatient: catchedAsync(updatePatient),
     deletePatient: catchedAsync(deletePatient),
     getPatientFiles: catchedAsync(getPatientFiles),
-    getPatientPhotos: catchedAsync(getPatientPhotos),
+    getPhotos: catchedAsync(getPatientPhotos),
+    createPhoto: catchedAsync(createPatientPhoto),
     getPatientTurns: catchedAsync(getPatientTurns),
     getPatientTreatments: catchedAsync(getPatientTreatments),
     getPatientNotes: catchedAsync(getPatientNotes),

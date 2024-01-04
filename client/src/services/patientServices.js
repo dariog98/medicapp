@@ -79,7 +79,7 @@ const deleteNote = async ({ idPatient, idNote }) => {
     return await response.json()
 }
 
-const getAllPatientPhotos = async({ idPatient, search, page, order }) => {
+const getAllPhotos = async({ idPatient, search, page, order }) => {
     const params = new URLSearchParams({
         search: search ?? '',
         page: page ?? 1,
@@ -88,6 +88,13 @@ const getAllPatientPhotos = async({ idPatient, search, page, order }) => {
 
     const url = `${RouteAPI.Patients}/${idPatient}/photos?${params.toString()}`
     const request = newRequest({ url, userToken: true })
+    const response = await fetch(request)
+    return await response.json()
+}
+
+const createPhoto = async ({ idPatient, data }) => {
+    const url = `${RouteAPI.Patients}/${idPatient}/photos`
+    const request = newRequest({ url, method: METHODS.Post, body: data, userToken: true })
     const response = await fetch(request)
     return await response.json()
 }
@@ -129,7 +136,8 @@ const patientServices = {
     updateNote,
     deleteNote,
     getAllPatientFiles,
-    getAllPatientPhotos,
+    getAllPhotos,
+    createPhoto,
     getAllPatientTreatments
 }
 

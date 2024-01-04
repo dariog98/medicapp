@@ -3,6 +3,7 @@ import { validateCreate } from '../validators/patients.js'
 import { validateCreateNote, validateUpdateNote } from '../validators/notes.js'
 import { checkAuth } from '../middleware/auth.js'
 import patientController from '../controlers/patients.js'
+import { uploadMiddleware } from '../middleware/storage.js'
 
 const router = Router()
 
@@ -17,7 +18,8 @@ router.delete('/:id', checkAuth, patientController.deletePatient)
 router.get('/:id/files', checkAuth, patientController.getPatientFiles)
 
 // Photos
-router.get('/:id/photos', checkAuth, patientController.getPatientPhotos)
+router.get('/:id/photos', checkAuth, patientController.getPhotos)
+router.post('/:id/photos', checkAuth, uploadMiddleware.single('file'), patientController.createPhoto)
 
 // Notes
 router.get('/:id/notes', checkAuth, patientController.getPatientNotes)

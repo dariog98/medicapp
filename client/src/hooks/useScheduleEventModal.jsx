@@ -116,7 +116,7 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const handleConfirmTurn = async (data) => {
         try {
             setIsLoading(true)
-            TURN_ACTIONS[modalMode](data)
+            await TURN_ACTIONS[modalMode](data)
         } catch (error) {
             //console.log(error)
             addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.AnErrorOcurred, type: 'warning', time: TOAST_TIME.Short })
@@ -167,7 +167,7 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const handleConfirmException = async (data) => {
         try {
             setIsLoading(true)
-            EXCEPTION_ACTIONS[modalMode](data)
+            await EXCEPTION_ACTIONS[modalMode](data)
         } catch (error) {
             //console.log(error)
             addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.AnErrorOcurred, type: 'warning', time: TOAST_TIME.Short })
@@ -217,7 +217,7 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const handleConfirmReminder = async (data) => {
         try {
             setIsLoading(true)
-            REMINDER_ACTIONS[modalMode](data)
+            await REMINDER_ACTIONS[modalMode](data)
         } catch (error) {
             //console.log(error)
             addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.AnErrorOcurred, type: 'warning', time: TOAST_TIME.Short })

@@ -37,7 +37,7 @@ const NoteModal = ({ showModal, modalMode, handleClose, handleEdit, handleDelete
     }
 
     return (
-        <Modal  title={language.Notes} show={showModal} modalSize='modal-lg' handleClose={handleClose}>
+        <Modal title={language.Notes} show={showModal} handleClose={handleClose} modalSize='modal-lg'>
             <div className='d-flex flex-column gap-3'>
                 {
                     modalMode === MODALMODES.Delete &&

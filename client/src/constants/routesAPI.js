@@ -1,4 +1,4 @@
-const baseAPI = 'http://localhost:3001'
+const baseAPI = import.meta.env.VITE_API_SERVER
 
 const RouteAPI = {
     Login: `${baseAPI}/auth/login`,

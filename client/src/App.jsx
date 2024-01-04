@@ -2,8 +2,7 @@ import { Sidebar } from './components/basis';
 import ProtectedUserRoute from './components/protect/ProtectedUserRoute';
 import { ROUTES } from './constants/routes';
 import { Configuration, Home, Login, Patient, Patients, Profesional, Profesionals, Schedule } from './pages'
-
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
   
 const router = createBrowserRouter([
     {

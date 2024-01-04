@@ -46,7 +46,7 @@ const usePatientModal = ({ refreshData } = {}) => {
     const handleConfirm = async (data) => {
         try {
             setIsLoading(true)
-            ACTIONS[modalMode](data)
+            await ACTIONS[modalMode](data)
         } catch (error) {
             //console.log(error)
             addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.PatientDeleted, type: 'warning', time: TOAST_TIME.Short })

@@ -8,8 +8,8 @@ import { MODALMODES } from '../../constants/modal'
 
 const PatientPhotos = ({ idPatient }) => {
     const { language, timeZone } = useSettingsContext()
-    const { isLoading, data, order, handleOrder, page, handlePage, handleSearch } = usePatientPhotos({ idPatient })
-    const { showModal, modalMode, form, handleOpen, handleClose } = usePatientFileModal()
+    const { isLoading, data, order, handleOrder, page, handlePage, handleSearch, refreshPhotos } = usePatientPhotos({ idPatient })
+    const { showModal, modalMode, form, handleOpen, handleClose } = usePatientFileModal({ idPatient, refreshPhotos })
     const { mode, onSwitch, offSwitch } = useSwitch()
 
     return (
@@ -81,6 +81,7 @@ const PatientPhotos = ({ idPatient }) => {
                                 },
                             ]}
                             height='646px'
+                            handleOnPress={(item) => handleOpen(item, MODALMODES.Preview)}
                         />
                     }
                     
