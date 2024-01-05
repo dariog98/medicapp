@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import mysql2 from 'mysql2'
 import { Sequelize } from 'sequelize'
 
 dotenv.config()
@@ -13,7 +14,8 @@ const sequelize = new Sequelize(
     password,
     {
         host: hostname,
-        dialect: 'mysql'
+        dialect: 'mysql',
+        dialectModule: mysql2
     }
 )
 
