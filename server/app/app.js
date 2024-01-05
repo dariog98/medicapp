@@ -23,9 +23,9 @@ app.use((error, request, response, next) => {
 })
 
 app.listen(PORT, () => {
-    console.log('API lista')
-    console.log('Puerto:', PORT)
-    console.log('Plataforma:', PLATFORM)
+    console.log('API ready')
+    console.log('Port:', PORT)
+    console.log('Platform:', PLATFORM)
 })
 
 export default app
