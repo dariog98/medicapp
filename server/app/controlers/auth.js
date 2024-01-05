@@ -46,72 +46,38 @@ const login = async (request, response) => {
 }
 
 const update = async (request, response) => {
-    try {
-        const accessToken = await getTokenFromRequest(request)
-        const idUser = accessToken.idUser
-        const { username, names, surnames, mail, phone, idCharge } = request.body
+    const accessToken = await getTokenFromRequest(request)
+    const { idUser } = accessToken
+    const { username, names, surnames, mail, phone, idCharge } = request.body
 
-        let user = await User.getByID(idUser)
+    let user = await User.getById(idUser)
 
-        if (!user) {
-            const status = 404
-            const message = 'User is not found or does not exist'
-            handleResponse(response, status, message)
-            return
-        }
+    if (!user) throw new ClientError('User not found', 404)
 
-        // Update user
-        await user.update({ username, names, surnames, mail, phone, idCharge })
+    // Update user
+    await user.update({ username, names, surnames, mail, phone, idCharge })
 
-        // Generate token
-        user = await User.getByID(idUser)
+    user = await User.getById(idUser)
 
-        const userResume = { 
-            id: user.id,
-            username: user.username,
-            charge: user.charge,
-            role: user.role
-        }
+    const userResume = { idUser, username, charge: user.charge, role: user.role }
 
-        const newAccessToken = await tokenSign(userResume, tokenSecretKey, '24h')
-        const newRefreshToken = await tokenSign(userResume, refreshTokenSecretKey, '30d')
+    const newAccessToken = await tokenSign(userResume, tokenSecretKey, '24h')
+    const newRefreshToken = await tokenSign(userResume, refreshTokenSecretKey, '30d')
 
-        const data = {
-            id: user.id,
-            names: user.names,
-            surnames: user.surnames,
-            username: user.username,
-            charge: user.charge,
-            role: user.role,
-            mail: user.mail,
-            phone: user.phone,
-            token: newAccessToken,
-            refreshToken: newRefreshToken
-        }
-
-        const status = 200
-        const message = 'User updated successfully'
-        handleResponse(response, status, message, data)
-    } catch (error) {
-        const errorNumber = Number(error?.original?.errno)
-        const fields = error?.fields
-        if (errorNumber === 1062) {
-            const httpStatus = 409
-            if (fields?.username) {
-                const status = 10062
-                const message = 'Username duplicate'
-                handleResponseCustomStatus(response, httpStatus, status, message)
-                return
-            }
-            if (fields?.mail) {
-                const status = 10063
-                const message = 'Mail duplicate'
-                handleResponseCustomStatus(response, httpStatus, status, message)
-                return
-            }
-        }
-        httpError(response, error)
+    const data = {
+        idUser,
+        surnames,
+        names,
+        username,
+        mail,
+        phone,
+        charge: user.charge,
+        role: user.role,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
     }
+
+    handleResponse({ response, statusCode: 200, message: 'User updated successfully', data })
 }
 
 const register = async (request, response) => {

@@ -1,3 +1,4 @@
+import { Op } from 'sequelize'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { handleResponse } from '../helpers/handleResponse.js'
 import { Reminder } from '../models/index.js'

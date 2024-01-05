@@ -16,7 +16,8 @@ const LANGUAGES = {
         Main: 'Principal',
         Profile: 'Perfil',
         headings: {
-            TodaysTurns: 'Turnos de hoy'
+            TodaysTurns: 'Turnos de hoy',
+            TodaysReminders: 'Recordatorios de hoy'
         },
         buttons: {
             SeeMore: 'Ver más',
@@ -82,6 +83,7 @@ const LANGUAGES = {
             PasswordMin: 'La contraseña debe tener un mínimo de 8 caracteres',
             WriteHere: 'Escriba aquí...',
             PasswordChanged: 'La contraseña ha sido actulizada satisfactoriamente',
+            UserUpdated: 'Su perfil ha sido guardado satisfactoriamente',
             ConfirmDelete: '¿Está seguro que desea eliminar el siguiente elemento?',
             PatientCreated: 'Nuevo paciente añadido satisfactoriamente',
             PatientUpdated: 'Paciente editado satisfactoriamente',
@@ -121,7 +123,8 @@ const LANGUAGES = {
         Main: 'Main',
         Profile: 'Profile',
         headings: {
-            TodaysTurns: "Today's Appointments"
+            TodaysTurns: "Today's Appointments",
+            TodaysReminders: "Today's Reminders",
         },
         buttons: {
             SeeMore: 'See More',
@@ -187,6 +190,7 @@ const LANGUAGES = {
             PasswordMin: 'The password must have a minimum of 8 characters',
             WriteHere: 'Write here...',
             PasswordChanged: 'Password changed successfully',
+            UserUpdated: 'Your profile has been updated successfully',
             ConfirmDelete: 'Do you confirm that you want to delete the following item?',
             PatientCreated: 'New patient added successfully',
             PatientUpdated: 'Patient edited successfully',

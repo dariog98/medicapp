@@ -5,7 +5,7 @@ import { useSettingsContext } from '../providers/SettingsProvider'
 import { ROUTES } from '../../constants/routes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCircleCheck } from '@fortawesome/free-regular-svg-icons'
-import { faCalendarDays } from '@fortawesome/free-solid-svg-icons'
+import { faCalendarDays, faUser, faUserDoctor } from '@fortawesome/free-solid-svg-icons'
 import Button from './Button'
 
 const TurnItem = ({ data }) => {
@@ -32,12 +32,22 @@ const TurnItem = ({ data }) => {
             </div>
 
             <div className='border-start flex-grow-1 p-2'>
-                <small>{`${getStringTimeInTimeZone(date, timeZone)} hs`}</small>
-                <h5>{`${data.profesional.surnames} ${data.profesional.names}`}</h5>
-                <div>{`${data.patient.surnames} ${data.patient.names}`}</div>
-                <div className='d-flex gap-2 align-items-end'>
-                {data.treatment && <div>{data.treatment.description}</div>}
-                <small><i>{data.description}</i></small>
+                <div className='d-flex gap-2'>
+                    <small>{`${getStringTimeInTimeZone(date, timeZone)} hs`}</small>
+                </div>
+                <div className='d-flex align-items-center gap-2'>
+                    <FontAwesomeIcon icon={faUserDoctor}/>
+                    <div className='m-0 p-0'>{`${data.profesional.surnames} ${data.profesional.names}`}</div>
+                </div>
+
+                <div className='d-flex gap-2 align-items-center'>
+                    <FontAwesomeIcon icon={faUser}/>
+                    <div className='m-0 p-0 fw-medium fs-5'>{`${data.patient.surnames} ${data.patient.names}`}</div>
+                </div>
+
+                <div className='d-flex gap-2'>
+                    <small>{data.description}</small>
+                    {data.treatment && <><small>-</small><small>{data.treatment.description}</small></>}
                 </div>
             </div>
             <div className='d-flex p-2 align-items-end'>

@@ -1,7 +1,7 @@
-import { faCalendarDays, faHouse } from '@fortawesome/free-solid-svg-icons'
-import { Container, Title, TurnList } from '../components/basis'
+import { faCalendarDays, faClock, faHouse } from '@fortawesome/free-solid-svg-icons'
+import { Container, ReminderList, Title, TurnList } from '../components/basis'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
-import { useTurns } from '../hooks'
+import { useReminders, useTurns } from '../hooks'
 import { getStringDateInTimeZone, newDateInTimeZone } from '../constants/dateToString'
 import { useState } from 'react'
 
@@ -12,6 +12,7 @@ const Home = () => {
     const [endTime] = useState(newDateInTimeZone(timeZone, year, month, date, 23, 59))
 
     const { isLoading, data } = useTurns({ startTime, endTime })
+    const { isLoading: isLoadingReminders, data: dataReminders } = useReminders({ startTime, endTime })
 
     return (
         <Container>
@@ -19,17 +20,23 @@ const Home = () => {
                 <Title icon={faHouse} text={language.Home}/>
 
                 <div className='d-grid gap-3' style={{ gridTemplateColumns: '1fr 1fr' }}>
-                    <div>
-
-                    </div>
-
+                    
                     <div className='d-flex flex-column gap-3'>
                         <Title icon={faCalendarDays} text={language.headings.TodaysTurns}/>
 
                         <div className='overflow-auto pe-4'  style={{ maxHeight: 'calc(100vh - 160px)' }}>
-                        <TurnList data={data?.data || []}/>
+                            <TurnList data={data?.data || []}/>
                         </div>
                     </div>
+
+                    <div className='d-flex flex-column gap-3'>
+                        <Title icon={faClock} text={language.headings.TodaysReminders}/>
+
+                        <div className='overflow-auto pe-4'  style={{ maxHeight: 'calc(100vh - 160px)' }}>
+                            <ReminderList data={dataReminders?.data || []}/>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </Container>

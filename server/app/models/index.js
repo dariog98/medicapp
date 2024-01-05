@@ -239,4 +239,14 @@ User.getByUsernameOrMail = (data) => {
     })
 }
 
+User.getById = (idUser) => {
+    return User.findOne({
+        where: {
+            isDeleted: 0, 
+            id: idUser
+        },
+        include: [{ model: Role }, { model: Charge }]
+    })
+}
+
 export { Charge, Exception, File, Note, Patient, Reminder, Role, Treatment, Turn, User }

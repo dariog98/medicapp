@@ -3,7 +3,7 @@ import { Button, Modal, Password } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import { useSwitch } from '../../hooks'
 
-const ChangePasswordModal = ({ showModal, handleClose, form }) => {
+const ChangePasswordModal = ({ showModal, handleClose, form, isLoading }) => {
     const { language } = useSettingsContext()
     const { mode, toggleSwitch } = useSwitch()
 
@@ -43,6 +43,8 @@ const ChangePasswordModal = ({ showModal, handleClose, form }) => {
                             icon={faCheck}
                             text={language.buttons.Confirm}
                             handleOnClick={form.handleSubmit}
+                            isLoading={isLoading}
+                            isDisabled={isLoading}
                         />
 
                         <Button

@@ -15,9 +15,17 @@ const changePassword = async (data) => {
     return await response.json()
 }
 
+const update = async (data) => {
+    const url = RouteAPI.UserUpdate
+    const request = newRequest({ url, method: METHODS.Patch, contentType: CONTENT_TYPES.JSON, body: data, userToken: true })
+    const response = await fetch(request)
+    return await response.json()
+}
+
 const userServices = {
     login,
     changePassword,
+    update
 }
 
 export default userServices

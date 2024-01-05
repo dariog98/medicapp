@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserDoctor, faCalendarDays, faHouse, faSliders, faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { faUserDoctor, faHouse, faSliders, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '../../constants/routes'
 import { useLocation } from 'react-router-dom'
@@ -29,7 +29,6 @@ const Sidebar = () => {
                 <Button route={ROUTES.Home} title={language.Home} icon={faHouse}/>
                 <Button route={ROUTES.Patients} title={language.Patients} icon={faUserGroup}/>
                 <Button route={ROUTES.Profesionals} title={language.Profesionals} icon={faUserDoctor}/>
-                <Button icon={faCalendarDays}/>
                 <Button route={ROUTES.Configuration} title={language.Configuration} icon={faSliders}/>
             </div>
         </div>

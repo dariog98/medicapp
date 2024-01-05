@@ -3,6 +3,7 @@ const baseAPI = import.meta.env.VITE_API_SERVER
 const RouteAPI = {
     Login: `${baseAPI}/auth/login`,
     Password: `${baseAPI}/auth/password`,
+    UserUpdate: `${baseAPI}/auth/update`,
     Profesionals: `${baseAPI}/profesionals`,
     Patients: `${baseAPI}/patients`,
     Files: `${baseAPI}/files`,

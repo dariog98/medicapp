@@ -9,8 +9,8 @@ import UserModal from './UserModal'
 const Profile = () => {
     const { language } = useSettingsContext()
     const { user, handleLogOut } = useUserContext()
-    const { showModal, handleOpen, handleClose, form: formPassword } = useChangePasswordModal()
-    const { showModal: showUserModal, handleOpen: handleOpenUserModal, handleClose: handleCloseUserModal, form: formUser } = useUserModal()
+    const { showModal, handleOpen, handleClose, form: formPassword, isLoading: isLoadingPassword } = useChangePasswordModal()
+    const { showModal: showUserModal, handleOpen: handleOpenUserModal, handleClose: handleCloseUserModal, form: formUser, isLoading: isLoadingUser } = useUserModal()
 
     return (
         <div className='d-flex flex-column gap-3'>
@@ -112,8 +112,8 @@ const Profile = () => {
                 />
             </div>
 
-            <UserModal showModal={showUserModal} handleClose={handleCloseUserModal} form={formUser}/>
-            <ChangePasswordModal showModal={showModal} handleClose={handleClose} form={formPassword}/>
+            <UserModal showModal={showUserModal} handleClose={handleCloseUserModal} form={formUser} isLoading={isLoadingUser}/>
+            <ChangePasswordModal showModal={showModal} handleClose={handleClose} form={formPassword} isLoading={isLoadingPassword}/>
         </div>
     )
 }

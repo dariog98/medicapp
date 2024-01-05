@@ -3,7 +3,7 @@ import { Button, Input, Modal, Select } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import { useCharges } from '../../hooks'
 
-const UserModal = ({ showModal, handleClose, form }) => {
+const UserModal = ({ showModal, handleClose, form, isLoading }) => {
     const { language } = useSettingsContext()
     const { isLoading: isLoadingCharges, data: dataCharges } = useCharges()
     
@@ -60,7 +60,9 @@ const UserModal = ({ showModal, handleClose, form }) => {
                         className='btn-success'
                         icon={faCheck}
                         text={language.buttons.Confirm}
-                        //handleOnClick={form.handleSubmit}
+                        handleOnClick={form.handleSubmit}
+                        isLoading={isLoading}
+                        isDisabled={isLoading}
                     />
 
                     <Button
