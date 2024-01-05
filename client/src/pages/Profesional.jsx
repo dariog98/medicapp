@@ -1,10 +1,9 @@
-import { faCalendarDays, faUserDoctor } from '@fortawesome/free-solid-svg-icons'
-import { ButtonLink, Container, Loading, NotFound, Title } from '../components/basis'
+import { faUserDoctor } from '@fortawesome/free-solid-svg-icons'
+import { Container, Loading, NotFound, Title } from '../components/basis'
 import { useProfesional } from '../hooks'
 import { useParams } from 'react-router-dom'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
 import { ProfesionalData, ProfesionalPatients, ProfesionalTreatments } from '../components/profesional'
-import { ROUTES } from '../constants/routes'
 
 const Profesional = () => {
     const { language } = useSettingsContext()
