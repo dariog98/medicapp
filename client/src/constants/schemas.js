@@ -19,12 +19,12 @@ const schemaPatient = yup.object({
     address: yup.string().nullable().notRequired(),
 })
 
-const schemaNotes = yup.object({
+const schemaNote = yup.object({
     content: yup.string().required(language.messages.FieldRequired)
 })
 
 
-const schemaTurns = yup.object({
+const schemaTurn = yup.object({
     patient: yup.object().shape({ id: yup.string().required("El paciente ingresado no es válido") }),
     date: yup.string().required(language.messages.FieldRequired),
     time: yup.string().required(language.messages.FieldRequired),
@@ -32,14 +32,14 @@ const schemaTurns = yup.object({
     description: yup.string().nullable().notRequired(),
 })
 
-const schemaReminders = yup.object({
+const schemaReminder = yup.object({
     patient: yup.object({ id: yup.string() }).notRequired(),
     date: yup.string().required(language.messages.FieldRequired),
     time: yup.string().required(language.messages.FieldRequired),
     description: yup.string().nullable().notRequired(),
 })
 
-const schemaExceptions = yup.object({
+const schemaException = yup.object({
     startDate: yup.string().required(language.messages.FieldRequired),
     startTime: yup.string().required(language.messages.FieldRequired),
     endDate: yup.string().required(language.messages.FieldRequired),
@@ -53,12 +53,17 @@ const schemaUserPassword = yup.object({
     confirmPassword: yup.string().oneOf([yup.ref('password'), null], language.messages.FieldsDoNotMatch).required(language.messages.FieldRequired),
 })
 
+const schemaTreatment = yup.object({
+    description: yup.string().required(language.messages.FieldRequired),
+})
+
 export {
     schemaLogin,
     schemaPatient,
-    schemaNotes,
-    schemaExceptions,
-    schemaReminders,
-    schemaTurns,
+    schemaNote,
+    schemaException,
+    schemaReminder,
+    schemaTurn,
+    schemaTreatment,
     schemaUserPassword
 }

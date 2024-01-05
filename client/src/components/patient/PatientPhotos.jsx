@@ -9,7 +9,7 @@ import { MODALMODES } from '../../constants/modal'
 const PatientPhotos = ({ idPatient }) => {
     const { language, timeZone } = useSettingsContext()
     const { isLoading, data, order, handleOrder, page, handlePage, handleSearch, refreshPhotos } = usePatientPhotos({ idPatient })
-    const { showModal, modalMode, form, handleOpen, handleClose, handleEdit } = usePatientFileModal({ idPatient, refreshPhotos })
+    const { showModal, modalMode, form, handleOpen, handleClose, handleEdit, isLoading: isLoadingFileModal } = usePatientFileModal({ idPatient, refreshPhotos })
     const { mode, onSwitch, offSwitch } = useSwitch()
 
     return (
@@ -45,7 +45,7 @@ const PatientPhotos = ({ idPatient }) => {
                         />
                     </div>
                 </div>
-                <div className='d-flex flex-column align-items-center gap-3'>
+                <div className='d-flex flex-column align-items-center'>
                     {
                         !mode ?
                         <Table
@@ -93,6 +93,7 @@ const PatientPhotos = ({ idPatient }) => {
                     modalMode={modalMode}
                     handleClose={handleClose}
                     handleEdit={handleEdit}
+                    isLoading={isLoadingFileModal}
                 />
             </div>
         </div>

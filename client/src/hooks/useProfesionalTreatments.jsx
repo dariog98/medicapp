@@ -18,7 +18,7 @@ const useProfesionalTreatments = ({ search, idProfesional } = {}) => {
         return await profesionalServices.getTreatments({ idProfesional, search, page, order: tableOrder })
     }
 
-    const { isLoading, data } = useFetch(getProfesionals, [search, page, order])
+    const { isLoading, data, fechData: refreshTreatments } = useFetch(getProfesionals, [search, page, order])
 
     return {
         isLoading,
@@ -27,6 +27,7 @@ const useProfesionalTreatments = ({ search, idProfesional } = {}) => {
         order,
         handlePage: setPage,
         handleOrder,
+        refreshTreatments
     }
 }
 

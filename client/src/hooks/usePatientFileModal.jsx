@@ -1,9 +1,7 @@
 import { faPen, faPlus, faTrashCan, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { MODALMODES } from '../constants/modal'
-import { schemaNotes } from '../constants/schemas'
 import { useNotificationsContext } from '../components/providers/NotificationsProvider'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
 import { TOAST_TIME } from '../constants/time'
@@ -13,10 +11,10 @@ import useModal from './useModal'
 const usePatientFileModal = ({ idPatient, refreshPhotos } = {}) => {
     const { language } = useSettingsContext()
     const { addNotification } = useNotificationsContext()
-    const form = useForm()
     const [isLoading, setIsLoading] = useState(false)
     const [modalMode, setModalMode] = useState(MODALMODES.Add)
     const { show: showModal, handleOpen: open, handleClose } = useModal()
+    const form = useForm()
 
     const handleOpen = (data, mode) => {
         form.reset(data ?? { id: '', file: '', name: '', description: '' })

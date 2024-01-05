@@ -35,13 +35,14 @@ const Reminder = ({ isLoading, modalMode, form }) => {
                 </div>
 
                 <div className='d-flex justify-content-end'>
-                    <button className='btn btn-danger d-flex gap-2 align-items-center' onClick={form.handleSubmit} disabled={loading}>
-                        Confirmar
-                        <div
-                            className='spinner-border'
-                            style={{width: '1rem', height: '1rem', borderWidth: '2px', display: loading ? 'inherit' : 'none'}}
-                        />
-                    </button>
+                    <Button
+                        className='btn-success'
+                        icon={faCheck}
+                        text={language.buttons.Confirm}
+                        isLoading={isLoading}
+                        isDisabled={isLoading}
+                        handleOnClick={form.handleSubmit}
+                    />
                 </div>
             </div>
         )
@@ -94,7 +95,6 @@ const Reminder = ({ isLoading, modalMode, form }) => {
                     height='128px'
                 />
             </div>
-
 
             <div className='d-flex justify-content-end'>
                 <Button

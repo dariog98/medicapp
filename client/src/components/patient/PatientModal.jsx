@@ -2,7 +2,7 @@ import { faCheck, faX } from '@fortawesome/free-solid-svg-icons'
 import { Button, Input, Modal } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 
-const PatientModal = ({ showModal, modalMode, form, handleClose }) => {
+const PatientModal = ({ showModal, modalMode, handleClose, form, isLoading }) => {
     const { language } = useSettingsContext()
 
     return (
@@ -56,6 +56,8 @@ const PatientModal = ({ showModal, modalMode, form, handleClose }) => {
                         text={language.buttons.Save}
                         icon={faCheck}
                         handleOnClick={form.handleSubmit}
+                        isLoading={isLoading}
+                        isDisabled={isLoading}
                     />
 
                     <Button

@@ -1,6 +1,7 @@
-import { faPen } from '@fortawesome/free-solid-svg-icons'
-import { Button, Input } from '../basis'
+import { faCalendarDays, faPen } from '@fortawesome/free-solid-svg-icons'
+import { Button, ButtonLink, Input } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
+import { ROUTES } from '../../constants/routes'
 
 const ProfesionalData = ({ profesional }) => {
     const { language } = useSettingsContext()
@@ -83,7 +84,15 @@ const ProfesionalData = ({ profesional }) => {
                 </div>
             </div>
 
-            <div className='d-flex justify-content-end gap-2'>
+            <div className='d-flex justify-content-between gap-2'>
+                <div>
+                    <ButtonLink
+                        className='btn-outline-system'
+                        icon={faCalendarDays}
+                        text='See agenda'
+                        to={`${ROUTES.Profesionals}/${profesional.id}/schedule`}
+                    />
+                </div>
                 <Button
                     className='btn-success'
                     icon={faPen}

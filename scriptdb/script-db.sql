@@ -155,7 +155,7 @@ if exists(
 		(new.dateTime >= te.startDateTime and ADDTIME(new.dateTime, new.duration) <= te.endDateTime)
 	)
 ) then
-	signal sqlstate '50001' set MESSAGE_TEXT = 'The turn cant be inserted. The schedule is busy.';
+	signal sqlstate '50001' set MESSAGE_TEXT = 'The turn can not be inserted. The schedule is busy.';
 end if; //
 delimiter ;
 
@@ -173,7 +173,7 @@ if exists(
 		(new.dateTime >= te.startDateTime and ADDTIME(new.dateTime, new.duration) <= te.endDateTime)
 	)
 ) then
-	signal sqlstate '50001' set MESSAGE_TEXT = 'The turn cant be updated. The schedule is busy.';
+	signal sqlstate '50001' set MESSAGE_TEXT = 'The turn can not be updated. The schedule is busy.';
 end if; //
 delimiter ;
 
@@ -190,7 +190,7 @@ if exists(
 		(new.startDateTime >= te.startDateTime and new.endDateTime <= te.endDateTime)
 	)
 ) then
-	signal sqlstate '50001' set MESSAGE_TEXT = 'The exception cant be inserted. The schedule is busy.';
+	signal sqlstate '50001' set MESSAGE_TEXT = 'The exception can not be inserted. The schedule is busy.';
 end if; //
 delimiter ;
 
@@ -208,7 +208,7 @@ if exists(
 		(new.startDateTime >= te.startDateTime and new.endDateTime <= te.endDateTime)
 	)
 ) then
-	signal sqlstate '50001' set MESSAGE_TEXT = 'The exception cant be updated. The schedule is busy.';
+	signal sqlstate '50001' set MESSAGE_TEXT = 'The exception can not be updated. The schedule is busy.';
 end if; //
 delimiter ;
 

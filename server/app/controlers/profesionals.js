@@ -1,7 +1,5 @@
 import { Op, Sequelize } from 'sequelize'
-import { sequelize } from '../config/mysql.js'
 import { catchedAsync } from '../helpers/catchedAsync.js'
-import { httpError } from '../helpers/handleErrors.js'
 import { handleResponse } from '../helpers/handleResponse.js'
 import { Exception, Reminder, Treatment, Turn, User } from '../models/index.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'

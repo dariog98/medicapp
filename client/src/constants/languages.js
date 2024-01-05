@@ -17,7 +17,9 @@ const LANGUAGES = {
         Profile: 'Perfil',
         headings: {
             TodaysTurns: 'Turnos de hoy',
-            TodaysReminders: 'Recordatorios de hoy'
+            TodaysReminders: 'Recordatorios de hoy',
+            Treatments: 'Tratamientos',
+            Treatment: 'Tratamiento',
         },
         buttons: {
             SeeMore: 'Ver más',
@@ -100,6 +102,9 @@ const LANGUAGES = {
             ReminderCreated: 'Nuevo recordatorio añadido satisfactoriamente',
             ReminderUpdated: 'Recordatorio editado satisfactoriamente',
             ReminderDeleted: 'Recordatorio eliminado satisfactoriamente',
+            TreatmentCreated: 'Nuevo tratamiento añadido satisfactoriamente',
+            TreatmentUpdated: 'Tratamiento editado satisfactoriamente',
+            TreatmentDeleted: 'Tratamiento eliminado satisfactoriamente',
             AnErrorOcurred: 'Ha ocurrido un error',
             PageNotFound: 'Página no encontrada',
         },
@@ -118,13 +123,14 @@ const LANGUAGES = {
         Photos: 'Photos',
         Files: 'Files',
         Turns: 'Appointments',
-        Treatments: 'Treatments',
         Events: 'Events',
         Main: 'Main',
         Profile: 'Profile',
         headings: {
             TodaysTurns: "Today's Appointments",
             TodaysReminders: "Today's Reminders",
+            Treatments: 'Treatments',
+            Treatment: 'Treatment',
         },
         buttons: {
             SeeMore: 'See More',
@@ -207,6 +213,9 @@ const LANGUAGES = {
             ReminderCreated: 'New reminder added successfully',
             ReminderUpdated: 'Reminder edited successfully',
             ReminderDeleted: 'Reminder deleted successfully',
+            TreatmentCreated: 'New treatment added successfully',
+            TreatmentUpdated: 'Treatment edited successfully',
+            TreatmentDeleted: 'Treatment deleted successfully',
             AnErrorOcurred: 'An error ocurred',
             PageNotFound: 'Page not found',
         },

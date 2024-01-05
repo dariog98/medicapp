@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { MODALMODES } from '../constants/modal'
-import { schemaNotes } from '../constants/schemas'
+import { schemaNote } from '../constants/schemas'
 import { useNotificationsContext } from '../components/providers/NotificationsProvider'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
 import { TOAST_TIME } from '../constants/time'
@@ -13,7 +13,7 @@ import useModal from './useModal'
 const useNotesModal = ({ idPatient, refreshNotes } = {}) => {
     const { language } = useSettingsContext()
     const { addNotification } = useNotificationsContext()
-    const form = useForm({ resolver: yupResolver(schemaNotes) })
+    const form = useForm({ resolver: yupResolver(schemaNote) })
     const [isLoading, setIsLoading] = useState(false)
     const [modalMode, setModalMode] = useState(MODALMODES.Add)
     const { show: showModal, handleOpen: open, handleClose } = useModal()

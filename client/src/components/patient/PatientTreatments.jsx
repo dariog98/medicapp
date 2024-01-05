@@ -9,7 +9,7 @@ const PatientTreatments = ({ idPatient }) => {
 
     return (
         <div className='d-flex flex-column gap-3'>
-            <Title icon={faStethoscope} text={language.Treatments}/>
+            <Title icon={faStethoscope} text={language.headings.Treatments}/>
 
             <div>
                 {

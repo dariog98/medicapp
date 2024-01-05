@@ -3,7 +3,7 @@ import { ButtonLink, Container, Loading, NotFound, Title } from '../components/b
 import { useProfesional } from '../hooks'
 import { useParams } from 'react-router-dom'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
-import { ProfesionalData, ProfesionalPatients } from '../components/profesional'
+import { ProfesionalData, ProfesionalPatients, ProfesionalTreatments } from '../components/profesional'
 import { ROUTES } from '../constants/routes'
 
 const Profesional = () => {
@@ -21,15 +21,7 @@ const Profesional = () => {
                         <div className='d-flex flex-column gap-3'>
                             <Title icon={faUserDoctor} text={language.Profesional}/>
                             <ProfesionalData profesional={data.data}/>
-
-                            <div className='d-flex'>
-                                <ButtonLink
-                                    className='btn-outline-system'
-                                    icon={faCalendarDays}
-                                    text='See agenda'
-                                    to={`${ROUTES.Profesionals}/${idProfesional}/schedule`}
-                                />
-                            </div>
+                            <ProfesionalTreatments idProfesional={idProfesional}/>
                         </div>
                         <div>
                             <ProfesionalPatients idProfesional={idProfesional}/>

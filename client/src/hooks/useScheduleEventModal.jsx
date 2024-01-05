@@ -4,12 +4,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useNotificationsContext } from '../components/providers/NotificationsProvider'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
 import { MODALMODES, MODALTABS } from '../constants/modal'
-import { schemaExceptions, schemaReminders, schemaTurns } from '../constants/schemas'
-import useModal from './useModal'
+import { schemaException, schemaReminder, schemaTurn } from '../constants/schemas'
 import { getStringDateInTimeZone, getStringTimeInTimeZone } from '../constants/dateToString'
-import profesionalServices from '../services/profesionalServices'
-import { faPen, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faPlus, faTrashCan, faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { TOAST_TIME } from '../constants/time'
+import useModal from './useModal'
+import profesionalServices from '../services/profesionalServices'
 
 const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const [isLoading, setIsLoading] = useState()
@@ -17,9 +17,9 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const [modalMode, setModalMode] = useState(MODALMODES.Add)
     const { show: showModal, handleOpen: open, handleClose } = useModal()
 
-    const turnForm = useForm({ resolver: yupResolver(schemaTurns) })
-    const exceptionForm = useForm({ resolver: yupResolver(schemaExceptions) })
-    const reminderForm = useForm({ resolver: yupResolver(schemaReminders) })
+    const turnForm = useForm({ resolver: yupResolver(schemaTurn) })
+    const exceptionForm = useForm({ resolver: yupResolver(schemaException) })
+    const reminderForm = useForm({ resolver: yupResolver(schemaReminder) })
 
     const { language, timeZone } = useSettingsContext()
     const { addNotification } = useNotificationsContext()
@@ -103,7 +103,7 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
             const response = await profesionalServices.deleteTurn({ idProfesional, idTurn })
 
             if (response.status === 200) {
-                addNotification({ id: Date.now(), icon: faPen, message: language.messages.TurnDeleted, type: 'danger', time: TOAST_TIME.Short })
+                addNotification({ id: Date.now(), icon: faTrashCan, message: language.messages.TurnDeleted, type: 'danger', time: TOAST_TIME.Short })
                 refreshEvents()
                 handleClose()
             }
@@ -154,7 +154,7 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
             const response = await profesionalServices.deleteException({ idProfesional, idException })
 
             if (response.status === 200) {
-                addNotification({ id: Date.now(), icon: faPen, message: language.messages.ExceptionDeleted, type: 'danger', time: TOAST_TIME.Short })
+                addNotification({ id: Date.now(), icon: faTrashCan, message: language.messages.ExceptionDeleted, type: 'danger', time: TOAST_TIME.Short })
                 refreshEvents()
                 handleClose()
             }
@@ -204,7 +204,7 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
             const response = await profesionalServices.deleteReminder({ idProfesional, idReminder })
 
             if (response.status === 200) {
-                addNotification({ id: Date.now(), icon: faPen, message: language.messages.ReminderDeleted, type: 'danger', time: TOAST_TIME.Short })
+                addNotification({ id: Date.now(), icon: faTrashCan, message: language.messages.ReminderDeleted, type: 'danger', time: TOAST_TIME.Short })
                 refreshEvents()
                 handleClose()
             }

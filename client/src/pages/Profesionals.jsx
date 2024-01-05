@@ -27,13 +27,6 @@ const Profesionals = () => {
                 
                 <div className='d-flex gap-3'>
                     <SearchBar placeholder={`${language.Search}...`} handleSearch={handleSearch} value={search}/>
-                    <div>
-                        <Button
-                            className='btn-primary'
-                            icon={faUserPlus}
-                            text={language.buttons.Add}
-                        />
-                    </div>
                 </div>
 
                 <div className='d-flex flex-column align-items-center gap-3'>

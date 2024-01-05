@@ -13,7 +13,7 @@ const getYearsOlds = (birthdate) => {
 
 const PatientData = ({ data, refreshData }) => {
     const { language } = useSettingsContext()
-    const { showModal, handleOpen, handleClose, form } = usePatientModal({ refreshData })
+    const { showModal, handleOpen, handleClose, form, isLoading } = usePatientModal({ refreshData })
 
     return (
         <div className='d-flex flex-column gap-3'>
@@ -93,7 +93,7 @@ const PatientData = ({ data, refreshData }) => {
                 />
             </div>
 
-            <PatientModal form={form} showModal={showModal} handleClose={handleClose}/>
+            <PatientModal form={form} isLoading={isLoading} showModal={showModal} handleClose={handleClose}/>
         </div>
     )
 }

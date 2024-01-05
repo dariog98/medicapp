@@ -24,7 +24,7 @@ const PatientFiles = ({ idPatient }) => {
                         />
                     </div>
                 </div>
-                <div className='d-flex flex-column align-items-center gap-3'>
+                <div className='d-flex flex-column align-items-center'>
                     <Table
                         isLoading={isLoading}
                         items={data ? data.data : []}
