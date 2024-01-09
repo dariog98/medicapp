@@ -1,22 +1,22 @@
-## Rutas API
+## API Routes
 
-### Autenticación
+### Authentication
 
 * **Login**
 
 Method: `POST`
 
-Request Body:
-```json
-{
-    "username": "nombre de usuario",
-    "password": "constraseña de usuario"
-}
-```
-
 Route:
 ```
 /auth/login
+```
+
+Request Body:
+```json
+{
+    "username": "admin",
+    "password": "............"
+}
 ```
 
 Response Body: `ON SUCCESS`
@@ -25,48 +25,22 @@ Response Body: `ON SUCCESS`
     "status": 200,
     "message": "Login user sucessfully",
     "data": {
-        "id": "id de usuario",
-        "names": "nombres del usuario",
-        "surnames": "apellidos del usuario",
-        "username": "nombre de usario",
+        "id": "1",
+        "names": "David",
+        "surnames": "Marcelo",
+        "username": "admin",
         "charge": {
-            "id": "id del cargo",
-            "description": "descripción del cargo"
+            "id": "1",
+            "description": "Admin"
         },
         "role": {
-            "id": "id del rol",
-            "description": "descripción del rol"
+            "id": "1",
+            "description": "Admin"
         },
-        "mail": "correo del usuario",
-        "phone": "teléfono del usuario",
-        "token": "token de acceso del usuario"
+        "mail": "admin@mail.com",
+        "phone": "",
+        "accessToken": "",
+        "refreshToken": "",
     }
 }
 ```
-
-### /register
-
-Método POST
-
-Recibe un body de tipo JSON con los siguientes datos 
-
-{
-    "name": "Nombre de la persona",
-    "username": "nombre de usuario",
-    "password": "contraseña",
-    "idRole": "id del rol(entero)",
-    "idCharge": "id del cargo(entero)",
-}
-
-### /login
-
-Método POST
-
-Recibe un body de tipo JSON con los siguientes datos 
-
-{
-    "username": "nombre de usuario",
-    "password": "contraseña"
-}
-
-/patients 
