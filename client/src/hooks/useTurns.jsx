@@ -18,7 +18,7 @@ const useTurns = ({ idPatient, idProfesional, idTreatment, status, startTime, en
         return turnServices.getAllTurns({ idPatient, idProfesional, idTreatment, startTime, endTime, status, page, order: tableOrder })
     }
 
-    const { isLoading, data } = useFetch(getTurns, [idPatient, idProfesional, status, startTime, endTime])
+    const { isLoading, data } = useFetch(getTurns, [idPatient, idProfesional, idTreatment, status, startTime, endTime])
 
     return {
         isLoading,

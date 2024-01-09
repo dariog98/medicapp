@@ -6,6 +6,12 @@ import Turn from './Turn'
 import Exception from './Exception'
 import Reminder from './Reminder'
 
+const TABS = {
+    [MODALTABS.Turns]: Turn,
+    [MODALTABS.Exceptions]: Exception,
+    [MODALTABS.Reminders]: Reminder,
+}
+
 const EventModal = () => {
     const {
         isLoading,
@@ -19,8 +25,15 @@ const EventModal = () => {
         reminderForm
     } = useScheduleContext()
 
+    const FORMS = {
+        [MODALTABS.Turns]: turnForm,
+        [MODALTABS.Exceptions]: exceptionForm,
+        [MODALTABS.Reminders]: reminderForm,
+    }
+
     const { language } = useSettingsContext()
     const isButtonsDisabled = modalMode !== MODALMODES.Add
+    const Tab = TABS[modalTab]
 
     return (
         <Modal show={showModal} title={language.Events} handleClose={handleClose}>
@@ -50,11 +63,7 @@ const EventModal = () => {
                     />
                 </div>
 
-                <div>
-                    {modalTab === MODALTABS.Turns && <Turn isLoading={isLoading} modalMode={modalMode} form={turnForm}/>}
-                    {modalTab === MODALTABS.Reminders && <Reminder isLoading={isLoading} modalMode={modalMode} form={reminderForm}/>}
-                    {modalTab === MODALTABS.Exceptions && <Exception isLoading={isLoading} modalMode={modalMode} form={exceptionForm}/>}        
-                </div>
+                <Tab isLoading={isLoading} modalMode={modalMode} form={FORMS[modalTab]}/>
             </div>
             
         </Modal>

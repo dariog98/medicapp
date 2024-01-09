@@ -42,7 +42,7 @@ const Exception = ({ isLoading, modalMode, form }) => {
                 <div className='flex-grow-1'>
                     <Input
                         form={form}
-                        label='Fecha'
+                        label={language.rows.StartDate}
                         name='startDate'
                         type='date'
                     />
@@ -51,7 +51,7 @@ const Exception = ({ isLoading, modalMode, form }) => {
                 <div className='flex-grow-1'>
                     <Input
                         form={form}
-                        label='Hora'
+                        label={language.rows.StartTime}
                         name='startTime'
                         type='time'
                     />
@@ -62,7 +62,7 @@ const Exception = ({ isLoading, modalMode, form }) => {
                 <div className='flex-grow-1'>
                     <Input
                         form={form}
-                        label='Fecha'
+                        label={language.rows.EndDate}
                         name='endDate'
                         type='date'
                     />
@@ -71,7 +71,7 @@ const Exception = ({ isLoading, modalMode, form }) => {
                 <div className='flex-grow-1'>
                     <Input
                         form={form}
-                        label='Hora'
+                        label={language.rows.EndTime}
                         name='endTime'
                         type='time'
                     />

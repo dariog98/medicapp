@@ -1,7 +1,7 @@
 import { Sidebar } from './components/basis';
 import ProtectedUserRoute from './components/protect/ProtectedUserRoute';
 import { ROUTES } from './constants/routes';
-import { Configuration, Home, Login, Patient, Patients, Profesional, Profesionals, Schedule } from './pages'
+import { Appointments, Configuration, Home, Login, Patient, Patients, Profesional, Profesionals, Schedule } from './pages'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
   
 const router = createBrowserRouter([
@@ -60,6 +60,15 @@ const router = createBrowserRouter([
                     <div className='d-flex'>
                         <Sidebar/>
                         <Schedule/>
+                    </div>
+                ),
+            },
+            {
+                path: ROUTES.Appointments,
+                element: (
+                    <div className='d-flex'>
+                        <Sidebar/>
+                        <Appointments/>
                     </div>
                 ),
             },

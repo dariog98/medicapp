@@ -13,12 +13,12 @@ const useProfesionalTreatments = ({ search, idProfesional } = {}) => {
         setOrder(newOrder)
     }
 
-    const getProfesionals = async () => {
+    const getTreatments = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
         return await profesionalServices.getTreatments({ idProfesional, search, page, order: tableOrder })
     }
 
-    const { isLoading, data, fechData: refreshTreatments } = useFetch(getProfesionals, [search, page, order])
+    const { isLoading, data, fechData: refreshTreatments } = useFetch(getTreatments, [idProfesional, search, page, order])
 
     return {
         isLoading,

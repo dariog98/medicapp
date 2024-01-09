@@ -4,7 +4,7 @@ import { useSettingsContext } from '../providers/SettingsProvider'
 import Button from './Button'
 import Loading from './Loading'
 
-const AutoComplete = ({ label, before, after, form, name, items, value, isRequired, isDisabled, handleSearch, defaultValue, isLoading }) => {
+const AutoComplete = ({ label, before, after, form, name, items, value, isRequired, isDisabled, handleSearch, defaultValue, isLoading, handleOnChange }) => {
     const { language } = useSettingsContext()
     const [currentValue, setCurrentValue] = useState(defaultValue)
     const searchInput = useRef()
@@ -20,12 +20,14 @@ const AutoComplete = ({ label, before, after, form, name, items, value, isRequir
     const handleOnClickItem = (item) => {
         setCurrentValue(item)
         if (form) form.setValue(name, item)
+        if (handleOnChange) handleOnChange(item)
     }
 
     const handleRemove = () => {
         handleSearch('')
         setCurrentValue(undefined)
         if (form) form.setValue(name, undefined)
+        if (handleOnChange) handleOnChange(undefined)
     }
 
     return (
@@ -51,7 +53,7 @@ const AutoComplete = ({ label, before, after, form, name, items, value, isRequir
                         <div tabIndex='0' className='position-relative rounded w-100 autocomplete'>
                             <input
                                 ref={searchInput}
-                                className='form-control autocomplete-input'
+                                className='form-control form-autocomplete autocomplete-input'
                                 onKeyDown={handleKeyDown}
                                 style={{
                                     borderTopLeftRadius: before ? 0 : 'inherit', borderBottomLeftRadius: before ? 0 : 'inherit',

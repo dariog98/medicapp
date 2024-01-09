@@ -4,7 +4,8 @@ const ROUTES = {
     Profesionals: '/profesionals',
     Configuration: '/configuration',
     Login: '/login',
-    Root: '/'
+    Root: '/',
+    Appointments: '/appointments'
 }
 
 export { ROUTES }
