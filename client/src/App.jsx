@@ -1,9 +1,9 @@
-import { Sidebar } from './components/basis';
-import ProtectedUserRoute from './components/protect/ProtectedUserRoute';
-import { ROUTES } from './constants/routes';
+import { Sidebar } from './components/basis'
+import { ROUTES } from './constants/routes'
 import { Appointments, Configuration, Home, Login, Patient, Patients, Profesional, Profesionals, Schedule } from './pages'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-  
+import ProtectedUserRoute from './components/protect/ProtectedUserRoute'
+
 const router = createBrowserRouter([
     {
         path: ROUTES.Root,
