@@ -6,5 +6,6 @@
 
 ## Test credentials
 
-Username `admin`
-Password `12345678`
+Username: `admin`
+
+Password: `12345678`
