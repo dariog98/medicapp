@@ -1,19 +1,20 @@
 import { Button, Container, Title } from '../components/basis'
 import { faSliders } from '@fortawesome/free-solid-svg-icons'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
-import Main from '../components/configuration/Main'
 import { useSearchParams } from 'react-router-dom'
-import Profile from '../components/configuration/Profile'
+import { Main, Profile } from '../components/configuration'
+import { CONF_TABS } from '../constants/configurations'
 
 const TABS = {
-    Main: 'main',
-    Profile: 'profile'
+    [CONF_TABS.Main]: Main,
+    [CONF_TABS.Profile]: Profile,
 }
 
 const Configuration = () => {
     const { language } = useSettingsContext()
     const [searchParams, setSearchParams] = useSearchParams()
-    const currentTab = searchParams.get('tab') ?? 'main'
+    const currentTab = searchParams.get('tab') ?? CONF_TABS.Main
+    const Tab = TABS[currentTab]
 
     const handleTab = (value) => {
         setSearchParams(params => {
@@ -30,27 +31,20 @@ const Configuration = () => {
                 <div className='d-flex flex-row'>
                     <div className='d-flex flex-column nav-vertical' style={{ width: '150px'}}>
                         <Button
-                            className={currentTab === TABS.Main ? 'active' : ''}
+                            className={currentTab === CONF_TABS.Main ? 'active' : ''}
                             text={language.Main}
-                            handleOnClick={() => handleTab(TABS.Main)}
+                            handleOnClick={() => handleTab(CONF_TABS.Main)}
                         />
 
                         <Button
-                            className={currentTab === TABS.Profile ? 'active' : ''}
+                            className={currentTab === CONF_TABS.Profile ? 'active' : ''}
                             text={language.Profile}
-                            handleOnClick={() => handleTab(TABS.Profile)}
+                            handleOnClick={() => handleTab(CONF_TABS.Profile)}
                         />
                     </div>
 
                     <div className='d-flex flex-column gap-3 flex-grow-1 ps-3'>
-                        {
-                            currentTab === TABS.Main &&
-                            <Main/>
-                        }
-                        {
-                            currentTab === TABS.Profile &&
-                            <Profile/>
-                        }
+                        <Tab/>
                     </div>
                 </div>
             </div>
