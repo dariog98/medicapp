@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../config/mysql.js'
 
-const Turn = sequelize.define(
-    'turns',
+const Appointment = sequelize.define(
+    'appointments',
     {
         createdBy: {
             type: DataTypes.INTEGER,
@@ -43,4 +43,4 @@ const Turn = sequelize.define(
     }
 )
 
-export default Turn
+export default Appointment

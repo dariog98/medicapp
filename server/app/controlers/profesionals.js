@@ -1,7 +1,7 @@
 import { Op, Sequelize } from 'sequelize'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { handleResponse } from '../helpers/handleResponse.js'
-import { Exception, Reminder, Treatment, Turn, User } from '../models/index.js'
+import { Exception, Reminder, Treatment, Appointment, User } from '../models/index.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'
 import { ClientError, ServerError } from '../constants/errors.js'
 import { getTokenFromRequest } from '../helpers/generateToken.js'
@@ -42,7 +42,7 @@ const getProfesionalEvents = async (request, response) => {
         )
     )
 
-    const turns = await Turn.findAll({
+    const appointments = await Appointment.findAll({
         where: { idProfesional, dateTime: { [Op.between]: [startTime, endTime] } },
         include: ['createdByUser', 'modifiedByUser', 'profesional', 'patient', 'treatment'],
     })
@@ -58,11 +58,11 @@ const getProfesionalEvents = async (request, response) => {
     })
 
     const data = [
-        ...turns.map(t => {
-            const turn = t.get()
+        ...appointments.map(t => {
+            const appointment = t.get()
 
-            const startTime = new Date(turn.dateTime)
-            const [hours, minutes] = turn.duration.split(':')
+            const startTime = new Date(appointment.dateTime)
+            const [hours, minutes] = appointment.duration.split(':')
             const endTime = new Date(Date.UTC(
                 startTime.getUTCFullYear(),
                 startTime.getUTCMonth(),
@@ -71,7 +71,7 @@ const getProfesionalEvents = async (request, response) => {
                 startTime.getUTCMinutes() + parseInt(minutes)
             ))
 
-            return { type: 'turn', startTime, endTime, ...turn }
+            return { type: 'appointment', startTime, endTime, ...appointment }
         }),
         ...exceptions.map(ex => {
             const exception = ex.get()
@@ -152,57 +152,57 @@ const deleteProfesionalTreatment = async (request, response) => {
     })
     .catch(error => {
         const errorNumber = Number(error?.original?.errno)
-        if (errorNumber === 1451) throw new ClientError("The treatment can't be deleted since it was assigned to a turn", 409, 1451)
+        if (errorNumber === 1451) throw new ClientError("The treatment can't be deleted since it was assigned to a appointment", 409, 1451)
         throw new ServerError('An error occurred while trying to delete the treatment', 500)
     })
 }
 
-const createTurn = async (request, response) => {
+const createAppointment = async (request, response) => {
     const { id: idProfesional } = request.params
     const { idPatient, dateTime, duration, idTreatment, description } = request.body
     const accessToken = await getTokenFromRequest(request)
     const createdBy = accessToken.idUser
 
-    await Turn.create({ idProfesional, idPatient, dateTime, duration, idTreatment, description, createdBy })
+    await Appointment.create({ idProfesional, idPatient, dateTime, duration, idTreatment, description, createdBy })
     .then(() => {
-        handleResponse({ response, statusCode: 201, message: 'Turn create successfully' })
+        handleResponse({ response, statusCode: 201, message: 'Appointment create successfully' })
     })
     .catch(error => {
         console.log(error)
-        throw new ServerError('An error occurred while trying to create the turn', 500)
+        throw new ServerError('An error occurred while trying to create the appointment', 500)
     })
 }
 
-const updateTurn = async (request, response) => {
-    const { id: idProfesional, turn: idTurn } = request.params
+const updateAppointment = async (request, response) => {
+    const { id: idProfesional, appointment: idAppointment } = request.params
     const { dateTime, duration, idTreatment, description } = request.body
     const accessToken = await getTokenFromRequest(request)
     const modifiedBy = accessToken.idUser
 
-    const turn = await Turn.findOne({ where: { idProfesional, id: idTurn } })
-    if (!turn) throw new ClientError('Turn was not found or does not exist', 404)
+    const appointment = await Appointment.findOne({ where: { idProfesional, id: idAppointment } })
+    if (!appointment) throw new ClientError('Appointment was not found or does not exist', 404)
 
-    turn.update({ dateTime, duration, idTreatment: idTreatment ?? null, description, modifiedBy })
+    appointment.update({ dateTime, duration, idTreatment: idTreatment ?? null, description, modifiedBy })
     .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Turn updated successfully' })
+        handleResponse({ response, statusCode: 200, message: 'Appointment updated successfully' })
     })
     .catch(error => {
-        throw new ServerError('An error occurred while trying to update the turn', 500)
+        throw new ServerError('An error occurred while trying to update the appointment', 500)
     })
 }
 
-const deleteTurn = async (request, response) => {
-    const { id: idProfesional, turn: idTurn } = request.params
+const deleteAppointment = async (request, response) => {
+    const { id: idProfesional, appointment: idAppointment } = request.params
 
-    const turn = await Turn.findOne({ where: { idProfesional, id: idTurn } })
-    if (!turn) throw new ClientError('Turn was not found or does not exist', 404)
+    const appointment = await Appointment.findOne({ where: { idProfesional, id: idAppointment } })
+    if (!appointment) throw new ClientError('Appointment was not found or does not exist', 404)
 
-    turn.destroy()
+    appointment.destroy()
     .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Turn deleted successfully' })
+        handleResponse({ response, statusCode: 200, message: 'Appointment deleted successfully' })
     })
     .catch(error => {
-        throw new ServerError('An error occurred while trying to delete the turn', 500)
+        throw new ServerError('An error occurred while trying to delete the appointment', 500)
     })
 }
 
@@ -313,9 +313,9 @@ const profesionalController = {
     createTreatment: catchedAsync(createProfesionalTreatment),
     updateTreatment: catchedAsync(updateProfesionalTreatment),
     deleteTreatment: catchedAsync(deleteProfesionalTreatment),
-    createTurn: catchedAsync(createTurn),
-    updateTurn: catchedAsync(updateTurn),
-    deleteTurn: catchedAsync(deleteTurn),
+    createAppointment: catchedAsync(createAppointment),
+    updateAppointment: catchedAsync(updateAppointment),
+    deleteAppointment: catchedAsync(deleteAppointment),
     createException: catchedAsync(createException),
     updateException: catchedAsync(updateException),
     deleteException: catchedAsync(deleteException),

@@ -2,8 +2,8 @@ import { Router } from 'express'
 import { validateCreate } from '../validators/patients.js'
 import { validateCreateNote, validateUpdateNote } from '../validators/notes.js'
 import { checkAuth } from '../middleware/auth.js'
-import patientController from '../controlers/patients.js'
 import { uploadMiddleware } from '../middleware/storage.js'
+import patientController from '../controlers/patients.js'
 
 const router = Router()
 
@@ -27,8 +27,8 @@ router.post('/:id/notes', checkAuth, validateCreateNote, patientController.creat
 router.patch('/:id/notes/:note', checkAuth, validateUpdateNote, patientController.updatePatientNote)
 router.delete('/:id/notes/:note', checkAuth, patientController.deletePatientNote)
 
-// Turns
-router.get('/:id/turns', checkAuth, patientController.getPatientTurns)
+// Appointments
+router.get('/:id/appointments', checkAuth, patientController.getPatientAppointments)
 
 // Treatments
 router.get('/:id/treatments', checkAuth, patientController.getPatientTreatments)

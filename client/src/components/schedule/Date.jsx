@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { timesRows } from '../../constants/timesRows'
 
 import EventContainer from './EventContainer'
-import EventTurn from './EventTurn'
+import EventAppointment from './EventAppointment'
 import EventException from './EventException'
 import EventReminder from './EventReminder'
 import EventPreview from './EventPreview'
@@ -35,7 +35,7 @@ const DateEvents = ({ currentDate, events }) => {
                         className='btn-outline-system rounded-0 rounded-top border-bottom-0'
                         handleOnClick={offSwitch}
                         isActived={!mode}
-                        text={language.Turns}
+                        text={language.Appointments}
                     />
                     <Button
                         className='btn-outline-system rounded-0 rounded-top border-bottom-0'
@@ -66,7 +66,7 @@ const DateEvents = ({ currentDate, events }) => {
                                                 className='add-turn d-flex align-items-center text-bg-primary my-2 me-3 p-2 rounded-2'
                                                 onClick={() => handleOpen({ date: day, time }, MODALTABS.Turns, MODALMODES.Add)}
                                             >
-                                                {`${language.buttons.AddTurnTo} ${time}`}
+                                                {`${language.buttons.AddAppointmentTo} ${time}`}
                                             </div>
                                         </div>
                                     </div>
@@ -74,9 +74,9 @@ const DateEvents = ({ currentDate, events }) => {
                             }
                             <div className='position-absolute' style={{ top: 0, bottom: 0, left: 0, right: 0, pointerEvents: 'none' }}>
                                 {
-                                    events.turn?.map(event =>
+                                    events.appointment?.map(event =>
                                         <EventContainer key={event.id} data={event} rowHeight={rowHeight} dateStart={dateStart} dateEnd={dateEnd}>
-                                            <EventTurn data={event} handleOnClick={() => previewModal.handleOpen(event)}/>
+                                            <EventAppointment data={event} handleOnClick={() => previewModal.handleOpen(event)}/>
                                         </EventContainer>
                                     )
                                 }

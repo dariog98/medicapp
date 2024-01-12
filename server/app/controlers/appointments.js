@@ -1,10 +1,10 @@
 import { Op } from 'sequelize'
 import { handleResponse } from '../helpers/handleResponse.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'
-import { Turn } from '../models/index.js'
+import { Appointment } from '../models/index.js'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 
-const getAllTurns = async (request, response) => {
+const getAllAppointments = async (request, response) => {
     const {
         idPatient,
         idProfesional,
@@ -29,7 +29,7 @@ const getAllTurns = async (request, response) => {
         literal.dateTime = { ...literal['dateTime'], [Op.lte]: endTime }
     }
 
-    const { totalPages, data, total } = await paginatedQuery(Turn, rows, page, order, {
+    const { totalPages, data, total } = await paginatedQuery(Appointment, rows, page, order, {
         idPatient,
         idProfesional,
         idTreatment,
@@ -39,8 +39,8 @@ const getAllTurns = async (request, response) => {
     handleResponse({ response, statusCode: 200, data, total, totalPages })
 }
 
-const turnsController = {
-    getAllTurns: catchedAsync(getAllTurns)
+const appointmentController = {
+    getAllAppointments: catchedAsync(getAllAppointments)
 }
 
-export default turnsController
+export default appointmentController

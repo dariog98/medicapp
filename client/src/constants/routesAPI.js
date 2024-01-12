@@ -7,7 +7,7 @@ const RouteAPI = {
     Profesionals: `${baseAPI}/profesionals`,
     Patients: `${baseAPI}/patients`,
     Files: `${baseAPI}/files`,
-    Turns: `${baseAPI}/turns`,
+    Appointments: `${baseAPI}/appointments`,
     Reminders: `${baseAPI}/reminders`,
     Exceptions: `${baseAPI}/exceptions`,
     Users: `${baseAPI}/users`,

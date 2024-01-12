@@ -18,7 +18,7 @@ const PatientTreatments = ({ idPatient }) => {
                         <Loading size='small'/>
                     </>
                     :
-                        data && data.data.length ?
+                        data && data.data?.length ?
                         <div className='d-flex flex-column gap-3'>
                             {
                                 data.data.map(treatment =>

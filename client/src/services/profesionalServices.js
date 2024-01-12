@@ -27,22 +27,22 @@ const getEvents = async ({ idProfesional, startTime, endTime }) => {
     return await response.json()
 }
 
-const createTurn = async ({ idProfesional, data }) => {
-    const url = `${RouteAPI.Profesionals}/${idProfesional}/turns`
+const createAppointment = async ({ idProfesional, data }) => {
+    const url = `${RouteAPI.Profesionals}/${idProfesional}/appointments`
     const request = newRequest({ url, method: METHODS.Post, contentType: CONTENT_TYPES.JSON, body: data, userToken: true })
     const response = await fetch(request)
     return await response.json()
 }
 
-const updateTurn = async ({ idProfesional, idTurn, data }) => {
-    const url = `${RouteAPI.Profesionals}/${idProfesional}/turns/${idTurn}`
+const updateAppointment = async ({ idProfesional, idAppointment, data }) => {
+    const url = `${RouteAPI.Profesionals}/${idProfesional}/appointments/${idAppointment}`
     const request = newRequest({ url, method: METHODS.Patch, contentType: CONTENT_TYPES.JSON, body: data, userToken: true })
     const response = await fetch(request)
     return await response.json()
 }
 
-const deleteTurn = async ({ idProfesional, idTurn }) => {
-    const url = `${RouteAPI.Profesionals}/${idProfesional}/turns/${idTurn}`
+const deleteAppointment = async ({ idProfesional, idAppointment }) => {
+    const url = `${RouteAPI.Profesionals}/${idProfesional}/appointments/${idAppointment}`
     const request = newRequest({ url, method: METHODS.Delete, userToken: true })
     const response = await fetch(request)
     return await response.json()
@@ -126,9 +126,9 @@ const profesionalServices = {
     getAllProfesionals,
     getEvents,
     getTreatments,
-    createTurn,
-    updateTurn,
-    deleteTurn,
+    createAppointment,
+    updateAppointment,
+    deleteAppointment,
     createException,
     updateException,
     deleteException,

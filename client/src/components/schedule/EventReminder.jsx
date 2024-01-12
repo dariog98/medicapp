@@ -4,7 +4,7 @@ import { getStringTimeInTimeZone } from '../../constants/dateToString'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-solid-svg-icons'
 
-function EventReminder({ data, handleOnClick }) {
+const EventReminder = ({ data, handleOnClick }) => {
     const { timeZone } = useSettingsContext()
     const time = getStringTimeInTimeZone(new Date(data.dateTime), timeZone)
 

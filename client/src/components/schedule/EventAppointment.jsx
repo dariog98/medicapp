@@ -3,13 +3,13 @@ import { useSettingsContext } from '../providers/SettingsProvider'
 import { COLORS } from '../../constants/eventColors'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheckCircle, faUser } from '@fortawesome/free-solid-svg-icons'
-import { TURN_STATUS } from '../../constants/turn'
+import { APPOINTMENT_STATUS } from '../../constants/appointment'
 
-function EventTurn({ data, handleOnClick }) {
+const EventAppointment = ({ data, handleOnClick }) => {
     const { timeZone } = useSettingsContext()
     const startTime = getStringTimeInTimeZone(new Date(data.startTime), timeZone)
     const endTime   = getStringTimeInTimeZone(new Date(data.endTime), timeZone)
-    const isConfirmed = data.status === TURN_STATUS.Confirmed
+    const isConfirmed = data.status === APPOINTMENT_STATUS.Confirmed
 
     return (
         <>
@@ -43,4 +43,4 @@ function EventTurn({ data, handleOnClick }) {
     )
 }
 
-export default EventTurn
+export default EventAppointment

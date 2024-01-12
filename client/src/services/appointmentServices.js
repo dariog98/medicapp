@@ -1,7 +1,7 @@
 import { newRequest } from '../constants/request'
 import { RouteAPI } from '../constants/routesAPI'
 
-const getAllTurns = async ({ idPatient, idProfesional, idTreatment, startTime, endTime, page, order }) => {
+const getAllAppointments = async ({ idPatient, idProfesional, idTreatment, startTime, endTime, page, order }) => {
     const params = new URLSearchParams({
         page: page ?? 1,
         idPatient: idPatient ?? '',
@@ -12,14 +12,14 @@ const getAllTurns = async ({ idPatient, idProfesional, idTreatment, startTime, e
         order: JSON.stringify(order ?? []),
     })
 
-    const url = `${RouteAPI.Turns}?${params.toString()}`
+    const url = `${RouteAPI.Appointments}?${params.toString()}`
     const request = newRequest({ url, userToken: true })
     const response = await fetch(request)
     return await response.json()
 }
 
-const turnServices = {
-    getAllTurns
+const appointmentServices = {
+    getAllAppointments
 }
 
-export default turnServices
+export default appointmentServices

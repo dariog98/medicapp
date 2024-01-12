@@ -8,7 +8,7 @@ import { faCircleCheck } from '@fortawesome/free-regular-svg-icons'
 import { faCalendarDays, faUser, faUserDoctor } from '@fortawesome/free-solid-svg-icons'
 import Button from './Button'
 
-const TurnItem = ({ data }) => {
+const AppointmentItem = ({ data }) => {
     const { isThemeDark, timeZone, language } = useSettingsContext()
     const navigate = useNavigate()
     const date = new Date(data.dateTime)
@@ -71,4 +71,4 @@ const TurnItem = ({ data }) => {
     )
 }
 
-export default TurnItem
+export default AppointmentItem

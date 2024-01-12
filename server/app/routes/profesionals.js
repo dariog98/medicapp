@@ -18,10 +18,10 @@ router.delete('/:id/treatments/:treatment', checkUser, profesionalController.del
 // Events
 router.get('/:id/events', checkAuth, profesionalController.getEvents)
 
-// Turns
-router.post('/:id/turns', checkAuth, profesionalController.createTurn)
-router.patch('/:id/turns/:turn', checkAuth, profesionalController.updateTurn)
-router.delete('/:id/turns/:turn', checkAuth, profesionalController.deleteTurn)
+// Appointments
+router.post('/:id/appointments', checkAuth, profesionalController.createAppointment)
+router.patch('/:id/appointments/:appointment', checkAuth, profesionalController.updateAppointment)
+router.delete('/:id/appointments/:appointment', checkAuth, profesionalController.deleteAppointment)
 
 // Exceptions
 router.post('/:id/exceptions', checkAuth, profesionalController.createException)

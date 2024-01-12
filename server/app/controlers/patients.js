@@ -3,7 +3,7 @@ import { ClientError } from '../constants/errors.js'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { getTokenFromRequest } from '../helpers/generateToken.js'
 import { handleResponse } from '../helpers/handleResponse.js'
-import { File, Note, Patient, Treatment, Turn } from '../models/index.js'
+import { File, Note, Patient, Treatment, Appointment } from '../models/index.js'
 import { paginatedQuery } from '../utils/paginatedQuery.js'
 import { sequelize } from '../config/mysql.js'
 import { helperImage } from '../helpers/helperImage.js'
@@ -17,9 +17,9 @@ const getAllPatients = async (request, response) => {
     if (idProfesional) {
         const query = `
             select distinct idPatient
-            from turns
-            where turns.idProfesional = ${Number(idProfesional)}
-            ${idTreatment ? `and turns.idTreatment = ${Number(idTreatment)}`  : ''}
+            from appointments
+            where appointments.idProfesional = ${Number(idProfesional)}
+            ${idTreatment ? `and appointments.idTreatment = ${Number(idTreatment)}`  : ''}
         `
         const [results] = await sequelize.query(query)
         const patients = results.map(row => row.idPatient)
@@ -129,12 +129,12 @@ const createPatientPhoto = async (request, response) => {
     })
 }
 
-const getPatientTurns = async (request, response) => {
+const getPatientAppointments = async (request, response) => {
     const { id: idPatient } = request.params
     const { idProfesional, idTreatment, status, rows, page, startTime, endTime, order: stringOrder } = request.query
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
     
-    const { totalPages, data, total } = await paginatedQuery(Turn, rows, page, order, {
+    const { totalPages, data, total } = await paginatedQuery(Appointment, rows, page, order, {
         idPatient,
         idProfesional,
         idTreatment,
@@ -151,8 +151,8 @@ const getPatientTreatments = async (request, response) => {
     const { status: status, order: stringOrder, page } = request.query
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
 
-    const turns = await Turn.findAll({ where: { idPatient }, raw: true })
-    const treatmentsOfPatient = turns.map(turn => turn.idTreatment)
+    const appointments = await Appointment.findAll({ where: { idPatient }, raw: true })
+    const treatmentsOfPatient = appointments.map(appointment => appointment.idTreatment)
 
     const { totalPages, data, total } = await paginatedQuery(Treatment, 100, page, order, {
         id: treatmentsOfPatient
@@ -214,7 +214,7 @@ const patientController = {
     getPatientFiles: catchedAsync(getPatientFiles),
     getPhotos: catchedAsync(getPatientPhotos),
     createPhoto: catchedAsync(createPatientPhoto),
-    getPatientTurns: catchedAsync(getPatientTurns),
+    getPatientAppointments: catchedAsync(getPatientAppointments),
     getPatientTreatments: catchedAsync(getPatientTreatments),
     getPatientNotes: catchedAsync(getPatientNotes),
     createPatientNote: catchedAsync(createPatientNote),

@@ -7,7 +7,7 @@ import Patient from './patient.js'
 import Reminder from './reminder.js'
 import Role from './role.js'
 import Treatment from './treatment.js'
-import Turn from './turn.js'
+import Appointment from './appointment.js'
 import User from './user.js'
 
 /* Patient - File */
@@ -52,68 +52,68 @@ Reminder.belongsTo(
     }
 )
 
-/* Patient - Turn */
+/* Patient - Appointment */
 Patient.hasMany(
-    Turn,{
+    Appointment,{
         foreignKey: 'idPatient'
     }
 )
 
-Turn.belongsTo(
+Appointment.belongsTo(
     Patient,{
         foreignKey: 'idPatient',
         as: 'patient'
     }
 )
 
-/* Treatment - Turn */
+/* Treatment - Appointment */
 Treatment.hasMany(
-    Turn,{
+    Appointment,{
         foreignKey: 'idTreatment'
     }
 )
 
-Turn.belongsTo(
+Appointment.belongsTo(
     Treatment,{
         foreignKey: 'idTreatment',
         as: 'treatment'
     }
 )
 
-/* Turn - User */
+/* Appointment - User */
 User.hasMany(
-    Turn,{
+    Appointment,{
         foreignKey: 'idProfesional'
     }
 )
 
 User.hasMany(
-    Turn,{
+    Appointment,{
         foreignKey: 'createdBy'
     }
 )
 
 User.hasMany(
-    Turn,{
+    Appointment,{
         foreignKey: 'modifiedBy'
     }
 )
 
-Turn.belongsTo(
+Appointment.belongsTo(
     User,{
         foreignKey: 'createdBy',
         as: 'createdByUser'
     }
 )
 
-Turn.belongsTo(
+Appointment.belongsTo(
     User,{
         foreignKey: 'modifiedBy',
         as: 'modifiedByUser'
     }
 )
 
-Turn.belongsTo(
+Appointment.belongsTo(
     User,{
         foreignKey: 'idProfesional',
         as: 'profesional'
@@ -249,4 +249,4 @@ User.getById = (idUser) => {
     })
 }
 
-export { Charge, Exception, File, Note, Patient, Reminder, Role, Treatment, Turn, User }
+export { Charge, Exception, File, Note, Patient, Reminder, Role, Treatment, Appointment, User }

@@ -3,7 +3,7 @@ import { Container, NotFound, Title, Loading } from '../components/basis'
 import { usePatient } from '../hooks'
 import { useParams } from 'react-router-dom'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
-import { PatientData, PatientFiles, PatientNotes, PatientPhotos, PatientTreatments, PatientTurns } from '../components/patient'
+import { PatientAppointments, PatientData, PatientFiles, PatientNotes, PatientPhotos, PatientTreatments } from '../components/patient'
 
 const Patient = () => {
     const { language } = useSettingsContext()
@@ -26,7 +26,7 @@ const Patient = () => {
                             <PatientFiles idPatient={idPatient}/>
                         </div>
                         <div className='d-flex flex-column gap-3'>
-                            <PatientTurns idPatient={idPatient}/>
+                            <PatientAppointments idPatient={idPatient}/>
                             <PatientTreatments idPatient={idPatient}/>
                         </div>
                     </div>

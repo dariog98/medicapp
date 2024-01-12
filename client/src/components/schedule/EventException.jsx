@@ -4,7 +4,7 @@ import { COLORS } from '../../constants/eventColors'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLock } from '@fortawesome/free-solid-svg-icons'
 
-function EventException({ data, handleOnClick }) {
+const EventException = ({ data, handleOnClick }) => {
     const { language, timeZone } = useSettingsContext()
     const startDateTime = getStringDateTimeInLanguageTimeZone(new Date(data.startDateTime), language.string, timeZone)
     const endDateTime = getStringDateTimeInLanguageTimeZone(new Date(data.endDateTime), language.string, timeZone)

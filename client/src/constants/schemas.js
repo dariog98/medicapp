@@ -24,7 +24,7 @@ const schemaNote = yup.object({
 })
 
 
-const schemaTurn = yup.object({
+const schemaAppointment = yup.object({
     patient: yup.object().shape({ id: yup.string().required("El paciente ingresado no es válido") }),
     date: yup.string().required(language.messages.FieldRequired),
     time: yup.string().required(language.messages.FieldRequired),
@@ -63,7 +63,7 @@ export {
     schemaNote,
     schemaException,
     schemaReminder,
-    schemaTurn,
+    schemaAppointment,
     schemaTreatment,
     schemaUserPassword
 }

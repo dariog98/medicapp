@@ -2,7 +2,7 @@ import express from 'express'
 import { router as patientRouter } from './patients.js'
 import { router as fileRouter } from './files.js'
 import { router as authRouter } from './auth.js'
-import { router as turnRouter } from './turns.js'
+import { router as appointmentRouter } from './appointments.js'
 import { router as reminderRouter } from './reminders.js'
 import { router as chargeRouter } from './charges.js'
 import { router as profesionalRouter } from './profesionals.js'
@@ -17,7 +17,7 @@ router.use('/files', fileRouter)
 router.use('/auth', authRouter)
 router.use('/charges', chargeRouter)
 router.use('/profesionals', profesionalRouter)
-router.use('/turns', turnRouter)
+router.use('/appointments', appointmentRouter)
 router.use('/reminders', reminderRouter)
 router.use('/users', userRouter)
 router.use('/roles', rolesRouter)

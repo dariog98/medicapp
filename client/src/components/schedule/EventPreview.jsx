@@ -7,9 +7,9 @@ import { MODALMODES, MODALTABS } from '../../constants/modal'
 import { useScheduleContext } from '../providers/ScheduleProvider'
 
 const TYPES = {
-    'exception': MODALTABS.Exceptions,
-    'reminder': MODALTABS.Reminders,
-    'turn': MODALTABS.Turns
+    'exception': MODALTABS.Exception,
+    'reminder': MODALTABS.Reminder,
+    'appointment': MODALTABS.Appointment
 }
 
 const EventPreview = ({ data, showModal, handleClose }) => {
@@ -34,7 +34,7 @@ const EventPreview = ({ data, showModal, handleClose }) => {
 
     return (
         <Modal
-            title={isReminder ? language.buttons.Reminder : isException ? language.buttons.Exception : language.buttons.Turn}
+            title={isReminder ? language.buttons.Reminder : isException ? language.buttons.Exception : language.buttons.Appointment}
             show={showModal}
             handleClose={handleClose}
             className={isException ? 'text-light pattern' : 'text-light'}

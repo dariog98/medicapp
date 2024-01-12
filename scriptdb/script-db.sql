@@ -81,7 +81,7 @@ create table treatments (
     unique key treatments_unique_profesional_description (idProfesional, description)
 );
 
-create table turns (
+create table appointments (
     id int auto_increment primary key,
     createdBy int not null,
     modifiedBy int null,
@@ -94,12 +94,12 @@ create table turns (
     status int not null default 0,
     createdAt timestamp not null default current_timestamp,
     updatedAt timestamp null,
-    constraint fk_turns_created foreign key (createdBy) references users(id),
-    constraint fk_turns_modified foreign key (modifiedBy) references users(id),
-    constraint fk_turns_profesionals foreign key (idProfesional) references users(id),
-    constraint fk_turns_patients foreign key (idPatient) references patients(id),
-    constraint fk_turns_treatment foreign key (idTreatment) references treatments(id),
-    unique key turns_unique_idProfesional_dateTime (idProfesional, dateTime)
+    constraint fk_appointments_created foreign key (createdBy) references users(id),
+    constraint fk_appointments_modified foreign key (modifiedBy) references users(id),
+    constraint fk_appointments_profesionals foreign key (idProfesional) references users(id),
+    constraint fk_appointments_patients foreign key (idPatient) references patients(id),
+    constraint fk_appointments_treatment foreign key (idTreatment) references treatments(id),
+    unique key appointments_unique_idProfesional_dateTime (idProfesional, dateTime)
 );
 
 create table exceptions (
@@ -133,47 +133,46 @@ create table reminders (
     constraint fk_reminders_patients foreign key (idPatient) references patients(id)
 );
 
--- Vista que une turnos y excepcions
-create view turns_and_exceptions as (
-    select id, idProfesional, 'turn' as type, dateTime as startDateTime, ADDTIME(dateTime, duration) as endDateTime
-    from turns
+create view appointments_and_exceptions as (
+    select id, idProfesional, 'appointment' as type, dateTime as startDateTime, ADDTIME(dateTime, duration) as endDateTime
+    from appointments
     union
     select id, idProfesional, 'exception' as type, startDateTime, endDateTime
     from exceptions
 );
 
-drop trigger if exists controlTurnInsert;
+drop trigger if exists controlAppointmentInsert;
 delimiter //
-create trigger controlTurnInsert before insert on turns
+create trigger controlAppointmentInsert before insert on appointments
 for each row
 if exists(
-	select id from turns_and_exceptions as te
-	where te.idProfesional = new.idProfesional and 
+	select id from appointments_and_exceptions as ae
+	where ae.idProfesional = new.idProfesional and 
 	(
-		(new.dateTime < te.startDateTime and ADDTIME(new.dateTime, new.duration) > te.startDateTime) or
-		(ADDTIME(new.dateTime, new.duration) >= te.endDateTime and new.dateTime < te.endDateTime) or
-		(new.dateTime >= te.startDateTime and ADDTIME(new.dateTime, new.duration) <= te.endDateTime)
+		(new.dateTime < ae.startDateTime and ADDTIME(new.dateTime, new.duration) > ae.startDateTime) or
+		(ADDTIME(new.dateTime, new.duration) >= ae.endDateTime and new.dateTime < ae.endDateTime) or
+		(new.dateTime >= ae.startDateTime and ADDTIME(new.dateTime, new.duration) <= ae.endDateTime)
 	)
 ) then
-	signal sqlstate '50001' set MESSAGE_TEXT = 'The turn can not be inserted. The schedule is busy.';
+	signal sqlstate '50001' set MESSAGE_TEXT = 'The appointment can not be inserted. The schedule is busy.';
 end if; //
 delimiter ;
 
-drop trigger if exists controlTurnUpdate;
+drop trigger if exists controlAppointmentUpdate;
 delimiter //
-create trigger controlTurnUpdate before update on turns
+create trigger controlAppointmentsUpdate before update on appointments
 for each row
 if exists(
-	select id from turns_and_exceptions as te
-	where not (te.id = new.id and te.type = 'turn')
-	and te.idProfesional = new.idProfesional and
+	select id from appointments_and_exceptions as ae
+	where not (ae.id = new.id and ae.type = 'appointment')
+	and ae.idProfesional = new.idProfesional and
 	(
-		(new.dateTime < te.startDateTime and ADDTIME(new.dateTime, new.duration) > te.startDateTime) or
-		(ADDTIME(new.dateTime, new.duration) >= te.endDateTime and new.dateTime < te.endDateTime) or
-		(new.dateTime >= te.startDateTime and ADDTIME(new.dateTime, new.duration) <= te.endDateTime)
+		(new.dateTime < ae.startDateTime and ADDTIME(new.dateTime, new.duration) > ae.startDateTime) or
+		(ADDTIME(new.dateTime, new.duration) >= ae.endDateTime and new.dateTime < ae.endDateTime) or
+		(new.dateTime >= ae.startDateTime and ADDTIME(new.dateTime, new.duration) <= ae.endDateTime)
 	)
 ) then
-	signal sqlstate '50001' set MESSAGE_TEXT = 'The turn can not be updated. The schedule is busy.';
+	signal sqlstate '50001' set MESSAGE_TEXT = 'The appointment can not be updated. The schedule is busy.';
 end if; //
 delimiter ;
 
@@ -182,12 +181,12 @@ delimiter //
 create trigger controlExceptionInsert before insert on exceptions
 for each row
 if exists(
-	select id from turns_and_exceptions as te
-	where te.idProfesional = new.idProfesional and 
+	select id from appointments_and_exceptions as ae
+	where ae.idProfesional = new.idProfesional and 
 	(
-		(new.startDateTime < te.startDateTime and new.endDateTime > te.startDateTime) or
-		(new.endDateTime >= te.endDateTime and new.startDateTime < te.endDateTime) or
-		(new.startDateTime >= te.startDateTime and new.endDateTime <= te.endDateTime)
+		(new.startDateTime < ae.startDateTime and new.endDateTime > ae.startDateTime) or
+		(new.endDateTime >= ae.endDateTime and new.startDateTime < ae.endDateTime) or
+		(new.startDateTime >= ae.startDateTime and new.endDateTime <= ae.endDateTime)
 	)
 ) then
 	signal sqlstate '50001' set MESSAGE_TEXT = 'The exception can not be inserted. The schedule is busy.';
@@ -199,13 +198,13 @@ delimiter //
 create trigger controlExceptionUpdate before update on exceptions
 for each row
 if exists(
-	select id from turns_and_exceptions as te
-	where not (te.id = new.id and te.type = 'exception')
-	and te.idProfesional = new.idProfesional and
+	select id from appointments_and_exceptions as ae
+	where not (ae.id = new.id and ae.type = 'exception')
+	and ae.idProfesional = new.idProfesional and
 	(
-		(new.startDateTime < te.startDateTime and new.endDateTime > te.startDateTime) or
-		(new.endDateTime >= te.endDateTime and new.startDateTime < te.endDateTime) or
-		(new.startDateTime >= te.startDateTime and new.endDateTime <= te.endDateTime)
+		(new.startDateTime < ae.startDateTime and new.endDateTime > ae.startDateTime) or
+		(new.endDateTime >= ae.endDateTime and new.startDateTime < ae.endDateTime) or
+		(new.startDateTime >= ae.startDateTime and new.endDateTime <= ae.endDateTime)
 	)
 ) then
 	signal sqlstate '50001' set MESSAGE_TEXT = 'The exception can not be updated. The schedule is busy.';

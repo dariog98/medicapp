@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendarWeek, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
-import { AutoComplete, Container, Loading, Title, TurnList } from '../components/basis'
-import { usePatients, useProfesionalTreatments, useProfesionals, useTurns } from '../hooks'
+import { AppointmentsList, AutoComplete, Container, Loading, Title } from '../components/basis'
+import { useAppointments, usePatients, useProfesionalTreatments, useProfesionals } from '../hooks'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
 import { useSearchParams } from 'react-router-dom'
 import { useState } from 'react'
@@ -22,7 +22,7 @@ const Appointments = () => {
     const { isLoading: isLoadingProfesionals, data: dataProfesionals } = useProfesionals({ search: searchProfesional })
     const { isLoading: isLoadingTreatments, data: dataTreatments } = useProfesionalTreatments({ search: searchTreatment, idProfesional })
 
-    const { isLoading, data } = useTurns({ idPatient, idProfesional, idTreatment })
+    const { isLoading, data } = useAppointments({ idPatient, idProfesional, idTreatment })
 
     const handleSearchPatient = (patient) => {
         setSearchParams(params => {
@@ -48,7 +48,7 @@ const Appointments = () => {
     return (
         <Container>
             <div className='d-flex flex-column gap-3'>
-                <Title icon={faCalendarWeek} text={language.Turns}/>
+                <Title icon={faCalendarWeek} text={language.Appointments}/>
 
                 <div className='d-flex gap-3'>
                     <div className='flex-grow-1'>
@@ -95,7 +95,7 @@ const Appointments = () => {
                     </>
                     :
                         data &&
-                        <TurnList data={data.data}/>
+                        <AppointmentsList data={data.data}/>
                 }
             </div>
         </Container>

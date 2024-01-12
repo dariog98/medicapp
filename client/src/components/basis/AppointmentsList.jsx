@@ -1,8 +1,8 @@
 import { useSettingsContext } from '../providers/SettingsProvider'
+import AppointmentItem from './AppointmentItem'
 import Loading from './Loading'
-import TurnItem from './TurnItem'
 
-const TurnsList = ({ isLoading, data }) => {
+const AppointmentsList = ({ isLoading, data }) => {
     const { language } = useSettingsContext()
 
     return (
@@ -13,9 +13,9 @@ const TurnsList = ({ isLoading, data }) => {
                         <Loading size='small'/>
                     </div>
                 :
-                    data.length ?
+                    data?.length ?
                     <>
-                        {data.map(turn => <TurnItem key={turn.id} data={turn}/>)}
+                        {data.map(turn => <AppointmentItem key={turn.id} data={turn}/>)}
                     </>
                     :
                     <>
@@ -28,4 +28,4 @@ const TurnsList = ({ isLoading, data }) => {
     )
 }
 
-export default TurnsList
+export default AppointmentsList

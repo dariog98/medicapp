@@ -1,4 +1,4 @@
-import { faCheck, faMagnifyingGlass, faX } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { COLORS } from '../../../constants/eventColors'
 import { MODALMODES } from '../../../constants/modal'
 import { AutoComplete, Button, Input, Select, Textarea } from '../../basis'
@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useScheduleContext } from '../../providers/ScheduleProvider'
 
-const Turn = ({ isLoading, modalMode, form }) => {
+const Appointment = ({ isLoading, modalMode, form }) => {
     const { language } = useSettingsContext()
     const { idProfesional } = useScheduleContext()
     const [searchPatient, setSearchPatient] = useState('')
@@ -144,4 +144,4 @@ const Turn = ({ isLoading, modalMode, form }) => {
     )
 }
 
-export default Turn
+export default Appointment

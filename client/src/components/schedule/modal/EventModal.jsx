@@ -2,14 +2,14 @@ import { Button, Modal } from '../../basis'
 import { useScheduleContext } from '../../providers/ScheduleProvider'
 import { MODALMODES, MODALTABS } from '../../../constants/modal'
 import { useSettingsContext } from '../../providers/SettingsProvider'
-import Turn from './Turn'
+import Appointment from './Appointment'
 import Exception from './Exception'
 import Reminder from './Reminder'
 
 const TABS = {
-    [MODALTABS.Turns]: Turn,
-    [MODALTABS.Exceptions]: Exception,
-    [MODALTABS.Reminders]: Reminder,
+    [MODALTABS.Appointment]: Appointment,
+    [MODALTABS.Exception]: Exception,
+    [MODALTABS.Reminder]: Reminder,
 }
 
 const EventModal = () => {
@@ -20,15 +20,15 @@ const EventModal = () => {
         modalTab,
         handleModalTab,
         modalMode,
-        turnForm,
+        appointmentForm,
         exceptionForm,
         reminderForm
     } = useScheduleContext()
 
     const FORMS = {
-        [MODALTABS.Turns]: turnForm,
-        [MODALTABS.Exceptions]: exceptionForm,
-        [MODALTABS.Reminders]: reminderForm,
+        [MODALTABS.Appointment]: appointmentForm,
+        [MODALTABS.Exception]: exceptionForm,
+        [MODALTABS.Reminder]: reminderForm,
     }
 
     const { language } = useSettingsContext()
@@ -42,23 +42,23 @@ const EventModal = () => {
                 <div className='d-flex gap-2'>
                     <Button
                         className='btn-simple'
-                        text={language.buttons.Turn}
-                        handleOnClick={() => handleModalTab(MODALTABS.Turns)}
-                        isActived={modalTab === MODALTABS.Turns}
+                        text={language.buttons.Appointment}
+                        handleOnClick={() => handleModalTab(MODALTABS.Appointment)}
+                        isActived={modalTab === MODALTABS.Appointment}
                         isDisabled={isButtonsDisabled}
                     />
                     <Button
                         className='btn-simple'
                         text={language.buttons.Reminder}
-                        handleOnClick={() => handleModalTab(MODALTABS.Reminders)}
-                        isActived={modalTab === MODALTABS.Reminders}
+                        handleOnClick={() => handleModalTab(MODALTABS.Reminder)}
+                        isActived={modalTab === MODALTABS.Reminder}
                         isDisabled={isButtonsDisabled}
                     />
                     <Button
                         className='btn-simple'
                         text={language.buttons.Exception}
-                        handleOnClick={() => handleModalTab(MODALTABS.Exceptions)}
-                        isActived={modalTab === MODALTABS.Exceptions}
+                        handleOnClick={() => handleModalTab(MODALTABS.Exception)}
+                        isActived={modalTab === MODALTABS.Exception}
                         isDisabled={isButtonsDisabled}
                     />
                 </div>

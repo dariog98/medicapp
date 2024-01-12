@@ -1,15 +1,15 @@
 import { faCalendarWeek } from '@fortawesome/free-solid-svg-icons'
-import { Loading, Title, TurnList } from '../basis'
+import { AppointmentsList, Loading, Title } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
-import { useTurns } from '../../hooks'
+import { useAppointments } from '../../hooks'
 
-const PatientTurns = ({ idPatient }) => {
+const PatientAppointments = ({ idPatient }) => {
     const { language } = useSettingsContext()
-    const { isLoading, data } = useTurns({ idPatient })
+    const { isLoading, data } = useAppointments({ idPatient })
 
     return (
         <div className='d-flex flex-column gap-3'>
-            <Title icon={faCalendarWeek} text={language.Turns}/>
+            <Title icon={faCalendarWeek} text={language.Appointments}/>
             {
                 isLoading ?
                 <>
@@ -17,10 +17,10 @@ const PatientTurns = ({ idPatient }) => {
                 </>
                 :
                     data &&
-                    <TurnList data={data.data}/>
+                    <AppointmentsList data={data.data}/>
             }
         </div>
     )
 }
 
-export default PatientTurns
+export default PatientAppointments

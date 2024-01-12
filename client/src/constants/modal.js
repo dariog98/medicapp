@@ -1,7 +1,7 @@
 const MODALTABS = {
-  Turns: 10,
-  Reminders: 20,
-  Exceptions: 30
+  Appointment: 10,
+  Reminder: 20,
+  Exception: 30
 }
 
 const MODALMODES = {
