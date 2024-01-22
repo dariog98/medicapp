@@ -17,8 +17,9 @@ const sequelize = new Sequelize(
         host: hostname,
         port: port,
         dialect: 'postgres',
-        dialectModule: pg
-    }
+        dialectModule: pg,
+        ssl: true
+    },
 )
 
 const dbConnectSQL = async() => {
