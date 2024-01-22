@@ -34,8 +34,20 @@ const loginUser = async ({ usernameOrMail, password }) => {
     return data
 }
 
+const updatePassword = async ({ idUser, currentPassword, newPassword }) => {
+    const user = await User.scope('withPassword').findOne({ where: { id: idUser } })
+    if (!user) throw new ClientError('User not found', 404)
+
+    const checkPassword = await compare(currentPassword, user.password)
+    if (!checkPassword) throw new ClientError('The password is incorrect', 401)
+
+    const passwordHash = await encrypt(newPassword)
+    await user.update({ password: passwordHash })
+}
+
 const authService = {
-    loginUser
+    loginUser,
+    updateUserPassword
 }
 
 export default authService
