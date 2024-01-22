@@ -1,10 +1,10 @@
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { handleResponse } from '../helpers/handleResponse.js'
-import { Role } from '../models/index.js'
+import { RolesService } from '../services/postgres/index.js'
 
 const getAllRoles = async (request, response) => {
-    const results = await Role.findAll()
-    handleResponse({ response, statusCode: 200, data: results })
+    const data = await RolesService.getAllRoles()
+    handleResponse({ response, statusCode: 200, data })
 }
 
 const rolesController = {

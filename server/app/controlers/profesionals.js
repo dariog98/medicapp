@@ -1,31 +1,18 @@
-import { Op, Sequelize } from 'sequelize'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { handleResponse } from '../helpers/handleResponse.js'
-import { Exception, Reminder, Treatment, Appointment, User } from '../models/index.js'
-import { paginatedQuery } from '../utils/paginatedQuery.js'
-import { ClientError, ServerError } from '../constants/errors.js'
 import { getTokenFromRequest } from '../helpers/generateToken.js'
+import { ProfesionalsService } from '../services/postgres/index.js'
 
 const getAllProfesionals = async (request, response) => {
     const { search, page, order: stringOrder } = request.query
-
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
-    const { totalPages, data, total } = await paginatedQuery(User, 100, page, order, { idRole: 1 }, [],
-    {
-        [Op.or]: [
-            Sequelize.where(Sequelize.fn('concat', Sequelize.col('surnames'), ' ', Sequelize.col('names')), { [Op.like]: `%${search ?? ''}%` }),
-            { username: { [Op.like]: `%${search ?? ''}%` } }
-        ]
-    })
+    const { totalPages, data, total } = await ProfesionalsService.getAllProfesionals({ search, page, order })
     handleResponse({ response, statusCode: 200, data, total, totalPages})
 }
 
 const getProfesional = async (request, response) => {
-    const { id } = request.params
-    const profesional = await User.findByPk(id, { include: ['role', 'charge'] })
-
-    if (!profesional) throw new ClientError('Profesional not found', 404)
-
+    const { id: idProfesional } = request.params
+    const profesional = await ProfesionalsService.getProfesional({ idProfesional })
     handleResponse({response, statusCode: 200, data: profesional })
 }
 
@@ -42,47 +29,7 @@ const getProfesionalEvents = async (request, response) => {
         )
     )
 
-    const appointments = await Appointment.findAll({
-        where: { idProfesional, dateTime: { [Op.between]: [startTime, endTime] } },
-        include: ['createdByUser', 'modifiedByUser', 'profesional', 'patient', 'treatment'],
-    })
-
-    const exceptions = await Exception.findAll({
-        where: { idProfesional, startDateTime: { [Op.lte]: endTime }, endDateTime: { [Op.gte]: startTime } },
-        include: ['createdByUser', 'modifiedByUser', 'profesional'],
-    })
-
-    const reminders = await Reminder.findAll({
-        where: { idProfesional, dateTime: { [Op.between]: [startTime, endTime] } },
-        include: ['createdByUser', 'modifiedByUser', 'profesional', 'patient'],
-    })
-
-    const data = [
-        ...appointments.map(t => {
-            const appointment = t.get()
-
-            const startTime = new Date(appointment.dateTime)
-            const [hours, minutes] = appointment.duration.split(':')
-            const endTime = new Date(Date.UTC(
-                startTime.getUTCFullYear(),
-                startTime.getUTCMonth(),
-                startTime.getUTCDate(),
-                startTime.getUTCHours() + parseInt(hours),
-                startTime.getUTCMinutes() + parseInt(minutes)
-            ))
-
-            return { type: 'appointment', startTime, endTime, ...appointment }
-        }),
-        ...exceptions.map(ex => {
-            const exception = ex.get()
-            return { type: 'exception', startTime: exception.startDateTime, endTime: exception.endDateTime, ...exception }
-        }),
-        ...reminders.map(r => {
-            const reminder = r.get()
-            return { type: 'reminder', startTime: reminder.dateTime, ...reminder }
-        })
-    ]
-
+    const data = await ProfesionalsService.getProfesionalEvents({ idProfesional, startTime, endTime })
     handleResponse({ response, statusCode: 200, data })
 }
 
@@ -90,71 +37,34 @@ const getProfesionalTreatments = async (request, response) => {
     const { id: idProfesional } = request.params
     const { order: stringOrder, search, page } = request.query
     const order = stringOrder ? JSON.parse(stringOrder) : ['id', 'ASC']
-
-    const { totalPages, data, total } = await paginatedQuery(Treatment, 100, page, order, { idProfesional }, [], {
-        description: { [Op.like]: `%${search ?? ''}%` }
-    })
-
+    const { totalPages, data, total } = await ProfesionalsService.getProfesionalTreatments({ idProfesional, search, page, order })
     handleResponse({ response, statusCode: 200, data, total, totalPages })
 }
 
 const getProfesionalTreatment = async (request, response) => {
     const { id: idProfesional, treatment: idTreatment } = request.params
-    const treatment = await Treatment.findOne({ where: { idProfesional, id: idTreatment }})
-    if (!treatment) throw new ClientError('Treatment is not found or does not exist', 404)
+    const treatment = await ProfesionalsService.getProfesionalTreatment({ idProfesional, idTreatment })
     handleResponse({response, statusCode: 200, data: treatment})
 }
 
-const createProfesionalTreatment = async (request, response) => {
+const createTreatment = async (request, response) => {
     const { id: idProfesional } = request.params
     const { description } = request.body
-
-    await Treatment.create({ idProfesional, description })
-    .then(() => {
-        handleResponse({ response, statusCode: 201, message: 'Treatment create successfully' })
-    })
-    .catch(error => {
-        const errorNumber = Number(error?.original?.errno)
-        if (errorNumber === 1062) throw new ClientError('Description duplicate', 409, 1062)
-        throw new ServerError('An error occurred while trying to create the treatment', 500)
-    })
+    await ProfesionalsService.createProfesionalTreatment({ idProfesional, description })
+    handleResponse({ response, statusCode: 201, message: 'Treatment create successfully' })
 }
 
-const updateProfesionalTreatment = async (request, response) => {
+const updateTreatment = async (request, response) => {
     const { id: idProfesional, treatment: idTreatment } = request.params
     const { description } = request.body
-
-    const treatment = await Treatment.findOne({ where: { id: idTreatment, idProfesional } })
-
-    if (!treatment) throw new ClientError('Treatment is not found or does not exist', 404)
-
-    treatment.update({ description })
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Treatment updated successfully' })
-    })
-    .catch(error => {
-        const errorNumber = Number(error?.original?.errno)
-        if (errorNumber === 1062) throw new ClientError('Description duplicate', 409, 1062)
-        throw new ServerError('An error occurred while trying to update the treatment', 500)
-    })
+    await ProfesionalsService.updateProfesionalTreatment({ idProfesional, idTreatment, description })
+    handleResponse({ response, statusCode: 200, message: 'Treatment updated successfully' })
 }
 
-const deleteProfesionalTreatment = async (request, response) => {
+const deleteTreatment = async (request, response) => {
     const { id: idProfesional, treatment: idTreatment } = request.params
-
-    const treatment = await Treatment.findOne({ where: { id: idTreatment, idProfesional } })
-
-    if (!treatment) throw new ClientError('Treatment is not found or does not exist', 404)
-
-    treatment.destroy()
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Treatment deleted successfully' })
-    })
-    .catch(error => {
-        const errorNumber = Number(error?.original?.errno)
-        if (errorNumber === 1451) throw new ClientError("The treatment can't be deleted since it was assigned to a appointment", 409, 1451)
-        throw new ServerError('An error occurred while trying to delete the treatment', 500)
-    })
+    await ProfesionalsService.deleteProfesionalTreatment({ idProfesional, idTreatment })
+    handleResponse({ response, statusCode: 200, message: 'Treatment deleted successfully' })
 }
 
 const createAppointment = async (request, response) => {
@@ -163,14 +73,8 @@ const createAppointment = async (request, response) => {
     const accessToken = await getTokenFromRequest(request)
     const createdBy = accessToken.idUser
 
-    await Appointment.create({ idProfesional, idPatient, dateTime, duration, idTreatment, description, createdBy })
-    .then(() => {
-        handleResponse({ response, statusCode: 201, message: 'Appointment create successfully' })
-    })
-    .catch(error => {
-        console.log(error)
-        throw new ServerError('An error occurred while trying to create the appointment', 500)
-    })
+    await ProfesionalsService.createProfesionalAppointment({ idProfesional, idPatient, dateTime, duration, idTreatment, description, createdBy })
+    handleResponse({ response, statusCode: 201, message: 'Appointment create successfully' })
 }
 
 const updateAppointment = async (request, response) => {
@@ -179,31 +83,14 @@ const updateAppointment = async (request, response) => {
     const accessToken = await getTokenFromRequest(request)
     const modifiedBy = accessToken.idUser
 
-    const appointment = await Appointment.findOne({ where: { idProfesional, id: idAppointment } })
-    if (!appointment) throw new ClientError('Appointment was not found or does not exist', 404)
-
-    appointment.update({ dateTime, duration, idTreatment: idTreatment ?? null, description, modifiedBy })
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Appointment updated successfully' })
-    })
-    .catch(error => {
-        throw new ServerError('An error occurred while trying to update the appointment', 500)
-    })
+    await ProfesionalsService.updateProfesionalAppointment({ idProfesional, idAppointment, dateTime, duration, idTreatment, description, modifiedBy })
+    handleResponse({ response, statusCode: 200, message: 'Appointment updated successfully' })
 }
 
 const deleteAppointment = async (request, response) => {
     const { id: idProfesional, appointment: idAppointment } = request.params
-
-    const appointment = await Appointment.findOne({ where: { idProfesional, id: idAppointment } })
-    if (!appointment) throw new ClientError('Appointment was not found or does not exist', 404)
-
-    appointment.destroy()
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Appointment deleted successfully' })
-    })
-    .catch(error => {
-        throw new ServerError('An error occurred while trying to delete the appointment', 500)
-    })
+    await ProfesionalsService.deleteProfesionalAppointment({ idProfesional, idAppointment })
+    handleResponse({ response, statusCode: 200, message: 'Appointment deleted successfully' })
 }
 
 const createException = async (request, response) => {
@@ -212,14 +99,8 @@ const createException = async (request, response) => {
     const accessToken = await getTokenFromRequest(request)
     const createdBy = accessToken.idUser
 
-    await Exception.create({ idProfesional, startDateTime, endDateTime, description, createdBy })
-    .then(() => {
-        handleResponse({ response, statusCode: 201, message: 'Exception create successfully' })
-    })
-    .catch(error => {
-        console.log(error)
-        throw new ServerError('An error occurred while trying to create the excepion', 500)
-    })
+    await ProfesionalsService.createProfesionalException({ idProfesional, startDateTime, endDateTime, description, createdBy })
+    handleResponse({ response, statusCode: 201, message: 'Exception create successfully' })
 }
 
 const updateException = async (request, response) => {
@@ -228,31 +109,14 @@ const updateException = async (request, response) => {
     const accessToken = await getTokenFromRequest(request)
     const modifiedBy = accessToken.idUser
 
-    const exception = await Exception.findOne({ where: { idProfesional, id: idException } })
-    if (!exception) throw new ClientError('Exception was not found or does not exist', 404)
-
-    exception.update({ startDateTime, endDateTime, description, modifiedBy })
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Exception updated successfully' })
-    })
-    .catch(error => {
-        throw new ServerError('An error occurred while trying to update the exception', 500)
-    })
+    await ProfesionalsService.updateProfesionalException({ idProfesional, idException, startDateTime, endDateTime, description, modifiedBy })
+    handleResponse({ response, statusCode: 200, message: 'Exception updated successfully' })
 }
 
 const deleteException = async (request, response) => {
     const { id: idProfesional, exception: idException } = request.params
-
-    const exception = await Exception.findOne({ where: { idProfesional, id: idException } })
-    if (!exception) throw new ClientError('Exception was not found or does not exist', 404)
-
-    exception.destroy()
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Exception deleted successfully' })
-    })
-    .catch(error => {
-        throw new ServerError('An error occurred while trying to delete the exception', 500)
-    })
+    await ProfesionalsService.deleteProfesionalException({ idProfesional, idException })
+    handleResponse({ response, statusCode: 200, message: 'Exception deleted successfully' })
 }
 
 const createReminder = async (request, response) => {
@@ -261,14 +125,8 @@ const createReminder = async (request, response) => {
     const accessToken = await getTokenFromRequest(request)
     const createdBy = accessToken.idUser
 
-    await Reminder.create({ idProfesional, idPatient, dateTime, description, createdBy })
-    .then(() => {
-        handleResponse({ response, statusCode: 201, message: 'Reminder create successfully' })
-    })
-    .catch(error => {
-        console.log(error)
-        throw new ServerError('An error occurred while trying to create the reminder', 500)
-    })
+    await ProfesionalsService.createProfesionalReminder({ idProfesional, idPatient, dateTime, description, createdBy })
+    handleResponse({ response, statusCode: 201, message: 'Reminder create successfully' })
 }
 
 const updateReminder = async (request, response) => {
@@ -277,31 +135,14 @@ const updateReminder = async (request, response) => {
     const accessToken = await getTokenFromRequest(request)
     const modifiedBy = accessToken.idUser
 
-    const reminder = await Reminder.findOne({ where: { idProfesional, id: idReminder } })
-    if (!reminder) throw new ClientError('Reminder was not found or does not exist', 404)
-
-    reminder.update({ dateTime, description, modifiedBy })
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Reminder updated successfully' })
-    })
-    .catch(error => {
-        throw new ServerError('An error occurred while trying to update the reminder', 500)
-    })
+    await ProfesionalsService.updateProfesionalReminder({ idProfesional, idReminder, dateTime, description, modifiedBy })
+    handleResponse({ response, statusCode: 200, message: 'Reminder updated successfully' })
 }
 
 const deleteReminder = async (request, response) => {
     const { id: idProfesional, reminder: idReminder } = request.params
-
-    const reminder = await Reminder.findOne({ where: { idProfesional, id: idReminder } })
-    if (!reminder) throw new ClientError('Reminder was not found or does not exist', 404)
-
-    reminder.destroy()
-    .then(() => {
-        handleResponse({ response, statusCode: 200, message: 'Reminder deleted successfully' })
-    })
-    .catch(error => {
-        throw new ServerError('An error occurred while trying to delete the reminder', 500)
-    })
+    await ProfesionalsService.deleteProfesionalReminder({ idProfesional, idReminder })
+    handleResponse({ response, statusCode: 200, message: 'Reminder deleted successfully' })
 }
 
 const profesionalController = {
@@ -310,9 +151,9 @@ const profesionalController = {
     getEvents: catchedAsync(getProfesionalEvents),
     getTreatments: catchedAsync(getProfesionalTreatments),
     getTreatment: catchedAsync(getProfesionalTreatment),
-    createTreatment: catchedAsync(createProfesionalTreatment),
-    updateTreatment: catchedAsync(updateProfesionalTreatment),
-    deleteTreatment: catchedAsync(deleteProfesionalTreatment),
+    createTreatment: catchedAsync(createTreatment),
+    updateTreatment: catchedAsync(updateTreatment),
+    deleteTreatment: catchedAsync(deleteTreatment),
     createAppointment: catchedAsync(createAppointment),
     updateAppointment: catchedAsync(updateAppointment),
     deleteAppointment: catchedAsync(deleteAppointment),

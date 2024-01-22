@@ -5,7 +5,7 @@ import appointmentServices from '../services/appointmentServices'
 
 const useAppointments = ({ idPatient, idProfesional, idTreatment, status, startTime, endTime } = {}) => {
     const [page, setPage] = useState(1)
-    const [order, setOrder] = useState({ dateTime: ORDER.Ascending })
+    const [order, setOrder] = useState({ date_time: ORDER.Ascending })
 
     const handleOrder = (row, value) => {
         const newOrder = {}
@@ -15,7 +15,7 @@ const useAppointments = ({ idPatient, idProfesional, idTreatment, status, startT
 
     const getAppointments = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-        return appointmentServices.getAllAppointments({ idPatient, idProfesional, idTreatment, startTime, endTime, status, page, order: tableOrder })
+        return appointmentServices.getAllAppointments({ idPatient, idProfesional, idTreatment, startTime: startTime.toISOString(), endTime: endTime.toISOString(), status, page, order: tableOrder })
     }
 
     const { isLoading, data } = useFetch(getAppointments, [idPatient, idProfesional, idTreatment, status, startTime, endTime])

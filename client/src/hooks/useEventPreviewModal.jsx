@@ -15,7 +15,6 @@ const useEventPreviewModal = () => {
         showModal,
         handleClose,
         handleOpen,
-        handleClose,
     }
 }
 
