@@ -1,3 +1,4 @@
+import pg from 'pg'
 import * as dotenv from 'dotenv'
 import { Sequelize } from 'sequelize'
 
@@ -15,7 +16,8 @@ const sequelize = new Sequelize(
     {
         host: hostname,
         port: port,
-        dialect: 'postgres'
+        dialect: 'postgres',
+        dialectModule: pg
     }
 )
 

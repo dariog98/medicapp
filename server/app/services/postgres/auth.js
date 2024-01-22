@@ -34,7 +34,7 @@ const loginUser = async ({ usernameOrMail, password }) => {
     return data
 }
 
-const updatePassword = async ({ idUser, currentPassword, newPassword }) => {
+const updateUserPassword = async ({ idUser, currentPassword, newPassword }) => {
     const user = await User.scope('withPassword').findOne({ where: { id: idUser } })
     if (!user) throw new ClientError('User not found', 404)
 
