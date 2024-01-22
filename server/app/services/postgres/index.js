@@ -1,0 +1,7 @@
+export { default as AppointmentsService } from './appointments.js'
+export { default as AuthService } from './auth.js'
+export { default as ChargesService } from './charges.js'
+export { default as PatientsService } from './patients.js'
+export { default as ProfesionalsService } from './profesionals.js'
+export { default as RemindersService } from './reminders.js'
+export { default as RolesService } from './roles.js'

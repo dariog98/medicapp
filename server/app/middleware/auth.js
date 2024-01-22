@@ -2,14 +2,13 @@ import { ClientError } from '../constants/errors.js'
 import { USER_ROLES } from '../constants/roles.js'
 import { verifyToken } from '../helpers/generateToken.js'
 import { handleResponse } from '../helpers/handleResponse.js'
-import { User } from '../models/index.js'
+import { User } from '../models/postgres/index.js'
 
 const tokenSecretKey = process.env.JWT_SECRET
 const refreshTokenSecretKey = process.env.JWT_RT_SECRET
 
 const checkAuth = async (request, response, next) => {
     const func = async () => {
-        console.log({ auth: request.headers.authorization })
         if(!request.headers.authorization) throw new ClientError("The token is invalid or doesn't exist", 401)
 
         const token = request.headers.authorization.split(' ').pop()

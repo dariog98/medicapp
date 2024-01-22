@@ -3,45 +3,17 @@ import { ClientError, ServerError } from '../constants/errors.js'
 import { catchedAsync } from '../helpers/catchedAsync.js'
 import { getTokenFromRequest, tokenSign } from '../helpers/generateToken.js'
 import { encrypt, compare } from '../helpers/handleBcrypt.js'
-import { httpError } from '../helpers/handleErrors.js'
-import { handleResponse, handleResponseCustomStatus } from '../helpers/handleResponse.js'
+import { handleResponse } from '../helpers/handleResponse.js'
 import { sendMail } from '../helpers/sendMail.js'
-import { User } from '../models/index.js'
+import { User } from '../models/postgres/index.js'
+import { AuthService } from '../services/postgres/index.js'
 
 const tokenSecretKey = process.env.JWT_SECRET
 const refreshTokenSecretKey = process.env.JWT_RT_SECRET
 
 const login = async (request, response) => {
     const { user: usernameOrMail, password } = request.body
-    
-    const user = await User.getByUsernameOrMail(usernameOrMail)
-    
-    if (!user) throw new ClientError('User not found', 404)
-
-    const { id: idUser, username, names, surnames, mail, phone, charge, role } = user
-
-    const userResume = { idUser, username, charge, role }
-
-    const checkPassword = await compare(password, user.password)
-    
-    if (!checkPassword) throw new ClientError('Invalid password', 409)
-    
-    const accessToken = await tokenSign(userResume, tokenSecretKey, '24h')
-    const refreshToken = await tokenSign(userResume, refreshTokenSecretKey, '30d')
-
-    const data = {
-        idUser,
-        surnames,
-        names,
-        username,
-        mail,
-        phone,
-        charge,
-        role,
-        accessToken,
-        refreshToken
-    }
-
+    const data = await AuthService.loginUser({ usernameOrMail, password })
     handleResponse({ response, statusCode: 200, message: 'Login user sucessfully', data })
 }
 

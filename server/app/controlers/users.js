@@ -1,7 +1,7 @@
 import { compare, encrypt } from '../helpers/handleBcrypt.js'
 import { httpError } from '../helpers/handleErrors.js'
 import { handleResponse, handleResponseCustomStatus } from '../helpers/handleResponse.js'
-import User from '../models/user.js'
+import { User } from '../models/postgres/index.js'
 
 const getUsers = async (request, response) => {
     try {

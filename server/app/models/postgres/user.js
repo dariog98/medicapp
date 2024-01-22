@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import { sequelize } from '../config/mysql.js'
+import { sequelize } from '../../config/postgres.js'
 
 const User = sequelize.define(
     'users',
@@ -28,15 +28,15 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true
         },
-        idRole: {
+        id_role: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        idCharge: {
+        id_charge: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        isDeleted: {
+        is_deleted: {
             type: DataTypes.BOOLEAN,
             allowNull: true
         }

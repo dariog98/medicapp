@@ -27,9 +27,6 @@ router.post('/:id/notes', checkAuth, validateCreateNote, patientController.creat
 router.patch('/:id/notes/:note', checkAuth, validateUpdateNote, patientController.updatePatientNote)
 router.delete('/:id/notes/:note', checkAuth, patientController.deletePatientNote)
 
-// Appointments
-router.get('/:id/appointments', checkAuth, patientController.getPatientAppointments)
-
 // Treatments
 router.get('/:id/treatments', checkAuth, patientController.getPatientTreatments)
 
