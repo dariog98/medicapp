@@ -73,7 +73,7 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const APPOINTMENT_ACTIONS = {
         [MODALMODES.Add]: async (data) => {
             const { patient: { id: idPatient }, duration, description } = data
-            const dateTime = `${data.date}T${data.time}:00${timeZone.numeric}`
+            const dateTime = new Date(`${data.date}T${data.time}:00${timeZone.numeric}`).toISOString()
             const idTreatment = data?.treatment?.id
             const appointment = { idPatient, dateTime, duration, idTreatment, description }
             const response = await profesionalServices.createAppointment({ idProfesional, data: appointment })

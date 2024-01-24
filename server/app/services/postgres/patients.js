@@ -4,6 +4,7 @@ import { paginatedQuery } from '../../utils/paginatedQuery.js'
 import { sequelize } from '../../config/postgres.js'
 import { ClientError, ServerError } from '../../constants/errors.js'
 import { helperImage } from '../../helpers/helperImage.js'
+import { snakeToCamelObject } from '../../utils/snakeToCamel.js'
 
 const getAllPatients = async ({ idProfesional, idTreatment, search, page, order }) => {
     const params = {}
@@ -77,9 +78,10 @@ const getPatientTreatments = async ({ idPatient, status, page, order }) => {
 }
 
 const getPatientNotes = async ({ idPatient, search, page, order }) => {
-    return await paginatedQuery(Note, 10, page, order, {
+    const { totalPages, total, data } = await paginatedQuery(Note, 10, page, order, {
         id_patient: idPatient
-    })    
+    })
+    return { page, totalPages, total, data: data.map(note => snakeToCamelObject(note.get())) }
 }
 
 const createPatientNote = async ({ idPatient, content, createdBy }) => {
@@ -97,7 +99,7 @@ const updatePatientNote = async ({ idPatient, idNote, content, modifiedBy }) => 
 }
 
 const deletePatientNote = async ({ idPatient, idNote }) => {
-    const note = await Note.findOne({ where: { idPatient, id: idNote } })
+    const note = await Note.findOne({ where: { id_patient: idPatient, id: idNote } })
     if (!note) throw new ClientError('Note is not found or does not exist', 404)
     try {
         await note.destroy()

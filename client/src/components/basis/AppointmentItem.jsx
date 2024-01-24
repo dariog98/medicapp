@@ -14,7 +14,7 @@ const AppointmentItem = ({ data }) => {
     const date = new Date(data.dateTime)
 
     const handleGoToSchedule = () => {
-        navigate(`${ROUTES.Profesionals}/${data.profesional.id}/schedule?date=${getStringDateInTimeZone(date, timeZone)}`)
+        navigate(`${ROUTES.Profesionals}/${data.profesional.id}/schedule?date=${getStringDateInTimeZone(date, timeZone)}#A${data.id}`)
     }
 
     const [year, _, day] = getStringDateInTimeZone(date, timeZone).split('-') 

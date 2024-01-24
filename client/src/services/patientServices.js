@@ -66,14 +66,14 @@ const createNote = async ({ idPatient, data }) => {
 }
 
 const updateNote = async ({ idPatient, idNote, data }) => {
-    const url = `${RouteAPI.Patients}/${idPatient}/notes/${idNote}}`
+    const url = `${RouteAPI.Patients}/${idPatient}/notes/${idNote}`
     const request = newRequest({ url, method: METHODS.Patch, contentType: CONTENT_TYPES.JSON, body: data, userToken: true })
     const response = await fetch(request)
     return await response.json()
 }
 
 const deleteNote = async ({ idPatient, idNote }) => {
-    const url = `${RouteAPI.Patients}/${idPatient}/notes/${idNote}}`
+    const url = `${RouteAPI.Patients}/${idPatient}/notes/${idNote}`
     const request = newRequest({ url, method: METHODS.Delete, userToken: true })
     const response = await fetch(request)
     return await response.json()

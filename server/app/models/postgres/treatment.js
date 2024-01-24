@@ -11,10 +11,6 @@ const Treatment = sequelize.define(
         description: {
             type: DataTypes.STRING,
             allowNull: false
-        },
-        price: {
-            type: DataTypes.STRING,
-            allowNull: true
         }
     },
     { timestamps: false }

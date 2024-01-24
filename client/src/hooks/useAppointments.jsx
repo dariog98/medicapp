@@ -15,7 +15,7 @@ const useAppointments = ({ idPatient, idProfesional, idTreatment, status, startT
 
     const getAppointments = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-        return appointmentServices.getAllAppointments({ idPatient, idProfesional, idTreatment, startTime: startTime.toISOString(), endTime: endTime.toISOString(), status, page, order: tableOrder })
+        return appointmentServices.getAllAppointments({ idPatient, idProfesional, idTreatment, startTime, endTime, status, page, order: tableOrder })
     }
 
     const { isLoading, data } = useFetch(getAppointments, [idPatient, idProfesional, idTreatment, status, startTime, endTime])
