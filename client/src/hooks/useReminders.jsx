@@ -15,7 +15,7 @@ const useReminders = ({ idPatient, idProfesional, startTime, endTime } = {}) => 
 
     const getReminders = async () => {
         const tableOrder = Object.keys(order).map(key => [key, order[key]])
-        return reminderServices.getAllReminders({ idPatient, idProfesional, startTime: startTime.toISOString(), endTime: endTime.toISOString(), page, order: tableOrder })
+        return reminderServices.getAllReminders({ idPatient, idProfesional, startTime, endTime, page, order: tableOrder })
     }
 
     const { isLoading, data } = useFetch(getReminders, [idPatient, idProfesional, startTime, endTime])

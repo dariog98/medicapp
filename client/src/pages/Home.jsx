@@ -1,9 +1,9 @@
+import { useState } from 'react'
 import { faCalendarDays, faClock, faHouse } from '@fortawesome/free-solid-svg-icons'
 import { AppointmentsList, Container, ReminderList, Title } from '../components/basis'
 import { useSettingsContext } from '../components/providers/SettingsProvider'
 import { useAppointments, useReminders } from '../hooks'
 import { getStringDateInTimeZone, newDateInTimeZone } from '../constants/dateToString'
-import { useState } from 'react'
 import { useUserContext } from '../components/providers/UserProvider'
 
 const Home = () => {
@@ -13,8 +13,8 @@ const Home = () => {
     const [startTime] = useState(newDateInTimeZone(timeZone, year, month, date))
     const [endTime] = useState(newDateInTimeZone(timeZone, year, month, date, 23, 59))
     const idProfesional = !isAdmin ? user.idUser : undefined
-    const { isLoading: isLoadingTurns, data: dataTurns } = useAppointments({ startTime, endTime, idProfesional })
-    const { isLoading: isLoadingReminders, data: dataReminders } = useReminders({ startTime, endTime, idProfesional })
+    const { isLoading: isLoadingTurns, data: dataTurns } = useAppointments({ startTime: startTime.toISOString(), endTime: endTime.toISOString(), idProfesional })
+    const { isLoading: isLoadingReminders, data: dataReminders } = useReminders({ startTime: startTime.toISOString(), endTime: endTime.toISOString(), idProfesional })
 
     return (
         <Container>

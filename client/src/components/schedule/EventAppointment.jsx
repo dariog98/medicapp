@@ -17,6 +17,7 @@ const EventAppointment = ({ data, handleOnClick }) => {
                 className='border-0 flex-grow-1 rounded-2 p-0 my-2 me-3 text-white'
                 style={{ backgroundColor: COLORS[data.id % COLORS.length], textAlign: 'inherit', opacity: isConfirmed ? '0.5' : '1' }}
                 onClick={handleOnClick}
+                id={`A${data.id}`}
             >
                 <div className='d-flex h-100'>
                     <div className='d-flex justify-content-center align-items-center p-2 border-end border-light'>
