@@ -107,11 +107,13 @@ const FileModal = ({ showModal, modalMode, handleClose, handleDownload, handleEd
                 }
 
                 {
-                    modalMode === MODALMODES.Edit &&
+                    modalMode !== MODALMODES.Add &&
                     <Input
                         form={form}
                         type='text'
                         name='name'
+                        label={language.rows.Filename}
+                        isDisabled={modalMode === MODALMODES.Delete}
                     />
                 }
                 
@@ -120,6 +122,7 @@ const FileModal = ({ showModal, modalMode, handleClose, handleDownload, handleEd
                     name='description'
                     label={language.rows.Description}
                     placeholder={language.messages.WriteHere}
+                    isDisabled={modalMode === MODALMODES.Delete}
                     height='128px'
                 />
 

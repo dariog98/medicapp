@@ -136,6 +136,46 @@ create table exceptions (
     constraint fk_exceptions_profesionals foreign key (id_profesional) references users(id)
 );
 
+create view appointments_and_exceptions as (
+	select id, date_time as start_date_time, date_time + (extract(hour from duration) * interval '1 hour') + (extract(minute from duration) * interval '1 minute') as end_date_time, 'appointment' as type from appointments
+	union
+	select id, start_date_time, end_date_time, 'exception' as type from exceptions
+);
+
+create or replace function appointment_check()
+returns trigger
+language PLPGSQL
+as
+$$
+begin
+	if exists(
+		select id from appointments_and_exceptions as ae
+        where not (ae.id = new.id and ae.type = 'appointment')
+		where ae.id_profesional = new.id_profesional and 
+		(
+			(new.date_time < ae.start_date_time and (new.date_time + (extract(hour from new.duration) * interval '1 hour') + (extract(minute from new.duration) * interval '1 minute')) > ae.start_date_time) or
+			((new.date_time + (extract(hour from new.duration) * interval '1 hour') + (extract(minute from new.duration) * interval '1 minute')) >= ae.end_date_time and new.date_time < ae.end_date_time) or
+			(new.date_time >= ae.start_date_time and (new.date_time + (extract(hour from new.duration) * interval '1 hour') + (extract(minute from new.duration) * interval '1 minute')) <= ae.end_date_time)
+		)
+	) then
+		raise sqlstate '50001';
+	end if;
+	return new;
+end;
+$$
+
+create trigger controlAppointmentInsert
+before insert
+on appointments
+for each row
+execute procedure appointment_check();
+
+create trigger controlAppointmentUpdate
+before update
+on appointments
+for each row
+execute procedure appointment_check();
+
 insert into charges (description) values
 ('Administrador'), ('Médico'), ('Cirujano'), ('Enfermero'), ('Secretario');
 

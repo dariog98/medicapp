@@ -4,7 +4,7 @@ import { Appointments, Configuration, Home, Login, Patient, Patients, Profesiona
 import { createBrowserRouter } from 'react-router-dom'
 import ProtectedUserRoute from './components/protect/ProtectedUserRoute'
 
-const router = createBrowserRouter([
+const Router = createBrowserRouter([
     {
         path: ROUTES.Root,
         element: <ProtectedUserRoute/>,
@@ -93,4 +93,4 @@ const router = createBrowserRouter([
     }
 ])
 
-export default router
+export default Router

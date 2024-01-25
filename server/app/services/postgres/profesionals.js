@@ -2,6 +2,7 @@ import { Op, Sequelize } from 'sequelize'
 import { Appointment, Exception, Reminder, Treatment, User } from '../../models/postgres/index.js'
 import { paginatedQuery } from '../../utils/paginatedQuery.js'
 import { ClientError, ServerError } from '../../constants/errors.js'
+import { snakeToCamelObject } from '../../utils/snakeToCamel.js'
 
 const getAllProfesionals = async ({ search, page, order }) => {
     return await paginatedQuery(User, 100, page, order, { id_role: 1 }, [],
@@ -52,8 +53,9 @@ const getProfesionalEvents = async ({ idProfesional, startTime, endTime}) => {
             return { type: 'appointment', startTime, endTime, ...appointment }
         }),
         ...exceptions.map(ex => {
-            const exception = ex.get()
-            return { type: 'exception', startTime: exception.start_date_time, endTime: exception.end_date_time, ...exception }
+            const exception = snakeToCamelObject(ex.get())
+            const profesional = snakeToCamelObject(exception.profesional.get())
+            return { ...exception, profesional, type: 'exception', startTime: exception.startDateTime, endTime: exception.endDateTime }
         }),
         ...reminders.map(r => {
             const reminder = r.get()
@@ -124,7 +126,8 @@ const createProfesionalAppointment = async ({ idProfesional, idPatient, dateTime
             description,
         })
     } catch (error) {
-        console.log(error)
+        const errorNumber = Number(error?.original?.code)
+        if (errorNumber === 23505 || errorNumber === 50001) throw new ClientError('The date time is not avalaible', 409, 23505)
         throw new ServerError('An error occurred while trying to create the appointment', 500)
     }
 }
@@ -136,6 +139,8 @@ const updateProfesionalAppointment = async ({ idProfesional, idAppointment, date
     try {
         return await appointment.update({ date_time: dateTime, duration, id_treatment: idTreatment ?? null, description, modified_by: modifiedBy })
     } catch (error) {
+        const errorNumber = Number(error?.original?.code)
+        if (errorNumber === 23505 || errorNumber === 50001) throw new ClientError('The date time is not avalaible', 409, 23505)
         throw new ServerError('An error occurred while trying to update the appointment', 500)
     }
 }

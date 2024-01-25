@@ -38,22 +38,28 @@ const usePatientFileModal = ({ idPatient, refreshPhotos } = {}) => {
             }
         },
         [MODALMODES.Edit]: async (data) => {
-            const { id: idNote, content } = data
-            const response = await patientServices.updateNote({ idPatient, idNote, data: { content } })
+            const { id: idPhoto } = data
+            const file = data.file ? data.file[0] : undefined
+            const fileData = new FormData()
+            fileData.set('file', file)
+            fileData.set('name', file?.name ?? data.name)
+            fileData.set('description', data.description)
+
+            const response = await patientServices.updatePhoto({ idPatient, idPhoto, data: fileData })
 
             if (response.status === 200) {
                 addNotification({ id: Date.now(), icon: faPen, message: language.messages.NoteUpdated, type: 'success', time: TOAST_TIME.Short })
-                refreshNotes()
+                refreshPhotos()
                 handleClose()
             }
         },
         [MODALMODES.Delete]: async (data) => {
-            const { id: idNote } = data
-            const response = await patientServices.deleteNote({ idPatient, idNote })
+            const { id: idPhoto } = data
+            const response = await patientServices.deletePhoto({ idPatient, idPhoto })
 
             if (response.status === 200) {
                 addNotification({ id: Date.now(), icon: faTrashCan, message: language.messages.NoteDeleted, type: 'danger', time: TOAST_TIME.Short })
-                refreshNotes()
+                refreshPhotos()
                 handleClose()
             }
         },
@@ -64,8 +70,7 @@ const usePatientFileModal = ({ idPatient, refreshPhotos } = {}) => {
             setIsLoading(true)
             await ACTIONS[modalMode](data)
         } catch (error) {
-            //console.log(error)
-            addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.NoteDeleted, type: 'warning', time: TOAST_TIME.Short })
+            addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.AnErrorOcurred, type: 'warning', time: TOAST_TIME.Short })
         } finally {
             setIsLoading(false)
         }

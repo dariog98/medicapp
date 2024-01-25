@@ -18,12 +18,14 @@ const sequelize = new Sequelize(
         port: port,
         dialect: 'postgres',
         dialectModule: pg,
+        /*
         ssl: true,
         dialectOptions: {
             ssl: {
                 require: true
             }
         }
+        */
         //native: true
     },
 )

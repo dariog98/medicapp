@@ -24,7 +24,7 @@ const PatientData = ({ data, refreshData }) => {
                         name='surnames'
                         type='text'
                         value={data.surnames}
-                        isDisabled={true}
+                        isReadOnly={true}
                     />
                 </div>
 
@@ -34,7 +34,7 @@ const PatientData = ({ data, refreshData }) => {
                         name='names'
                         type='text'
                         value={data.names}
-                        isDisabled={true}
+                        isReadOnly={true}
                     />
                 </div>
             </div>
@@ -46,7 +46,7 @@ const PatientData = ({ data, refreshData }) => {
                         name='dni'
                         type='number'
                         value={data.dni}
-                        isDisabled={true}
+                        isReadOnly={true}
                     />
                 </div>
                 
@@ -57,7 +57,7 @@ const PatientData = ({ data, refreshData }) => {
                         type='date'
                         value={data.birthdate}
                         after={<div className='text-lowercase'>{`${getYearsOlds(data.birthdate)} ${language.messages.YearsOld}`}</div>}
-                        isDisabled={true}
+                        isReadOnly={true}
                     />
                 </div>
 
@@ -67,7 +67,7 @@ const PatientData = ({ data, refreshData }) => {
                         name='phone'
                         type='text'
                         value={data.phone}
-                        isDisabled={true}
+                        isReadOnly={true}
                     />
                 </div>
             </div>
@@ -79,7 +79,7 @@ const PatientData = ({ data, refreshData }) => {
                         name='address'
                         type='text'
                         value={data.address ?? ''}
-                        isDisabled={true}
+                        isReadOnly={true}
                     />
                 </div>
             </div>

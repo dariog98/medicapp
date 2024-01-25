@@ -1,3 +1,4 @@
+import { faX } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 
@@ -20,15 +21,15 @@ const Notification = ({ data, handleClose }) => {
     }, [])
 
     return (
-        <div className={`toast fade show ${showing ? 'showing' : ''} align-items-center ${background[data.type]}`}>
-            <div className='d-flex'>
+        <div className={`toast m-0 pe-2 fade show ${showing ? 'showing' : ''} align-items-center ${background[data.type]}`}>
+            <div className='d-flex justify-content-between'>
                 <div className='toast-body'>
                     <div className='d-flex gap-2 align-items-center'>
                         {data?.icon && <FontAwesomeIcon icon={data.icon}/>}
                         {data.message}
                     </div>
                 </div>
-                <button type='button' className={`btn-close me-2 m-auto`} onClick={handleClose}></button>
+                <button className='btn m-0 p-2' onClick={handleClose}><FontAwesomeIcon icon={faX}/></button>
             </div>
         </div>
     )

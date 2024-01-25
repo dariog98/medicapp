@@ -84,6 +84,7 @@ const Appointments = () => {
                             value={(item) => item.description}
                             handleSearch={setSearchTreatment}
                             handleOnChange={handleSearchTreatment}
+                            isDisabled={!idProfesional}
                         />
                     </div>
                 </div>

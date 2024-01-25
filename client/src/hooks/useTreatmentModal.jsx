@@ -21,7 +21,9 @@ const useTreatmentModal = ({ idProfesional, refreshTreatments } = {}) => {
     const ACTIONS = {
         [MODALMODES.Add]: async (data) => {
             const response = await profesionalServices.createTreatment({ idProfesional, data })
-
+            if (response.status === 1062) {
+                addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.DescriptionDuplicatedError, type: 'warning', time: TOAST_TIME.Short })
+            }
             if (response.status === 201) {
                 addNotification({ id: Date.now(), icon: faPlus, message: language.messages.TreatmentCreated, type: 'primary', time: TOAST_TIME.Short })
                 refreshTreatments()
@@ -31,7 +33,9 @@ const useTreatmentModal = ({ idProfesional, refreshTreatments } = {}) => {
         [MODALMODES.Edit]: async (data) => {
             const { id: idTreatment, description } = data
             const response = await profesionalServices.updateTreatment({ idProfesional, idTreatment, data: { description } })
-
+            if (response.status === 1062) {
+                addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.DescriptionDuplicatedError, type: 'warning', time: TOAST_TIME.Short })
+            }
             if (response.status === 200) {
                 addNotification({ id: Date.now(), icon: faPen, message: language.messages.TreatmentUpdated, type: 'success', time: TOAST_TIME.Short })
                 refreshTreatments()
