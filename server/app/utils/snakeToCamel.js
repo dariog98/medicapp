@@ -7,7 +7,7 @@ const snakeToCamel = (string) => {
     )
 }
 
-const snakeToCamelObject = (object = {}) => {
+const snakeToCamelObject = (object) => {
     return Object.keys(object).reduce((accumulator, current) => {
         //const value = typeof object[current] === 'object' && object[current] !== null ? snakeToCamelObject(object[current]) : object[current]
         //accumulator[snakeToCamel(current)] = value

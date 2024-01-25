@@ -100,7 +100,7 @@ const DateEvents = ({ currentDate, events }) => {
                                 <div
                                     className='add-turn d-flex align-items-center text-bg-primary p-2 rounded-2 gap-2'
                                     style={{ height: '4rem' }}
-                                    onClick={() => handleOpen({ date: day }, MODALTABS.Turns, MODALMODES.Add)}
+                                    onClick={() => handleOpen({ date: day }, MODALTABS.Reminder, MODALMODES.Add)}
                                 >
                                     <FontAwesomeIcon icon={faPlus}/>
                                     {`Add reminder`}
