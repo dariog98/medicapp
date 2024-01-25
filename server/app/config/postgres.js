@@ -8,26 +8,31 @@ const database = process.env.DB_NAME
 const username = process.env.DB_USER
 const password = process.env.DB_PASS
 const port = process.env.DB_PORT
+const mode = process.env.MODE
+
+const config = mode === 'DEV' ? {
+    host: hostname,
+    port: port,
+    dialect: 'postgres',
+    dialectModule: pg,
+} : {
+    host: hostname,
+    port: port,
+    dialect: 'postgres',
+    dialectModule: pg,
+    ssl: true,
+    dialectOptions: {
+        ssl: {
+            require: true
+        }
+    }
+}
 
 const sequelize = new Sequelize(
     database,
     username,
     password,
-    {
-        host: hostname,
-        port: port,
-        dialect: 'postgres',
-        dialectModule: pg,
-        /*
-        ssl: true,
-        dialectOptions: {
-            ssl: {
-                require: true
-            }
-        }
-        */
-        //native: true
-    },
+    config,
 )
 
 const dbConnectSQL = async() => {
