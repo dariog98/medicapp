@@ -58,8 +58,10 @@ const getProfesionalEvents = async ({ idProfesional, startTime, endTime}) => {
             return { ...exception, profesional, type: 'exception', startTime: exception.startDateTime, endTime: exception.endDateTime }
         }),
         ...reminders.map(r => {
-            const reminder = r.get()
-            return { type: 'reminder', startTime: reminder.date_time, ...reminder }
+            const reminder = snakeToCamelObject(r.get())
+            const patient = reminder.patient ? snakeToCamelObject(reminder.patient.get()) : undefined
+            const profesional = snakeToCamelObject(reminder.profesional.get())
+            return { ...reminder, patient, profesional, type: 'reminder', startTime: reminder.dateTime }
         })
     ]
 
