@@ -128,6 +128,7 @@ const createProfesionalAppointment = async ({ idProfesional, idPatient, dateTime
             description,
         })
     } catch (error) {
+        console.log(error)
         const errorNumber = Number(error?.original?.code)
         if (errorNumber === 23505 || errorNumber === 50001) throw new ClientError('The date time is not avalaible', 409, 23505)
         throw new ServerError('An error occurred while trying to create the appointment', 500)
