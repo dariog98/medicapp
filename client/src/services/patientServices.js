@@ -99,6 +99,20 @@ const createPhoto = async ({ idPatient, data }) => {
     return await response.json()
 }
 
+const updatePhoto = async ({ idPatient, idPhoto, data }) => {
+    const url = `${RouteAPI.Patients}/${idPatient}/photos/${idPhoto}`
+    const request = newRequest({ url, method: METHODS.Patch, body: data, userToken: true })
+    const response = await fetch(request)
+    return await response.json()
+}
+
+const deletePhoto = async ({ idPatient, idPhoto }) => {
+    const url = `${RouteAPI.Patients}/${idPatient}/photos/${idPhoto}`
+    const request = newRequest({ url, method: METHODS.Delete, userToken: true })
+    const response = await fetch(request)
+    return await response.json()
+}
+
 const getAllPatientFiles = async({ idPatient, search, page, order }) => {
     const params = new URLSearchParams({
         search: search ?? '',
@@ -138,6 +152,8 @@ const patientServices = {
     getAllPatientFiles,
     getAllPhotos,
     createPhoto,
+    updatePhoto,
+    deletePhoto,
     getAllPatientTreatments
 }
 

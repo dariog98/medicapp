@@ -1,5 +1,5 @@
 import { Op, Sequelize } from 'sequelize'
-import { Appointment, Note, Patient, Treatment } from '../../models/postgres/index.js'
+import { Appointment, File, Note, Patient, Treatment } from '../../models/postgres/index.js'
 import { paginatedQuery } from '../../utils/paginatedQuery.js'
 import { sequelize } from '../../config/postgres.js'
 import { ClientError, ServerError } from '../../constants/errors.js'
@@ -54,6 +54,8 @@ const updatePatient = async ({ idPatient, names, surnames, dni, birthdate, phone
     try {
         await patient.update({ names, surnames, dni, birthdate, phone, address })
     } catch (error) {
+        const errorNumber = Number(error?.original?.code)
+        if (errorNumber === 23505) throw new ClientError('DNI is duplicated', 409, 23505)
         throw new ServerError('Server error')
     }
 }
@@ -109,16 +111,40 @@ const deletePatientNote = async ({ idPatient, idNote }) => {
 }
 
 const getPatientPhotos = async ({ idPatient, search, page, order }) => {
-    return await paginatedQuery(File, 100, page, order, { id_patient: idPatient, type: 'image' }, [], {
+    const { totalPages, total, data } = await paginatedQuery(File, 100, page, order, { id_patient: idPatient, type: 'image' }, [], {
         name: { [Op.like]: `%${search ?? ''}%`}
-    })    
+    })
+    return { page, totalPages, total, data: data.map(photo => snakeToCamelObject(photo.get()))}
 }
 
 const createPatientPhoto = async ({ idPatient, name, description, file, createdBy }) => {
     const type = 'image'
     await helperImage(file.path, file.filename)
     try {
-        return await File.create({ name, filename: file.filename, description, type, idPatient, createdBy })
+        return await File.create({ name, filename: file.filename, description, type, id_patient: idPatient, created_by: createdBy })
+    } catch (error) {
+        console.log(error)
+        throw new ServerError('Server error')
+    }
+}
+
+const updatePatientPhoto = async ({ idPatient, idPhoto, name, description, file, modifiedBy }) => {
+    const photo = await File.findOne({ where: { id_patient: idPatient, id: idPhoto } })
+    if (!photo) throw new ClientError('Photo is not found or does not exist', 404)
+    if (file) await helperImage(file.path, file.filename)
+    try {
+        return await photo.update({ name, filename: file?.filename, description, modified_by: modifiedBy })
+    } catch (error) {
+        console.log(error)
+        throw new ServerError('Server error')
+    }
+}
+
+const deletePatientPhoto = async ({ idPatient, idPhoto }) => {
+    const photo = await File.findOne({ where: { id_patient: idPatient, id: idPhoto } })
+    if (!photo) throw new ClientError('Photo is not found or does not exist', 404)
+    try {
+        await photo.destroy()
     } catch (error) {
         throw new ServerError('Server error')
     }
@@ -144,6 +170,8 @@ const patientsService = {
     deletePatientNote,
     getPatientPhotos,
     createPatientPhoto,
+    updatePatientPhoto,
+    deletePatientPhoto,
     getPatientFiles
 }
 

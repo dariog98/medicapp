@@ -58,6 +58,19 @@ const createPatientPhoto = async (request, response) => {
     handleResponse({response, statusCode: 201, message: 'File create successfully' })
 }
 
+const updatePatientPhoto = async (request, response) => {
+    const { params: { id: idPatient, photo: idPhoto }, body: { name, description }, file } = request
+    const { idUser: modifiedBy } = await getTokenFromRequest(request)
+    await PatientsService.updatePatientPhoto({ idPatient, idPhoto, name, description, file, modifiedBy })
+    handleResponse({ response, statusCode: 200, message: 'Photo updated successfully' })
+}
+
+const deletePatientPhoto = async (request, response) => {
+    const { id: idPatient, photo: idPhoto } = request.params
+    await PatientsService.deletePatientPhoto({ idPatient, idPhoto })
+    handleResponse({ response, statusCode: 200, message: 'Photo deleted successfully' })
+}
+
 const getPatientTreatments = async (request, response) => {
     const { id: idPatient } = request.params
     const { status: status, order: stringOrder, page } = request.query
@@ -105,11 +118,13 @@ const patientController = {
     getPatientFiles: catchedAsync(getPatientFiles),
     getPhotos: catchedAsync(getPatientPhotos),
     createPhoto: catchedAsync(createPatientPhoto),
+    updatePhoto: catchedAsync(updatePatientPhoto),
+    deletePhoto: catchedAsync(deletePatientPhoto),
     getPatientTreatments: catchedAsync(getPatientTreatments),
-    getPatientNotes: catchedAsync(getPatientNotes),
-    createPatientNote: catchedAsync(createPatientNote),
-    updatePatientNote: catchedAsync(updatePatientNote),
-    deletePatientNote: catchedAsync(deletePatientNote),
+    getNotes: catchedAsync(getPatientNotes),
+    createNote: catchedAsync(createPatientNote),
+    updateNote: catchedAsync(updatePatientNote),
+    deleteNote: catchedAsync(deletePatientNote),
 }
 
 export default patientController

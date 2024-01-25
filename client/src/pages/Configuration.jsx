@@ -25,7 +25,7 @@ const Configuration = () => {
 
     return (
         <Container>
-            <div className='d-flex flex-column gap-3 ps-5 vh-100'>
+            <div className='d-flex flex-column gap-3 vh-100'>
                 <Title icon={faSliders} text={language.Configuration}/>
 
                 <div className='d-flex flex-row'>

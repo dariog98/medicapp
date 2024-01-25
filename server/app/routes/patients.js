@@ -20,12 +20,14 @@ router.get('/:id/files', checkAuth, patientController.getPatientFiles)
 // Photos
 router.get('/:id/photos', checkAuth, patientController.getPhotos)
 router.post('/:id/photos', checkAuth, uploadMiddleware.single('file'), patientController.createPhoto)
+router.patch('/:id/photos/:photo', checkAuth, uploadMiddleware.single('file'), patientController.updatePhoto)
+router.delete('/:id/photos/:photo', checkAuth, patientController.deletePhoto)
 
 // Notes
-router.get('/:id/notes', checkAuth, patientController.getPatientNotes)
-router.post('/:id/notes', checkAuth, validateCreateNote, patientController.createPatientNote)
-router.patch('/:id/notes/:note', checkAuth, validateUpdateNote, patientController.updatePatientNote)
-router.delete('/:id/notes/:note', checkAuth, patientController.deletePatientNote)
+router.get('/:id/notes', checkAuth, patientController.getNotes)
+router.post('/:id/notes', checkAuth, validateCreateNote, patientController.createNote)
+router.patch('/:id/notes/:note', checkAuth, validateUpdateNote, patientController.updateNote)
+router.delete('/:id/notes/:note', checkAuth, patientController.deleteNote)
 
 // Treatments
 router.get('/:id/treatments', checkAuth, patientController.getPatientTreatments)

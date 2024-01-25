@@ -12,7 +12,11 @@ const getAllReminders = async ({ idProfesional, idPatient, startTime, endTime, p
         id_patient: idPatient,
         id_profesional: idProfesional,
     }, [ 'createdByUser', 'modifiedByUser', 'profesional', 'patient' ], literal)
-    return { page, totalPages, total, data: data.map(reminder => snakeToCamelObject(reminder.get())) }
+    return { page, totalPages, total, data: data.map(reminder => snakeToCamelObject({
+        ...reminder.get(),
+        patient: snakeToCamelObject(reminder?.patient?.get()),
+        profesional: snakeToCamelObject(reminder.profesional.get())
+    }))}
 }
 
 const remindersService = {

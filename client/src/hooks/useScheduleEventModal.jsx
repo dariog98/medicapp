@@ -73,11 +73,14 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
     const APPOINTMENT_ACTIONS = {
         [MODALMODES.Add]: async (data) => {
             const { patient: { id: idPatient }, duration, description } = data
-            const dateTime = new Date(`${data.date}T${data.time}:00${timeZone.numeric}`).toISOString()
+            const dateTime = `${data.date}T${data.time}:00${timeZone.numeric}`
             const idTreatment = data?.treatment?.id
             const appointment = { idPatient, dateTime, duration, idTreatment, description }
             const response = await profesionalServices.createAppointment({ idProfesional, data: appointment })
 
+            if (response.status === 23505) {
+                addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.DateTimeNotAvailable, type: 'warning', time: TOAST_TIME.Short })
+            }
             if (response.status === 201) {
                 addNotification({ id: Date.now(), icon: faPlus, message: language.messages.AppointmentCreated, type: 'primary', time: TOAST_TIME.Short })
                 refreshEvents()
@@ -92,6 +95,9 @@ const useScheduleEventModal = ({ idProfesional, refreshEvents } = {}) => {
             
             const response = await profesionalServices.updateAppointment({ idProfesional, idAppointment, data: appointment })
 
+            if (response.status === 23505) {
+                addNotification({ id: Date.now(), icon: faTriangleExclamation, message: language.messages.DateTimeNotAvailable, type: 'warning', time: TOAST_TIME.Short })
+            }
             if (response.status === 200) {
                 addNotification({ id: Date.now(), icon: faPen, message: language.messages.AppointmentUpdated, type: 'success', time: TOAST_TIME.Short })
                 refreshEvents()

@@ -26,7 +26,7 @@ const Home = () => {
                     <div className='d-flex flex-column gap-3'>
                         <Title icon={faCalendarDays} text={language.headings.TodaysAppointments}/>
 
-                        <div className='overflow-auto pe-4'  style={{ maxHeight: 'calc(100vh - 160px)' }}>
+                        <div className='overflow-auto'  style={{ maxHeight: 'calc(100vh - 160px)' }}>
                             <AppointmentsList isLoading={isLoadingTurns} data={dataTurns?.data || []}/>
                         </div>
                     </div>
@@ -34,7 +34,7 @@ const Home = () => {
                     <div className='d-flex flex-column gap-3'>
                         <Title icon={faClock} text={language.headings.TodaysReminders}/>
 
-                        <div className='overflow-auto pe-4'  style={{ maxHeight: 'calc(100vh - 160px)' }}>
+                        <div className='overflow-auto'  style={{ maxHeight: 'calc(100vh - 160px)' }}>
                             <ReminderList isLoading={isLoadingReminders} data={dataReminders?.data || []}/>
                         </div>
                     </div>

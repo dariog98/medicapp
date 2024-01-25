@@ -15,7 +15,7 @@ const ProfesionalData = ({ profesional }) => {
                         label={language.rows.Surnames}
                         name='surnames'
                         type='text'
-                        isDisabled={true}
+                        isReadOnly={true}
                         value={profesional.surnames}
                     />
                 </div>
@@ -24,7 +24,7 @@ const ProfesionalData = ({ profesional }) => {
                         label={language.rows.Names}
                         name='names'
                         type='text'
-                        isDisabled={true}
+                        isReadOnly={true}
                         value={profesional.names}
                     />
                 </div>
@@ -36,7 +36,7 @@ const ProfesionalData = ({ profesional }) => {
                         label={language.rows.Mail}
                         name='mail'
                         type='text'
-                        isDisabled={true}
+                        isReadOnly={true}
                         value={profesional.mail}
                     />
                 </div>
@@ -46,7 +46,7 @@ const ProfesionalData = ({ profesional }) => {
                         label={language.rows.Phone}
                         name='phone'
                         type='text'
-                        isDisabled={true}
+                        isReadOnly={true}
                         value={profesional.phone}
                     />
                 </div>
@@ -58,7 +58,7 @@ const ProfesionalData = ({ profesional }) => {
                         label={language.rows.Username}
                         name='mail'
                         type='text'
-                        isDisabled={true}
+                        isReadOnly={true}
                         value={profesional.username}
                     />
                 </div>
@@ -68,7 +68,7 @@ const ProfesionalData = ({ profesional }) => {
                         label={language.rows.Role}
                         name='phone'
                         type='text'
-                        isDisabled={true}
+                        isReadOnly={true}
                         value={profesional.role.description}
                     />
                 </div>
@@ -78,7 +78,7 @@ const ProfesionalData = ({ profesional }) => {
                         label={language.rows.Charge}
                         name='phone'
                         type='text'
-                        isDisabled={true}
+                        isReadOnly={true}
                         value={profesional.charge.description}
                     />
                 </div>

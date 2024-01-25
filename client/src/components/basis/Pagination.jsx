@@ -1,6 +1,5 @@
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { useSettingsContext } from '../providers/SettingsProvider'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Button from './Button'
 
 const Pagination = ({ page, totalPages, handlePage }) => {

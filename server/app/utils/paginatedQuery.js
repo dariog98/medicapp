@@ -1,6 +1,5 @@
 const cleanObject = (obj) => {
     return Object.keys(obj).reduce((accumulator, current) => {
-        console.log({ accumulator, current, value: obj[current] })
         if (obj[current] !== undefined && obj[current] !== '') accumulator[current] = obj[current]
         return accumulator
     }, {})

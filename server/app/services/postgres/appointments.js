@@ -24,7 +24,12 @@ const getAllAppointments = async ({
         id_treatment: idTreatment,
         status
     }, [ 'treatment', 'profesional', 'patient' ], literal)
-    return { page, totalPages, total, data: data.map(appointment => snakeToCamelObject(appointment.get())) }
+    return { page, totalPages, total, data: data.map(appointment => snakeToCamelObject({
+        ...appointment.get(),
+        patient: snakeToCamelObject(appointment.patient.get()),
+        treatment: snakeToCamelObject(appointment?.treatment?.get()),
+        profesional: snakeToCamelObject(appointment.profesional.get())
+    }))}
 }
 
 const appointmentsService = {
