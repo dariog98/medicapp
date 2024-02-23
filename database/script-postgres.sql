@@ -137,9 +137,9 @@ create table exceptions (
 );
 
 create view appointments_and_exceptions as (
-	select id, date_time as start_date_time, date_time + (extract(hour from duration) * interval '1 hour') + (extract(minute from duration) * interval '1 minute') as end_date_time, 'appointment' as type from appointments
+	select id, id_profesional, date_time as start_date_time, date_time + (extract(hour from duration) * interval '1 hour') + (extract(minute from duration) * interval '1 minute') as end_date_time, 'appointment' as type from appointments
 	union
-	select id, start_date_time, end_date_time, 'exception' as type from exceptions
+	select id, id_profesional, start_date_time, end_date_time, 'exception' as type from exceptions
 );
 
 create or replace function appointment_check()

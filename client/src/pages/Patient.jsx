@@ -19,7 +19,6 @@ const Patient = () => {
 
                     <div className='d-grid gap-3' style={{ gridTemplateColumns: '3fr 2fr' }} >
                         <div className='d-flex flex-column gap-3'>
-                            <Title icon={faUser} text={language.Patient}/>
                             <PatientData data={data.data} refreshData={refreshData}/>
                             <PatientNotes idPatient={idPatient}/>
                             <PatientPhotos idPatient={idPatient}/>
