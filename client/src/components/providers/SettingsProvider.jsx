@@ -11,7 +11,7 @@ const SettingsProvider = ({ children }) => {
     const languageStorage = useLocalStorage('LANGUAGE')
 
     const [language, setLanguage] = useState(languageStorage.getItem() || 'EN')
-    const [theme, setTheme] = useState(themeStorage.getItem() || 'dark')
+    const [theme, setTheme] = useState(themeStorage.getItem() || 'light')
     const [showTurns, setShowTurns] = useState(true)
     const [showExceptions, setShowExceptions] = useState(true)
     const [timeZone, setTimeZone] = useState(TIMEZONES[timeZoneStorage.getItem() || 0])

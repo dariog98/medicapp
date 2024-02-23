@@ -30,7 +30,8 @@ const Pagination = ({ page, totalPages, handlePage }) => {
                         return (
                             <Button
                                 key={index}
-                                className={isThemeDark ? 'btn-outline-light' : 'btn-outline-dark'}
+                                //className={isThemeDark ? 'btn-outline-light' : 'btn-outline-dark'}
+                                className='btn-outline-system'
                                 isActived={isActived}
                                 handleOnClick={() => handlePage(index)}
                                 text={index}

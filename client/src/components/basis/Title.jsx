@@ -4,13 +4,10 @@ const Title = ({ icon, text, children }) => {
     return (
         <div className='d-flex'>
             <div className='flex-grow-1 d-flex align-items-center gap-2'>
-                {
-                    icon &&
-                    <FontAwesomeIcon icon={icon} size='2x'/>
-                }
-                <div className='fs-4 fw-medium'>{text}</div>
+                {icon && <FontAwesomeIcon icon={icon} style={{ width: '1.5rem', height: '1.5rem' }}/>}
+                <div className='fs-4 fw-bolder'>{text}</div>
             </div>
-
+            
             <div>
                 {children}
             </div>

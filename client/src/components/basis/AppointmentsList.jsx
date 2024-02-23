@@ -19,7 +19,7 @@ const AppointmentsList = ({ isLoading, data }) => {
                     </>
                     :
                     <>
-                        <div className='flex-grow-1 d-flex justify-content-center align-items-center border rounded-2 p-2'>
+                        <div className='card flex-grow-1 d-flex justify-content-center align-items-center p-2'>
                             {language.messages.NoResults}
                         </div>
                     </>

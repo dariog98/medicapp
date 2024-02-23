@@ -1,5 +1,5 @@
-import { faPen } from '@fortawesome/free-solid-svg-icons'
-import { Button, Input } from '../basis'
+import { faPen, faUser } from '@fortawesome/free-solid-svg-icons'
+import { Button, Input, Title } from '../basis'
 import { useSettingsContext } from '../providers/SettingsProvider'
 import PatientModal from './PatientModal'
 import { usePatientModal } from '../../hooks'
@@ -17,6 +17,8 @@ const PatientData = ({ data, refreshData }) => {
 
     return (
         <div className='d-flex flex-column gap-3'>
+            <Title icon={faUser} text={language.Patient}/>
+
             <div className='d-flex flex-wrap gap-3'>
                 <div className='flex-grow-1'>
                     <Input

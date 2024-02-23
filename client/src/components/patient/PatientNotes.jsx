@@ -57,7 +57,7 @@ const PatientNotes = ({ idPatient }) => {
                         <Pagination page={page} handlePage={handlePage} totalPages={data?.totalPages}/>
                     </>
                     :
-                    <div className='w-100 border rounded d-flex justify-content-center align-items-center p-2'>
+                    <div className='card w-100 d-flex justify-content-center align-items-center p-2'>
                         {language.messages.NoResults}
                     </div>
                 }
