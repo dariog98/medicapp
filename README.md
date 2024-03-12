@@ -3,6 +3,7 @@
 Medical agenda and patient management
 
 [Live demo](https://medicapp-nu.vercel.app)
+
 ![UI-agenda](https://raw.githubusercontent.com/dariog98/medicapp/develop/resources/UI-agenda.png)
 
 ## Test credentials
@@ -33,6 +34,20 @@ There are two distinct user roles within the system:
 - [x] Custom reminder creation
 - [x] Custom pop-up notifications
 - [x] Email notifications
-- [x] Context-based authentication
-- [x] Device management
-- [x] Admin dashboard
+
+## Technologies
+
+- Vite
+- React.js
+- Bootstrap
+- Reack Hook Form
+- yup
+- Node.js
+- Express.js
+- PosgretSQL
+- Sequelize
+- JWT Authentication
+- Bcryptjs
+- Multer
+- Sharp
+- Nodemailer
