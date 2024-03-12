@@ -1,4 +1,4 @@
-## MedicApp
+# MedicApp
 
 ## Live demo
 
@@ -9,3 +9,7 @@
 Username: `admin`
 
 Password: `12345678`
+
+## Project Overview
+
+The project is a medical management application build using PosgretSQl, Express.js, React.js and Node.js.
