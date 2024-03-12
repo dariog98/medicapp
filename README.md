@@ -34,6 +34,8 @@ There are two distinct user roles within the system:
 - [x] Custom reminder creation
 - [x] Custom pop-up notifications
 - [x] Email notifications
+- [x] Language configuration
+- [x] Dark mode
 
 ## Technologies
 
