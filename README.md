@@ -1,10 +1,9 @@
 # MedicApp
 
+Medical agenda and patient management
+
+[Live demo](https://medicapp-nu.vercel.app)
 ![UI-agenda](https://raw.githubusercontent.com/dariog98/medicapp/develop/resources/UI-agenda.png)
-
-## Live demo
-
-[medicapp-nu.vercel.app](https://medicapp-nu.vercel.app)
 
 ## Test credentials
 
