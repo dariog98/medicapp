@@ -23,7 +23,7 @@ router.use('/users', userRouter)
 router.use('/roles', rolesRouter)
 router.use('/stats', statRouter)
 
-router.get('*', (request, response) => {
+router.get('/{*any}', (request, response) => {
     throw new ClientError('Route not found', 404)
 })
 
